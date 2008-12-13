@@ -406,9 +406,12 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
    * [[http://windriver.com][Wind River Systems]]
    * [[http://www.goldstarevents.com][Goldstar Events]]
 
-|  Plugin Author: | TWiki:Main/CrawfordCurrie, http://c-dot.co.uk |
-|  Plugin Version: | %$VERSION% |
+|  Author: | [[http://c-dot.co.uk][CrawfordCurrie]] |
+|  Version: | %$VERSION% |
+|  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2008 Crawford Currie |
+|  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  5 Dec 2008 | |
 |  7 May 2008 | TWikibug:Item5607: http: was being doubled up on URLs in mail due to a core bug |
 |  13 Apr 2008 | TWikibug:Item4649: merged TWiki:Main.JoaquinBuendia's fix for AJAX updates on IE. TWikibug:Item4760: fixed WYSIWYG editing of topics containing actions TWikibug:Item5531: added simple button option for state changes |
 |  17 Sep 2007 | TWikibug:Item4648 $formfield wasn't working on 4.1.2 |
@@ -446,33 +449,6 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  9 Jan 2002 | Bugfix version |
 |  Dependencies: | %$DEPENDENCIES% |
 |  Plugin Home: | http://foswiki.org/Extensions/ActionTrackerPlugin |
-|  Feedback: | http://foswiki.org/Extensions/ActionTrackerPluginDev |
-
-__Related Topics:__ %SYSTEMWEB%.DefaultPreferences, %USERSWEB%.SitePreferences, [[%SYSTEMWEB%.Plugins][Plugins]]
-
----++ Further development
-
-Further development of this code is welcomed. It is recommended that you unpack the distribution into a development directory and use the supplied build file which provides targets to run the test suite, and install and uninstall your development code into a test installation. Please, please, _please_ run, and extend if necessary, the test set!
-
-Developer discussion is in Foswiki:Extensions/ActionTrackerPluginDev.
-
----++ Copyright
-
-This code is an original development of Motorola Inc. and is protected by the following copyrights:
-	* Copyright &copy; 2002-2003 Motorola. All Rights Reserved.
-	* Portions Copyright &copy; 2004-2007 Crawford Currie, http://c-dot.co.uk
-
----++ License
-
-As required for the publication of all extensions to TWiki, this
-software is published under the terms of the GNU General Public
-License.
-
-This program is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details, published at
-http://www.gnu.org/copyleft/gpl.html
 
 %META:FILEATTACHMENT{name="styles.css" attr="" comment="Stylesheet for actions"}%
 %META:FILEATTACHMENT{name="juggle.gif" attr="h" comment="Logo"}%
