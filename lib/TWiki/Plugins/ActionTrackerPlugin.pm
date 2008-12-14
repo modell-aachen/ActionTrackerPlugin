@@ -26,7 +26,7 @@ require TWiki::Plugins;
 
 use vars qw( $VERSION $RELEASE $initialised $SHORTDESCRIPTION );
 
-$VERSION = '$Rev: 16657 $';
+$VERSION = '$Rev$';
 $RELEASE = '21 May 2007';
 $SHORTDESCRIPTION = 'Adds support for action tags in topics, and automatic notification of action statuses';
 $initialised = 0;
