@@ -1,5 +1,6 @@
 #
 # Copyright (C) Motorola 2002 - All rights reserved
+# Copyright (C) 2004-2009 Crawford Currie http://c-dot.co.uk
 #
 # TWiki extension that adds tags for action tracking
 #
@@ -14,11 +15,6 @@
 # GNU General Public License for more details, published at 
 # http://www.gnu.org/copyleft/gpl.html
 #
-use strict;
-use integer;
-
-require TWiki::Func;
-
 # Object that represents a header and fields format
 # This is where all formatting should be done; there should
 # be no HTML tags anywhere else in the code!
@@ -32,7 +28,12 @@ require TWiki::Func;
 #    representation of the field. Field methods override type
 #    methods. The function must return a tuple of ( text, colour ).
 #    The colour may be undefined.
-package TWiki::Plugins::ActionTrackerPlugin::Format;
+package Foswiki::Plugins::ActionTrackerPlugin::Format;
+
+use strict;
+use integer;
+
+require Foswiki::Func;
 
 # PUBLIC Constructor
 # $header is the format of the HTML table header representation
@@ -270,7 +271,7 @@ sub _generateHTMLTable {
     my ( $this, $rows, $class ) = @_;
     my $a = {};
     $a->{class} = $class if $class;
-    my $text = CGI::start_table( {class => 'twikiFormTable' }, $a );
+    my $text = CGI::start_table( {class => 'atpSearch' }, $a );
     my $i;
 
     if ( $this->{ORIENTATION} eq 'rows' ) {
@@ -444,7 +445,7 @@ sub _formatFieldForEdit {
         }
         if ( $type->{type} eq 'date') {
             # make sure JSCalendar is there
-            eval 'use TWiki::Contrib::JSCalendarContrib';
+            eval 'use Foswiki::Contrib::JSCalendarContrib';
             unless ( $@ ) {
                 @extras = ( id => "date_$attrname" );
                 $content =
@@ -452,8 +453,8 @@ sub _formatFieldForEdit {
                       -name => 'calendar',
                       -onclick =>
                           "return showCalendar('date_$attrname','%e %B %Y')",
-                      -src=> TWiki::Func::getPubUrlPath() . '/' .
-                        TWiki::Func::getTwikiWebname() .
+                      -src=> Foswiki::Func::getPubUrlPath() . '/' .
+                        $Foswiki::cfg{SystemWebName} .
                             '/JSCalendarContrib/img.gif',
                       -alt => 'Calendar',
                       -align => 'middle' );

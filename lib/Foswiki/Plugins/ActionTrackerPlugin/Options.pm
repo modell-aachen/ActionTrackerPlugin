@@ -1,5 +1,5 @@
 # See bottom of file for license and copyright information
-package TWiki::Plugins::ActionTrackerPlugin::Options;
+package Foswiki::Plugins::ActionTrackerPlugin::Options;
 
 # Define a global so that submodules can access options without needing the
 # result of the load. Nasty, but this is refactored over existing code, so
@@ -34,12 +34,12 @@ sub load {
     # Set defaults, will be overwritten by user prefs
     %options = %defaults;
 
-    require TWiki::Func;
+    require Foswiki::Func;
     foreach my $ky (keys %options) {
         my $sk = 'ACTIONTRACKERPLUGIN_'.$ky;
-        $sk = TWiki::Func::getPreferencesValue( $sk );
+        $sk = Foswiki::Func::getPreferencesValue( $sk );
         $options{$ky} = $sk if (defined $sk);
-        $options{$ky} = TWiki::Func::expandCommonVariables(
+        $options{$ky} = Foswiki::Func::expandCommonVariables(
             $options{$ky}, $topic, $web );
     }
 

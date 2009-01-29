@@ -3,10 +3,10 @@ use base qw(FoswikiFnTestCase);
 
 use strict;
 
-use TWiki::Plugins::ActionTrackerPlugin;
-use TWiki::Plugins::ActionTrackerPlugin::Action;
-use TWiki::Plugins::ActionTrackerPlugin::ActionSet;
-use TWiki::Plugins::ActionTrackerPlugin::Format;
+use Foswiki::Plugins::ActionTrackerPlugin;
+use Foswiki::Plugins::ActionTrackerPlugin::Action;
+use Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
+use Foswiki::Plugins::ActionTrackerPlugin::Format;
 use Time::ParseDate;
 
 sub new {
@@ -21,35 +21,35 @@ sub set_up {
     $this->SUPER::set_up();
 
     # Need this to get the actionnotify template
-    $TWiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
+    $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
     foreach my $lib (@INC) {
         my $d = "$lib/../templates";
         if (-e "$d/actionnotify.tmpl") {
-            $TWiki::cfg{TemplateDir} = $d;
+            $Foswiki::cfg{TemplateDir} = $d;
             last;
         }
     }
 
-    TWiki::Plugins::ActionTrackerPlugin::Action::forceTime("3 Jun 2002");
+    Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("3 Jun 2002");
 
-    my $meta = new TWiki::Meta($this->{twiki}, $this->{test_web}, "Topic1");
+    my $meta = new Foswiki::Meta($this->{twiki}, $this->{test_web}, "Topic1");
     $meta->putKeyed('FIELD', {name=>'Who', title=>'Leela', value=>'Turanaga'});
-    TWiki::Func::saveTopic($this->{test_web}, "Topic1", $meta, "
+    Foswiki::Func::saveTopic($this->{test_web}, "Topic1", $meta, "
 %ACTION{who=$this->{users_web}.Sam,due=\"3 Jan 02\",open}% Test0: Sam_open_late");
 
-    TWiki::Func::saveTopic($this->{test_web}, "Topic2", undef, "
+    Foswiki::Func::saveTopic($this->{test_web}, "Topic2", undef, "
 %ACTION{who=Fred,due=\"2 Jan 02\",open}% Test1: Fred_open_ontime");
 
-    TWiki::Func::saveTopic($this->{test_web}, "WebNotify", undef, "
+    Foswiki::Func::saveTopic($this->{test_web}, "WebNotify", undef, "
    * $this->{users_web}.Fred - fred\@sesame.street.com
 ");
 
-    TWiki::Func::saveTopic($this->{test_web}, "WebPreferences", undef, "
+    Foswiki::Func::saveTopic($this->{test_web}, "WebPreferences", undef, "
    * Set ACTIONTRACKERPLUGIN_HEADERCOL = green
    * Set ACTIONTRACKERPLUGIN_EXTRAS = |plaintiffs,names,16|decision,text,16|sentencing,date|sentence,select,\"life\",\"5 years\",\"community service\"|
 ");
 
-    TWiki::Func::saveTopic($this->{users_web}, "Topic2", undef, "
+    Foswiki::Func::saveTopic($this->{users_web}, "Topic2", undef, "
 %META:TOPICINFO{author=\"guest\" date=\"1053267450\" format=\"1.0\" version=\"1.35\"}%
 %META:TOPICPARENT{name=\"WebHome\"}%
 %ACTION{who=$this->{users_web}.Fred,due=\"1 Jan 02\",closed}% Main0: Fred_closed_ontime
@@ -61,25 +61,25 @@ sub set_up {
 %META:FIELD{name=\"Know.OsVersion\" title=\"Know.OsVersion\" value=\"hhhhhh\"}%
 ");
 
-    TWiki::Func::saveTopic($this->{users_web}, "WebNotify", undef, "
+    Foswiki::Func::saveTopic($this->{users_web}, "WebNotify", undef, "
    * $this->{users_web}.Sam - sam\@sesame.street.com
 ");
-    TWiki::Func::saveTopic($this->{users_web}, "Joe", undef, "
+    Foswiki::Func::saveTopic($this->{users_web}, "Joe", undef, "
    * Email: joe\@sesame.street.com
 ");
-    TWiki::Func::saveTopic($this->{users_web}, "TheWholeBunch", undef, "
+    Foswiki::Func::saveTopic($this->{users_web}, "TheWholeBunch", undef, "
    * Email: joe\@sesame.street.com
    * Email: fred\@sesame.street.com
    * Email: sam\@sesame.street.com
    * $this->{users_web}.GungaDin - gunga-din\@war_lords-home.ind
 ");
-    TWiki::Plugins::ActionTrackerPlugin::initPlugin("Topic",$this->{test_web},"User","Blah");
+    Foswiki::Plugins::ActionTrackerPlugin::initPlugin("Topic",$this->{test_web},"User","Blah");
 }
 
 sub testActionSearchFn {
     my $this = shift;
-    my $chosen = TWiki::Plugins::ActionTrackerPlugin::_handleActionSearch(
-        $twiki, new TWiki::Attrs("web=\".*\""),
+    my $chosen = Foswiki::Plugins::ActionTrackerPlugin::_handleActionSearch(
+        $twiki, new Foswiki::Attrs("web=\".*\""),
         $this->{users_web}, $this->{test_topic});
     $this->assert_matches(qr/Test0:/, $chosen);
     $this->assert_matches(qr/Test1:/, $chosen);
@@ -91,8 +91,8 @@ sub testActionSearchFn {
 
 sub testActionSearchFnSorted {
     my $this = shift;
-    my $chosen = TWiki::Plugins::ActionTrackerPlugin::_handleActionSearch(
-        $twiki, new TWiki::Attrs("web=\".*\" sort=\"state,who\""),
+    my $chosen = Foswiki::Plugins::ActionTrackerPlugin::_handleActionSearch(
+        $twiki, new Foswiki::Attrs("web=\".*\" sort=\"state,who\""),
         $this->{users_web}, $this->{test_topic});
     $this->assert_matches(qr/Test0:/, $chosen);
     $this->assert_matches(qr/Test1:/, $chosen);
@@ -112,8 +112,8 @@ Before
 %ACTION{who=One,due=\"11 jun 1993\"}% Finagle1: Oneth action
 After
 ";
-    $TWiki::Plugins::ActionTrackerPlugin::pluginInitialized = 1;
-    TWiki::Plugins::ActionTrackerPlugin::commonTagsHandler(
+    $Foswiki::Plugins::ActionTrackerPlugin::pluginInitialized = 1;
+    Foswiki::Plugins::ActionTrackerPlugin::commonTagsHandler(
         $chosen, "Finagle", $this->{users_web});
 
     $this->assert_matches(qr/Test0:/, $chosen);
@@ -151,7 +151,7 @@ break the table here %ACTION{who=ActorSeven,due=01/01/02,open}% Create the maile
    * should generate %ACTION{who=ActorNine,due=01/01/02,closed}% Create the mailer
 HERE
 
-    TWiki::Plugins::ActionTrackerPlugin::commonTagsHandler($text, "TheTopic", "TheWeb");
+    Foswiki::Plugins::ActionTrackerPlugin::commonTagsHandler($text, "TheTopic", "TheWeb");
 }
 
 sub anchor {
@@ -178,17 +178,17 @@ sub action {
 
 sub testBeforeEditHandler {
     my $this = shift;
-    my $q = new CGI({atp_action=>"AcTion0",
+    my $q = new Unit::Request({atp_action=>"AcTion0",
                      skin=>'action', atp_action=>'666'});
-    $this->{twiki}->{cgiQuery} = $q;
+    $this->{twiki}->{request} = $q;
     my $text = '%ACTION{uid="666" who=Fred,due="2 Jan 02",open}% Test1: Fred_open_ontime';
-    TWiki::Plugins::ActionTrackerPlugin::beforeEditHandler($text,"Topic2",$this->{users_web},undef);
+    Foswiki::Plugins::ActionTrackerPlugin::beforeEditHandler($text,"Topic2",$this->{users_web},undef);
     $text = $this->assert_html_matches("<input type=\"text\" name=\"who\" value=\"$this->{users_web}\.Fred\" size=\"35\"/>", $text);
 }
 
 sub testAfterEditHandler {
     my $this = shift;
-    my $q = new CGI({
+    my $q = new Unit::Request({
         closeactioneditor=>1,
         pretext=>"%ACTION{}% Before\n",
         posttext=>"After",
@@ -196,9 +196,9 @@ sub testAfterEditHandler {
         due=>"3 may 2009",
         state=>"closed" });
     # populate with edit fields
-    $this->{twiki}->{cgiQuery} = $q;
+    $this->{twiki}->{request} = $q;
     my $text = "%ACTION{}%";
-    TWiki::Plugins::ActionTrackerPlugin::afterEditHandler($text,"Topic","Web");
+    Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler($text,"Topic","Web");
     $this->assert($text =~ m/(%ACTION.*)(%ACTION.*)$/so);
     my $first = $1;
     my $second = $2;
@@ -229,7 +229,7 @@ sub testBeforeSaveHandler1 {
 %META:FIELD{name=\"Know.OperatingSystem\" title=\"Know.OperatingSystem\" value=\"Know.OsHPUX, Know.OsLinux\"}%
 %META:FIELD{name=\"Know.OsVersion\" title=\"Know.OsVersion\" value=\"hhhhhh\"}%";
     
-    TWiki::Plugins::ActionTrackerPlugin::beforeSaveHandler(
+    Foswiki::Plugins::ActionTrackerPlugin::beforeSaveHandler(
         $text,"Topic2",$this->{users_web});
     my $re = qr/ state=\"open\"/;
     $this->assert_matches($re, $text); $text =~ s/$re//;
@@ -274,7 +274,7 @@ EOF
 %META:FIELD{name=\"Know.OperatingSystem\" title=\"Know.OperatingSystem\" value=\"Know.OsHPUX, Know.OsLinux\"}%
 %META:FIELD{name=\"Know.OsVersion\" title=\"Know.OsVersion\" value=\"hhhhhh\"}%";
     
-    TWiki::Plugins::ActionTrackerPlugin::beforeSaveHandler(
+    Foswiki::Plugins::ActionTrackerPlugin::beforeSaveHandler(
         $text,"Topic2",$this->{users_web});
     my $re = qr/ state=\"open\"/o;
     $this->assert_matches($re, $text); $text =~ s/$re//;
@@ -294,8 +294,8 @@ sub test_formfield_format {
     my $text = <<HERE;
 %ACTIONSEARCH{who="$this->{users_web}.Sam" state="open" header="|Who|" format="|\$formfield(Who)|"}%
 HERE
-    $TWiki::Plugins::ActionTrackerPlugin::pluginInitialized = 1;
-    TWiki::Plugins::ActionTrackerPlugin::commonTagsHandler(
+    $Foswiki::Plugins::ActionTrackerPlugin::pluginInitialized = 1;
+    Foswiki::Plugins::ActionTrackerPlugin::commonTagsHandler(
         $text, "Finagle", $this->{test_web});
     $this->assert($text =~ /<td>Turanaga<\/td>/, $text);
 }

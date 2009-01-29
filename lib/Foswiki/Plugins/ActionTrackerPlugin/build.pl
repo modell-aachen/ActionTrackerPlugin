@@ -8,7 +8,7 @@ BEGIN {
   }
 }
 
-use TWiki::Contrib::Build;
+use Foswiki::Contrib::Build;
 
-$build = new TWiki::Contrib::Build("ActionTrackerPlugin");
+$build = new Foswiki::Contrib::Build("ActionTrackerPlugin");
 $build->build($build->{target});

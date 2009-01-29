@@ -3,14 +3,14 @@ use base qw(FoswikiFnTestCase);
 
 use strict;
 
-use TWiki::Plugins::ActionTrackerPlugin::Action;
-use TWiki::Plugins::ActionTrackerPlugin::ActionSet;
-use TWiki::Plugins::ActionTrackerPlugin::ActionNotify;
-use TWiki::Plugins::ActionTrackerPlugin::Format;
-use TWiki::Plugins::ActionTrackerPlugin::Options;
+use Foswiki::Plugins::ActionTrackerPlugin::Action;
+use Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
+use Foswiki::Plugins::ActionTrackerPlugin::ActionNotify;
+use Foswiki::Plugins::ActionTrackerPlugin::Format;
+use Foswiki::Plugins::ActionTrackerPlugin::Options;
 use Time::ParseDate;
-use TWiki::Attrs;
-use TWiki::Store::RcsLite;
+use Foswiki::Attrs;
+use Foswiki::Store::RcsLite;
 
 sub new {
     my $self = shift()->SUPER::new('ActionNotify', @_);
@@ -21,21 +21,21 @@ sub set_up {
     my $this = shift;
 
     $this->SUPER::set_up();
-    $TWiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
+    $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
 
     # Use RcsLite so we can manually gen topic revs
-    $TWiki::cfg{StoreImpl} = 'RcsLite';
+    $Foswiki::cfg{StoreImpl} = 'RcsLite';
 
     # Need this to get the actionnotify template
     foreach my $lib (@INC) {
         my $d = "$lib/../templates";
         if (-e "$d/actionnotify.tmpl") {
-            $TWiki::cfg{TemplateDir} = $d;
+            $Foswiki::cfg{TemplateDir} = $d;
             last;
         }
     }
 
-    TWiki::Plugins::ActionTrackerPlugin::Action::forceTime("3 Jun 2002");
+    Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("3 Jun 2002");
 
     # Actor 1 - wikiname in main, not a member of any groups
     # email: actor-1\@an-address.net
@@ -83,41 +83,41 @@ sub set_up {
     $this->registerUser("ActorSix", "Actor", "Six",
                         'actor6@correct-address');
 
-    TWiki::Func::saveTopic($this->{users_web}, "TWikiFormGroup", undef, <<'HERE');
+    Foswiki::Func::saveTopic($this->{users_web}, "TWikiFormGroup", undef, <<'HERE');
 Garbage
       * Set GROUP = ActorThree, ActorFour
 More garbage
 HERE
-    TWiki::Func::saveTopic($this->{users_web}, "WebNotify", undef, <<HERE);
+    Foswiki::Func::saveTopic($this->{users_web}, "WebNotify", undef, <<HERE);
 Garbage
    * $this->{users_web}.ActorFive - actor5\@correct.address
 More garbage
    * $this->{users_web}.ActorSix
 HERE
-    TWiki::Func::saveTopic($this->{test_web}, "WebNotify", undef, <<HERE
+    Foswiki::Func::saveTopic($this->{test_web}, "WebNotify", undef, <<HERE
    * $this->{users_web}.ActorEight - actor-8\@correct.address
 HERE
                               );
-    TWiki::Func::saveTopic($this->{users_web}, "EMailGroup", undef, <<'HERE');
-   * Set GROUP = actorTwo@another-address.net,ActorFour
+    Foswiki::Func::saveTopic($this->{users_web}, "EMailGroup", undef, <<'HERE');
+   * Set GROUP = ActorTwo,ActorFour
 HERE
 
-    TWiki::Func::saveTopic($this->{test_web}, "Topic1", undef, <<'HERE');
+    Foswiki::Func::saveTopic($this->{test_web}, "Topic1", undef, <<'HERE');
 %ACTION{who="ActorOne,ActorTwo,ActorThree,ActorFour,ActorFive,ActorSix,ActorSeven,ActorEight" due="3 Jan 02" state=open}% A1: ontime
 HERE
-    TWiki::Func::saveTopic($this->{test_web}, "Topic2", undef, <<'HERE');
+    Foswiki::Func::saveTopic($this->{test_web}, "Topic2", undef, <<'HERE');
 %ACTION{who="ActorOne,ActorTwo,ActorThree,ActorFour,ActorFive,ActorSix,actor.7@seven.net,ActorEight" due="2 Jan 02" state=closed}% A2: closed
 HERE
-    TWiki::Func::saveTopic($this->{users_web}, "Topic1", undef, <<'HERE');
+    Foswiki::Func::saveTopic($this->{users_web}, "Topic1", undef, <<'HERE');
 %ACTION{who="ActorOne,ActorTwo,ActorThree,ActorFour,ActorFive,ActorSix,actor.7@seven.net,ActorEight,NonEntity",due="3 Jan 01",state=open}% A3: late
 %ACTION{who=TWikiFormGroup,due="4 Jan 01",state=open}% A4: late 
 HERE
-    TWiki::Func::saveTopic($this->{users_web}, "Topic2", undef, <<'HERE');
+    Foswiki::Func::saveTopic($this->{users_web}, "Topic2", undef, <<'HERE');
 %ACTION{who=EMailGroup,due="2001-01-05",state=open}% A5: late
 %ACTION{who="ActorOne,ActorTwo,ActorThree,ActorFour,TWikiFormGroup,ActorFive,ActorSix,actor.7@seven.net,ActorEight,EMailGroup",due="6 Jan 99",open}% A6: late
 HERE
 
-    my $rcs = new TWiki::Store::RcsLite($this->{twiki}, $this->{test_web}, "ActionChanged" );
+    my $rcs = new Foswiki::Store::RcsLite($this->{twiki}, $this->{test_web}, "ActionChanged" );
     my $t1 = Time::ParseDate::parsedate("21 Jun 2001");
     $rcs->addRevisionFromText(<<HERE, 'Initial revision', 'crawford', $t1);
 %META:TOPICINFO{author="guest" date="$t1" format="1.0" version="1.1"}%
@@ -152,38 +152,37 @@ sub test_A_AddressExpansion {
         $this->{users_web}.'.PaxoHen' => 'chicken@farm.net'
        );
     my $who =
-      TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress('a@b.c',\%ma);
+      Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress('a@b.c',\%ma);
     $this->assert_str_equals( 'a@b.c', $who);
 
     $who =
-      TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("$this->{users_web}.BimboChimp",\%ma);
+      Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("$this->{users_web}.BimboChimp",\%ma);
     $this->assert_str_equals( 'bimbo@zoo.org', $who);
 
     $who =
-      TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("BimboChimp",\%ma);
+      Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("BimboChimp",\%ma);
     $this->assert_str_equals( 'bimbo@zoo.org', $who);
 
     $who =
-      TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("PaxoHen,BimboChimp , BonzoClown",\%ma);
+      Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("PaxoHen,BimboChimp , BonzoClown",\%ma);
     $this->assert_str_equals( 'chicken@farm.net,bimbo@zoo.org,bonzo@circus.com', $who);
 
-    $who = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorOne",\%ma);
+    $who = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorOne",\%ma);
     $this->assert_str_equals( 'actor-1@an-address.net', $who);
+    $who = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("EMailGroup",\%ma);
+    $this->assert_str_equals( "actorTwo\@another-address.net,actorfour\@yet-another-address.net", join(',',sort split(/[, ]+/, $who)));
+    $who = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("TWikiFormGroup",\%ma);
+    $this->assert_str_equals( "actor3\@yet-another-address.net,actorfour\@yet-another-address.net", join(',',sort split(/[, ]+/, $who)));
 
-    $who = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("EMailGroup",\%ma);
-    $this->assert_str_equals( "actorTwo\@another-address.net,actorfour\@yet-another-address.net", $who);
-    $who = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("TWikiFormGroup",\%ma);
-    $this->assert_str_equals( "actor3\@yet-another-address.net,actorfour\@yet-another-address.net", $who);
-
-    $who = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorFive",\%ma);
+    $who = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorFive",\%ma);
     $this->assert_str_equals('actor5@example.com', $who);
-    $who = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorEight",\%ma);
+    $who = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorEight",\%ma);
     $this->assert_null($who);
-    TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_loadWebNotify($this->{users_web},\%ma);
-    $who = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorFive",\%ma);
+    Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_loadWebNotify($this->{users_web},\%ma);
+    $who = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorFive",\%ma);
     $this->assert_str_equals( "actor5\@example.com", $who);
-    TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_loadWebNotify($this->{test_web},\%ma);
-    $who = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorEight",\%ma);
+    Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_loadWebNotify($this->{test_web},\%ma);
+    $who = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::_getMailAddress("ActorEight",\%ma);
     $this->assert_str_equals( "actor-8\@correct.address", $who);
 }
 
@@ -191,8 +190,8 @@ sub test_B_NotifyLate {
     my $this = shift;
     my $html;
 
-    TWiki::Plugins::ActionTrackerPlugin::Action::forceTime("2 Jan 2002");
-    TWiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications($this->{twiki}->{webName}, "web='($this->{test_web}|$this->{users_web})' late" );
+    Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("2 Jan 2002");
+    Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications($this->{twiki}->{webName}, "web='($this->{test_web}|$this->{users_web})' late" );
     if(scalar(@FoswikiFnTestCase::mails!= 8)) {
         my $mess = scalar(@FoswikiFnTestCase::mails)." mails received";
         while ( $html = shift(@FoswikiFnTestCase::mails)) {
@@ -286,8 +285,8 @@ sub test_B_NotifyLate {
 
 sub test_C_ChangedSince {
     my $this = shift;
-    TWiki::Plugins::ActionTrackerPlugin::Action::forceTime("2 Jan 2002");
-    TWiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications(
+    Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("2 Jan 2002");
+    Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications(
         $this->{twiki}->{webName}, 'changedsince="1 dec 2001" web="'.$this->{test_web}.'"' );
     my $saw = "";
     my $html;

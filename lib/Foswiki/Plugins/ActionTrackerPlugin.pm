@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2002 Motorola - All rights reserved
-# Copyright (C) 2004-2005 Crawford Currie http://c-dot.co.uk
+# Copyright (C) 2004-2009 Crawford Currie http://c-dot.co.uk
 #
 # TWiki extension that adds tags for action tracking
 #
@@ -15,14 +15,14 @@
 # GNU General Public License for more details, published at 
 # http://www.gnu.org/copyleft/gpl.html
 #
-package TWiki::Plugins::ActionTrackerPlugin;
+package Foswiki::Plugins::ActionTrackerPlugin;
 
 use strict;
 use Assert;
 use Error qw( :try );
 
-require TWiki::Func;
-require TWiki::Plugins;
+require Foswiki::Func;
+require Foswiki::Plugins;
 
 use vars qw( $VERSION $RELEASE $initialised $SHORTDESCRIPTION );
 
@@ -42,20 +42,32 @@ sub initPlugin {
 
     # COVERAGE OFF standard plugin code
 
-    if( $TWiki::Plugins::VERSION < 1.026 ) {
-        TWiki::Func::writeWarning( 'Version mismatch between ActionTrackerPlugin and Plugins.pm $TWiki::Plugins::VERSION. 1.026 required.' );
+    if( $Foswiki::Plugins::VERSION < 1.026 ) {
+        Foswiki::Func::writeWarning( 'Version mismatch between ActionTrackerPlugin and Plugins.pm $Foswiki::Plugins::VERSION. 1.026 required.' );
     }
     # COVERAGE ON
 
     $initialised = 0;
     $doneHeader = 0;
 
-    TWiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
-    TWiki::Func::registerTagHandler(
+    Foswiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
+    Foswiki::Func::registerTagHandler(
         'ACTIONSEARCH', \&_handleActionSearch, 'context-free');
 
     return 1;
 };
+
+sub _addCSSAndJS {
+    my $debug = '';
+    $debug = '_src' if DEBUG;
+
+    Foswiki::Func::addToHEAD('ACTIONTRACKERPLUGIN_CSS', <<HERE);
+<link rel="stylesheet" href="$options->{CSS}" type="text/css" media="all" />
+HERE
+    Foswiki::Func::addToHEAD('ACTIONTRACKERPLUGIN_JS', <<HERE);
+<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/ActionTrackerPlugin/atp$debug.js'></script>
+HERE
+}
 
 sub commonTagsHandler {
     my( $otext, $topic, $web, $meta ) = @_;
@@ -64,20 +76,12 @@ sub commonTagsHandler {
 
     return unless _lazyInit($web, $topic);
 
-    my $debug = '';
-    $debug = '_src' if DEBUG;
-
-    TWiki::Func::addToHEAD('ACTIONTRACKERPLUGIN_CSS', <<HERE);
-<link rel="stylesheet" href="$options->{CSS}" type="text/css" media="all" />
-HERE
-    TWiki::Func::addToHEAD('ACTIONTRACKERPLUGIN_JS', <<HERE);
-<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/ActionTrackerPlugin/atp$debug.js'></script>
-HERE
+    _addCSSAndJS();
 
     # Format actions in the topic.
     # Done this way so we get tables built up by
     # collapsing successive actions.
-    my $as = TWiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
         $web, $topic, $otext, 1);
     my $actionGroup;
     my $text = '';
@@ -86,7 +90,7 @@ HERE
         if (ref($entry)) {
             if (!$actionGroup) {
                 $actionGroup =
-                  new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
+                  new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
             }
             $actionGroup->add($entry);
         } elsif ($entry =~ /(\S|\n\s*\n)/s) {
@@ -126,9 +130,11 @@ HERE
 sub beforeEditHandler {
     #my( $text, $topic, $web, $meta ) = @_;
 
-    if( TWiki::Func::getSkin() =~ /\baction\b/ ) {
+    if( Foswiki::Func::getSkin() =~ /\baction\b/ ) {
+print STDERR "Action edit\n";
         return _beforeActionEdit(@_);
     } else {
+print STDERR "Noamrl edit\n";
         return _beforeNormalEdit(@_);
     }
 }
@@ -142,7 +148,7 @@ sub _beforeNormalEdit {
     if ($cc < $oc) {
         return unless _lazyInit($_[2], $_[1]);
 
-        my $as = TWiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+        my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
             $_[2], $_[1], $_[0], 1);
         $_[0] = $as->stringify();
     }
@@ -153,7 +159,7 @@ sub _beforeActionEdit {
 
     return unless _lazyInit($web, $topic);
 
-    my $query = TWiki::Func::getCgiQuery();
+    my $query = Foswiki::Func::getCgiQuery();
 
     my $uid = $query->param( 'atp_action' );
     return unless defined $uid;
@@ -161,18 +167,19 @@ sub _beforeActionEdit {
     # actionform.tmpl is a sub-template inserted into the parent template
     # as %TEXT%. This is done so we can use the standard template mechanism
     # without screwing up the content of the subtemplate.
-    my $tmpl = TWiki::Func::readTemplate( 'actionform',
-                                          TWiki::Func::getSkin());
+    my $tmpl = Foswiki::Func::readTemplate( 'actionform',
+                                          Foswiki::Func::getSkin());
 
-    my $date = TWiki::Func::formatTime( time(), undef, 'gmtime' );
+    my $date = Foswiki::Func::formatTime( time(), undef,
+                                          $Foswiki::cfg{DisplayTimeValues} );
 
     die unless ($date);
 
     $tmpl =~ s/%DATE%/$date/go;
-    my $user = TWiki::Func::getWikiUserName();
+    my $user = Foswiki::Func::getWikiUserName();
     $tmpl =~ s/%WIKIUSERNAME%/$user/go;
-    $tmpl = TWiki::Func::expandCommonVariables( $tmpl, $topic, $web );
-    $tmpl = TWiki::Func::renderText( $tmpl, $web );
+    $tmpl = Foswiki::Func::expandCommonVariables( $tmpl, $topic, $web );
+    $tmpl = Foswiki::Func::renderText( $tmpl, $web );
 
     # The 'command' parameter is used to signal to the afterEditHandler and
     # the beforeSaveHandler that they have to handle the fields of the
@@ -187,7 +194,7 @@ sub _beforeActionEdit {
     }
 
     # Find the action.
-    my $as = TWiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
         $web, $topic, $text, 1);
     my ( $action, $pre, $post ) = $as->splitOnAction( $uid );
     my $pretext = $pre->stringify();
@@ -227,7 +234,7 @@ sub _beforeActionEdit {
     $tmpl =~ s/%SUBMITCMDOPT%/$submitCmdOpt/go;
     $tmpl =~ s/%SUBMITCOMMAND%/$submitCmd/go;
 
-    my $fmt = new TWiki::Plugins::ActionTrackerPlugin::Format(
+    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
         $options->{EDITHEADER},
         $options->{EDITFORMAT},
         $options->{EDITORIENT},
@@ -251,15 +258,15 @@ sub _beforeActionEdit {
     $_[0] = $tmpl;
 
     # Add styles and javascript for the calendar
-    TWiki::Func::addToHEAD(
+    Foswiki::Func::addToHEAD(
         'ATP_CSS',
         '<style type="text/css" media="all">@import url("%ACTIONTRACKERPLUGIN_CSS%");</style>');
 
-    use TWiki::Contrib::JSCalendarContrib;
-    if( $@ || !$TWiki::Contrib::JSCalendarContrib::VERSION ) {
-        TWiki::Func::writeWarning('JSCalendarContrib not found '.$@);
+    use Foswiki::Contrib::JSCalendarContrib;
+    if( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
+        Foswiki::Func::writeWarning('JSCalendarContrib not found '.$@);
     } else {
-        TWiki::Contrib::JSCalendarContrib::addHEAD( 'twiki' );
+        Foswiki::Contrib::JSCalendarContrib::addHEAD( 'foswiki' );
     }
 }
 
@@ -281,7 +288,7 @@ sub _hiddenMeta {
 sub afterEditHandler {
     ### my ( $text, $topic, $web ) = @_;
 
-    my $query = TWiki::Func::getCgiQuery();
+    my $query = Foswiki::Func::getCgiQuery();
     return unless ( $query->param( 'closeactioneditor' ));
 
     return unless _lazyInit($_[2], $_[1]);
@@ -302,7 +309,7 @@ sub afterEditHandler {
     }
 
     my $action =
-      TWiki::Plugins::ActionTrackerPlugin::Action::createFromQuery(
+      Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery(
           $_[2], $_[1], $an, $query );
 
     $action->populateMissingFields();
@@ -324,7 +331,7 @@ sub beforeSaveHandler {
 
     return unless _lazyInit($web, $topic);
 
-    my $query = TWiki::Func::getCgiQuery();
+    my $query = Foswiki::Func::getCgiQuery();
     return unless ( $query ); # Fix from GarethEdwards 13 Jun 2003
 
     if ( $query->param( 'closeactioneditor' )) {
@@ -367,7 +374,7 @@ sub _addMissingAttributes {
     my $an = 0;
     my %seenUID;
 
-    my $as = TWiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
         $_[2], $_[1], $_[0], 1);
 
     foreach my $action (@{$as->{ACTIONS}}) {
@@ -393,6 +400,8 @@ sub _handleActionSearch {
 
     return unless _lazyInit($web, $topic);
 
+    _addCSSAndJS();
+
     # use default format unless overridden
     my $fmt;
     my $fmts = $attrs->remove( 'format' );
@@ -405,12 +414,12 @@ sub _handleActionSearch {
         $fmts = $defaultFormat->getFields() unless ( defined( $fmts ));
         $hdrs = $defaultFormat->getHeaders() unless ( defined( $hdrs ));
         $orient = $defaultFormat->getOrientation() unless ( defined( $orient ));
-        $fmt = new TWiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts, $orient, '', '' );
+        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts, $orient, '', '' );
     } else {
         $fmt = $defaultFormat;
     }
 
-    my $actions = TWiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web, $attrs, 0 );
+    my $actions = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web, $attrs, 0 );
     $actions->sort( $sort );
     return $actions->formatAsHTML( $fmt, 'href', $options->{USENEWWINDOW},
                                    'atpSearch' );
@@ -423,21 +432,21 @@ sub _lazyInit {
     return 1 if $initialised;
 
     eval {
-        require TWiki::Attrs;
-        require TWiki::Plugins::ActionTrackerPlugin::Options;
-        require TWiki::Plugins::ActionTrackerPlugin::Action;
-        require TWiki::Plugins::ActionTrackerPlugin::ActionSet;
-        require TWiki::Plugins::ActionTrackerPlugin::Format;
+        require Foswiki::Attrs;
+        require Foswiki::Plugins::ActionTrackerPlugin::Options;
+        require Foswiki::Plugins::ActionTrackerPlugin::Action;
+        require Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
+        require Foswiki::Plugins::ActionTrackerPlugin::Format;
     };
     if ($@) {
-        TWiki::Func::writeWarning("ActionTrackerPlugin: init failed $@");
+        Foswiki::Func::writeWarning("ActionTrackerPlugin: init failed $@");
         return 0;
     }
 
-    $options = TWiki::Plugins::ActionTrackerPlugin::Options::load(
+    $options = Foswiki::Plugins::ActionTrackerPlugin::Options::load(
         $web, $topic);
 
-    $defaultFormat = new TWiki::Plugins::ActionTrackerPlugin::Format(
+    $defaultFormat = new Foswiki::Plugins::ActionTrackerPlugin::Format(
         $options->{TABLEHEADER},
         $options->{TABLEFORMAT},
         $options->{TABLEORIENT},
@@ -445,11 +454,11 @@ sub _lazyInit {
         $options->{NOTIFYCHANGES} );
 
     if( $options->{EXTRAS} ) {
-        my $e = TWiki::Plugins::ActionTrackerPlugin::Action::extendTypes(
+        my $e = Foswiki::Plugins::ActionTrackerPlugin::Action::extendTypes(
             $options->{EXTRAS} );
         # COVERAGE OFF safety net
         if ( defined( $e )) {
-            TWiki::Func::writeWarning( "- TWiki::Plugins::ActionTrackerPlugin ERROR $e" );
+            Foswiki::Func::writeWarning( "- Foswiki::Plugins::ActionTrackerPlugin ERROR $e" );
         }
         # COVERAGE ON
     }
@@ -465,13 +474,13 @@ sub _lazyInit {
 sub _handleActionNotify {
     my ( $web, $expr ) = @_;
 
-    eval 'require TWiki::Plugins::ActionTrackerPlugin::ActionNotify';
+    eval 'require Foswiki::Plugins::ActionTrackerPlugin::ActionNotify';
     if( $@ ) {
-        TWiki::Func::writeWarning("ATP: $@");
+        Foswiki::Func::writeWarning("ATP: $@");
         return;
     }
 
-    my $text = TWiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications( $web, $expr, 1 );
+    my $text = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications( $web, $expr, 1 );
 
     $text =~ s/<html>/<\/pre>/gios;
     $text =~ s/<\/html>/<pre>/gios;
@@ -482,11 +491,11 @@ sub _handleActionNotify {
 
 sub _updateRESTHandler {
     my $session = shift;
-    my $query = TWiki::Func::getCgiQuery();
+    my $query = Foswiki::Func::getCgiQuery();
     try {
         my $topic = $query->param('topic');
         my $web;
-        ($web, $topic) = TWiki::Func::normalizeWebTopicName(undef, $topic);
+        ($web, $topic) = Foswiki::Func::normalizeWebTopicName(undef, $topic);
         _lazyInit($web, $topic);
         _updateSingleAction(
             $web, $topic,
@@ -497,7 +506,7 @@ sub _updateRESTHandler {
         my $e = shift;
         print CGI::header('text/plain', 500);
         print $e->{-text};
-    } catch TWiki::AccessControlException with {
+    } catch Foswiki::AccessControlException with {
         my $e = shift;
         print CGI::header('text/plain', 500);
         print $e->stringify();
@@ -508,7 +517,7 @@ sub _updateRESTHandler {
 sub _updateSingleAction {
     my ( $web, $topic, $uid, %changes ) = @_;
 
-    my ($meta, $text) = TWiki::Func::readTopic($web, $topic);
+    my ($meta, $text) = Foswiki::Func::readTopic($web, $topic);
 
     my $descr;
     my $attrs;
@@ -517,7 +526,7 @@ sub _updateSingleAction {
     my $an = 0;
     my %seenUID;
 
-    my $as = TWiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
         $web, $topic, $text, 1);
 
     foreach my $action (@{$as->{ACTIONS}}) {
@@ -529,7 +538,7 @@ sub _updateSingleAction {
             }
         }
     }
-    TWiki::Func::saveTopic($web, $topic, $meta, $as->stringify(),
+    Foswiki::Func::saveTopic($web, $topic, $meta, $as->stringify(),
                            { comment => 'atp save' });
 }
 

@@ -2,7 +2,7 @@
 
 =begin TML
 
----+ package TWiki::Plugins::ActionTrackerPlugin::Action
+---+ package Foswiki::Plugins::ActionTrackerPlugin::Action
 
 Object that represents a single action
 
@@ -34,7 +34,7 @@ closed:
 
 =cut
 
-package TWiki::Plugins::ActionTrackerPlugin::Action;
+package Foswiki::Plugins::ActionTrackerPlugin::Action;
 
 use strict;
 use integer;
@@ -43,15 +43,13 @@ require CGI;
 require Text::Soundex;
 require Time::ParseDate;
 
-require TWiki::Func;
-require TWiki::Attrs;
+require Foswiki::Func;
+require Foswiki::Attrs;
 
-require TWiki::Plugins::ActionTrackerPlugin::AttrDef;
-require TWiki::Plugins::ActionTrackerPlugin::Format;
+require Foswiki::Plugins::ActionTrackerPlugin::AttrDef;
+require Foswiki::Plugins::ActionTrackerPlugin::Format;
 
-use vars qw( $now );
-
-$now = time();
+our $now = time();
 
 # Options for parsedate
 my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1 );
@@ -70,79 +68,79 @@ my $nw = 35;
 my %basetypes =
   (
    changedsince =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    closed       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'date',  $dw, 1, 0, undef ),
    closer       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'names', $nw, 1, 0, undef ),
    created      =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'date',  $dw, 1, 0, undef ),
    creator      =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'names', $nw, 1, 0, undef ),
    dollar       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    due          =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'date',  $dw, 1, 0, undef ),
    edit         =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    format       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    header       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    late         =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    n            =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    nop          =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    notify       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'names', $nw, 1, 0, undef ),
    percnt       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    quot         =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    sort         =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
    state        =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'select', 1, 1, 1, [ 'open','closed' ] ),
    text         =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 1, 0, undef ),
    topic        =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 1, 0, undef ),
    uid          =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'text',  $nw, 1, 0, undef ),
    web          =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 1, 0, undef ),
    who          =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'names', $nw, 1, 0, undef ),
    within       =>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 1, 0, undef ),
    ACTION_NUMBER=>
-     new TWiki::Plugins::ActionTrackerPlugin::AttrDef(
+     new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
          'noload', 0, 0, 0, undef ),
   );
 
@@ -153,7 +151,7 @@ sub new {
     my ( $class, $web, $topic, $number, $attrs, $descr ) = @_;
     my $this = {};
 
-    my $attr = new TWiki::Attrs( $attrs, 1 );
+    my $attr = new Foswiki::Attrs( $attrs, 1 );
 
     # We always have a state, and if it's not defined in the
     # attribute set, and the closed attribute isn't defined,
@@ -241,7 +239,7 @@ sub extendTypes {
                 }
             }
             $types{$name} =
-              new TWiki::Plugins::ActionTrackerPlugin::AttrDef( $type, $size, 1, 1, \@values );
+              new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( $type, $size, 1, 1, \@values );
         } else {
             return 'Bad EXTRAS definition \''.$def.'\' in EXTRAS';
         }
@@ -276,12 +274,12 @@ sub getType {
 sub getNewUID {
     my $this = shift;
 
-    my $workArea = TWiki::Func::getWorkArea('ActionTrackerPlugin');
+    my $workArea = Foswiki::Func::getWorkArea('ActionTrackerPlugin');
     my $uidRegister = $workArea . '/UIDRegister';
 
     # Compatibility code. Upgrade existing atUidReg to plugin work area.
-    if (!-e $uidRegister && -e TWiki::Func::getDataDir() . '/atUidReg') {
-        my $oldReg = TWiki::Func::getDataDir() . '/atUidReg';
+    if (!-e $uidRegister && -e Foswiki::Func::getDataDir() . '/atUidReg') {
+        my $oldReg = Foswiki::Func::getDataDir() . '/atUidReg';
         open( FH, "<$oldReg" ) or die "Reading $oldReg: $!";
         my $uid = <FH>;
         close( FH );
@@ -302,7 +300,7 @@ sub getNewUID {
         # it.
         my @s = stat( $lockFile );
         if( time() - $s[9] > 10 * 60 ) {
-            TWiki::Func::writeWarning("Action Tracker Plugin: Warning: broke $lockFile");
+            Foswiki::Func::writeWarning("Action Tracker Plugin: Warning: broke $lockFile");
             last;
         }
         sleep(1);
@@ -399,10 +397,10 @@ sub _canonicalName {
 
     if ( $who !~ /([A-Za-z0-9\.\+\-\_]+\@[A-Za-z0-9\.\-]+)/ ) {
         if ( $who eq 'me' ) {
-            $who = TWiki::Func::getWikiName();
+            $who = Foswiki::Func::getWikiName();
         }
         if ( $who !~ /\./o ) {
-            $who = TWiki::Func::getMainWebname().'.'.$who;
+            $who = Foswiki::Func::getMainWebname().'.'.$who;
         }
     }
     return $who;
@@ -438,9 +436,9 @@ sub formatTime {
     if (!$time) {
         $stime = '';
     } elsif ( $format eq 'attr' ) {
-        $stime = TWiki::Func::formatTime( $time, '$year-$mo-$day', 'servertime' );
+        $stime = Foswiki::Func::formatTime( $time, '$year-$mo-$day', 'servertime' );
     } else {
-        $stime = TWiki::Func::formatTime( $time, '$wday, $day $month $year', 'servertime' );
+        $stime = Foswiki::Func::formatTime( $time, $Foswiki::cfg{DefaultDateFormat}, $Foswiki::cfg{DisplayTimeValues} );
     }
     return $stime;
 }
@@ -456,9 +454,9 @@ sub secsToGo {
         return $this->{due} - $now;
     }
     # No due date, use default
-    require TWiki::Plugins::ActionTrackerPlugin::Options;
+    require Foswiki::Plugins::ActionTrackerPlugin::Options;
     return
-      $TWiki::Plugins::ActionTrackerPlugin::Options::options{DEFAULTDUE};
+      $Foswiki::Plugins::ActionTrackerPlugin::Options::options{DEFAULTDUE};
 }
 
 # PUBLIC return number of days to go before due date, negative if action
@@ -628,11 +626,11 @@ sub _formatType_date {
 sub _formatField_formfield {
     my ( $this, $args, $asHTML ) = @_;
 
-    my ($meta, $text) = TWiki::Func::readTopic($this->{web}, $this->{topic});
+    my ($meta, $text) = Foswiki::Func::readTopic($this->{web}, $this->{topic});
 
     if (!$meta->can('renderFormFieldForDisplay')) {
         # 4.1 compatibility
-        return TWiki::Render::renderFormFieldArg($meta, $args);
+        return Foswiki::Render::renderFormFieldArg($meta, $args);
     } else {
         my $name = $args;
         my $breakArgs = '';
@@ -681,9 +679,9 @@ sub _formatField_state {
     return $this->{state} unless $asHTML;
     return $this->{state} unless $this->{uid};
     # SMELL: assumes a prior call has loaded the options
-    require TWiki::Plugins::ActionTrackerPlugin::Options;
+    require Foswiki::Plugins::ActionTrackerPlugin::Options;
     return $this->{state} unless
-      $TWiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT};
+      $Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT};
 
     my $input = '';
     foreach my $option (@{$types{state}->{values}}) {
@@ -743,7 +741,7 @@ sub _formatField_link {
         # Would be nice to do the goto as a button image....
         my $jump = ' '.
           CGI::a( { href=>
-                    TWiki::Func::getViewUrl( $this->{web},
+                    Foswiki::Func::getViewUrl( $this->{web},
                                              $this->{topic} ) .
                     '#' . $this->getAnchor() },
                   CGI::img( {
@@ -763,9 +761,9 @@ sub _formatField_edit {
         return '';
     }
 
-    my $skin = join( ',', ( 'action', TWiki::Func::getSkin()));
+    my $skin = join( ',', ( 'action', Foswiki::Func::getSkin()));
 
-    my $url = TWiki::Func::getScriptUrl(
+    my $url = Foswiki::Func::getScriptUrl(
         $this->{web}, $this->{topic}, 'edit',
         skin => $skin,
         atp_action => $this->getAnchor(),
@@ -914,7 +912,7 @@ sub createFromQuery {
             }
         }
     }
-    return new TWiki::Plugins::ActionTrackerPlugin::Action( $web, $topic, $an, $attrs, $desc );
+    return new Foswiki::Plugins::ActionTrackerPlugin::Action( $web, $topic, $an, $attrs, $desc );
 }
 
 sub formatForEdit {

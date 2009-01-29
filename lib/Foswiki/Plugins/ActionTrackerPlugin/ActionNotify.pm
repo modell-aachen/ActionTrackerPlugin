@@ -16,7 +16,7 @@
 #
 
 # This module contains the functionality of the bin/actionnotify script
-package TWiki::Plugins::ActionTrackerPlugin::ActionNotify;
+package Foswiki::Plugins::ActionTrackerPlugin::ActionNotify;
 
 use strict;
 use integer;
@@ -26,18 +26,18 @@ use locale;
 
 require Time::ParseDate;
 
-require TWiki::Net;
+require Foswiki::Net;
 
-require TWiki::Attrs;
+require Foswiki::Attrs;
 
-require TWiki::Plugins::ActionTrackerPlugin::Action;
-require TWiki::Plugins::ActionTrackerPlugin::ActionSet;
-require TWiki::Plugins::ActionTrackerPlugin::Format;
+require Foswiki::Plugins::ActionTrackerPlugin::Action;
+require Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
+require Foswiki::Plugins::ActionTrackerPlugin::Format;
 
 my $wikiWordRE;
 my $options;
 
-require TWiki::Plugins::ActionTrackerPlugin::Options;
+require Foswiki::Plugins::ActionTrackerPlugin::Options;
 
 # PUBLIC actionnotify script entry point. Reinitialises TWiki.
 #
@@ -47,9 +47,9 @@ require TWiki::Plugins::ActionTrackerPlugin::Options;
 sub actionNotify {
     my $expr = shift;
 
-    my $twiki = new TWiki();
+    my $twiki = new Foswiki();
     # Assign SESSION so that Func methods work
-    $TWiki::Plugins::SESSION = $twiki;
+    $Foswiki::Plugins::SESSION = $twiki;
 
     if ( $expr =~ s/DEBUG//o ) {
         print doNotifications( $twiki->{webName}, $expr, 1 ),"\n";
@@ -63,11 +63,11 @@ sub actionNotify {
 sub doNotifications {
     my ( $webName, $expr, $debugMailer ) = @_;
 
-    $options = TWiki::Plugins::ActionTrackerPlugin::Options::load();
+    $options = Foswiki::Plugins::ActionTrackerPlugin::Options::load();
     # Disable the state shortcut in mails
     $options->{ENABLESTATESHORTCUT} = 0;
 
-    my $attrs = new TWiki::Attrs( $expr, 1 );
+    my $attrs = new Foswiki::Attrs( $expr, 1 );
     my $hdr = $attrs->remove('header') || $options->{TABLEHEADER};
     my $bdy = $attrs->remove('format') || $options->{TABLEFORMAT};
 
@@ -75,7 +75,7 @@ sub doNotifications {
     my $textform = $options->{TEXTFORMAT};
     my $changes = $options->{NOTIFYCHANGES};
 
-    my $format = new TWiki::Plugins::ActionTrackerPlugin::Format(
+    my $format = new Foswiki::Plugins::ActionTrackerPlugin::Format(
         $hdr, $bdy, $orient, $textform, $changes );
 
     my $result = '';
@@ -101,7 +101,7 @@ sub doNotifications {
     my $actions;
     if ( !$attrs->isEmpty() ) {
         # Get all the actions that match the search
-        $actions = TWiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $webs, $attrs, 1 );
+        $actions = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $webs, $attrs, 1 );
         $actions->getActionees( \%people );
     }
     # Resolve all mail addresses
@@ -129,7 +129,7 @@ sub doNotifications {
         my $mailaddr = _getMailAddress( $wikiname, $mailAddress );
 
         if ( !defined( $mailaddr ) ) {
-            TWiki::Func::writeWarning( "No mail address found for $wikiname" );
+            Foswiki::Func::writeWarning( "No mail address found for $wikiname" );
             $result .= "No mail address found for $wikiname<br />" if ( $debugMailer );
             next;
       }
@@ -137,7 +137,7 @@ sub doNotifications {
         # find all the actions for this wikiname
         my $myActions;
         if ( $actions ) {
-            my $ats = new TWiki::Attrs( "who=\"$wikiname\"", 1 );
+            my $ats = new Foswiki::Attrs( "who=\"$wikiname\"", 1 );
             $myActions = $actions->search( $ats );
         }
 
@@ -146,7 +146,7 @@ sub doNotifications {
             if ( $myActions ) {
                 if ( !defined( $actionsPerEmail{$email} )) {
                     $actionsPerEmail{$email} =
-                      new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
+                      new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
                 }
                 $actionsPerEmail{$email}->concat( $myActions );
                 $notifyEmail{$email} = 1;
@@ -194,10 +194,10 @@ sub doNotifications {
             if ( $debugMailer ) {
                 $result .= $message;
             } else {
-                my $error = TWiki::Func::sendEmail( $message );
+                my $error = Foswiki::Func::sendEmail( $message );
                 if ( $error ) {
                     $error = "ActionTrackerPlugin:ActionNotify: $error";
-                    TWiki::Func::writeWarning( $error );
+                    Foswiki::Func::writeWarning( $error );
                 }
             }
         }
@@ -211,7 +211,7 @@ sub doNotifications {
 sub _loadWebNotifies {
     my ( $mailAddress ) = @_;
 
-    foreach my $web ( TWiki::Func::getListOfWebs( 'user' )) {
+    foreach my $web ( Foswiki::Func::getListOfWebs( 'user' )) {
         _loadWebNotify( $web, $mailAddress );
     }
 }
@@ -222,26 +222,26 @@ sub _loadWebNotify {
     my( $web, $mailAddress ) = @_;
 
     # COVERAGE OFF safety net
-    if( ! TWiki::Func::webExists( $web ) ) {
+    if( ! Foswiki::Func::webExists( $web ) ) {
         my $error = 'ActionTrackerPlugin:ActionNotify: did not find web $web';
-        TWiki::Func::writeWarning( $error );
+        Foswiki::Func::writeWarning( $error );
         return;
     }
     # COVERAGE ON
 
-    my $topicname = $TWiki::cfg{NotifyTopicName};
-    return undef unless TWiki::Func::topicExists( $web, $topicname );
+    my $topicname = $Foswiki::cfg{NotifyTopicName};
+    return undef unless Foswiki::Func::topicExists( $web, $topicname );
 
     my $list = {};
-    my $mainweb = TWiki::Func::getMainWebname();
-    my $text = TWiki::Func::readTopicText( $web, $topicname, undef, 1 );
+    my $mainweb = Foswiki::Func::getMainWebname();
+    my $text = Foswiki::Func::readTopicText( $web, $topicname, undef, 1 );
     foreach my $line ( split( /\r?\n/, $text)) {
         if ( $line =~ /^\s+\*\s([\w\.]+)\s+-\s+([\w\-\.\+]+\@[\w\-\.\+]+)/o ) {
             my $who = $1;
             my $addr = $2;
-            $who = TWiki::Plugins::ActionTrackerPlugin::Action::_canonicalName( $who );
+            $who = Foswiki::Plugins::ActionTrackerPlugin::Action::_canonicalName( $who );
             if ( !defined( $mailAddress->{$who} )) {
-                TWiki::Func::writeWarning( 'ActionTrackerPlugin:ActionNotify: mail address for $who found in WebNotify' );
+                Foswiki::Func::writeWarning( 'ActionTrackerPlugin:ActionNotify: mail address for $who found in WebNotify' );
                 $mailAddress->{$who} = $addr;
             }
         }
@@ -258,8 +258,8 @@ sub _getMailAddress {
         return $mailAddress->{$who};
     }
     my $addresses;
-	my $wikiWordRE = TWiki::Func::getRegularExpression('wikiWordRegex');
-	my $webNameRE = TWiki::Func::getRegularExpression('webNameRegex');
+	my $wikiWordRE = Foswiki::Func::getRegularExpression('wikiWordRegex');
+	my $webNameRE = Foswiki::Func::getRegularExpression('webNameRegex');
 
     if ( $who =~ m/^([\w\-\.\+]+\@[\w\-\.\+]+)$/o ) {
         # Valid mail address
@@ -281,19 +281,18 @@ sub _getMailAddress {
 	elsif ( $who =~ m/^$wikiWordRE$/o ) {
         # A legal topic wikiname
         $who =
-          TWiki::Plugins::ActionTrackerPlugin::Action::_canonicalName( $who );
+          Foswiki::Plugins::ActionTrackerPlugin::Action::_canonicalName( $who );
         $addresses = _getMailAddress( $who, $mailAddress );
         # Replaced by NKO
         # } elsif ( $who =~ m/^(\w+)\.([A-Z]+[a-z]+[A-Z]+\w+)$/o ) {
     }
 	elsif ( $who =~ m/^($webNameRE)\.($wikiWordRE)$/o ) {
         my( $inweb, $intopic ) = ( $1, $2 );
-        $addresses = TWiki::Func::wikiToEmail($intopic);
-
+        $addresses = join(',', Foswiki::Func::wikinameToEmails($intopic));
         # LEGACY - Try and expand groups the old way
-        if( !$addresses && TWiki::Func::topicExists( $inweb, $intopic ) ) {
+        if( !$addresses && Foswiki::Func::topicExists( $inweb, $intopic ) ) {
             my $text =
-              TWiki::Func::readTopicText( $inweb, $intopic, undef, 1 );
+              Foswiki::Func::readTopicText( $inweb, $intopic, undef, 1 );
             if ( $intopic =~ m/Group$/o ) {
                 # If it's a Group topic, match * Set GROUP = 
                 if ( $text =~ m/^\s+\*\s+Set\s+GROUP\s*=\s*([^\r\n]+)/mo ) {
@@ -323,10 +322,10 @@ sub _composeActionsMail {
     my ( $actionsString, $actionsHTML, $changesString, $changesHTML,
          $since, $mailaddr, $format ) = @_;
 
-    my $from = $TWiki::cfg{WebMasterEmail} ||
-      TWiki::Func::getPreferencesValue( 'WIKIWEBMASTER' ) || '';
+    my $from = $Foswiki::cfg{WebMasterEmail} ||
+      Foswiki::Func::getPreferencesValue( 'WIKIWEBMASTER' ) || '';
 
-    my $text = TWiki::Func::readTemplate( 'actionnotify' ) || <<'HERE';
+    my $text = Foswiki::Func::readTemplate( 'actionnotify' ) || <<'HERE';
 From: %EMAILFROM%
 To: %EMAILTO%
 Subject: %SUBJECT% on %WIKITOOLNAME%
@@ -351,7 +350,7 @@ HERE
 
     if ( $actionsString ne '' ) {
         $text =~ s/%ACTIONS_AS_STRING%/$actionsString/go;
-        my $asHTML = TWiki::Func::renderText( $actionsHTML );
+        my $asHTML = Foswiki::Func::renderText( $actionsHTML );
         $text =~ s/%ACTIONS_AS_HTML%/$asHTML/go;
         $text =~ s/%ACTIONS%(.*?)%END%/$1/gso;
     } else {
@@ -359,7 +358,7 @@ HERE
     }
 
     if( $since ) {
-        $since = TWiki::Func::formatTime( $since );
+        $since = Foswiki::Func::formatTime( $since );
     } else {
         $since = '';
     }
@@ -367,23 +366,23 @@ HERE
     $text =~ s/%SINCE%/$since/go;
     if ( $changesString ne '' ) {
         $text =~ s/%CHANGES_AS_STRING%/$changesString/go;
-        my $asHTML = TWiki::Func::renderText( $changesHTML );
+        my $asHTML = Foswiki::Func::renderText( $changesHTML );
         $text =~ s/%CHANGES_AS_HTML%/$asHTML/go;
         $text =~ s/%CHANGES%(.*?)%END%/$1/gso;
     } else {
         $text =~ s/%CHANGES%.*?%END%//gso;
     }
 
-    $text = TWiki::Func::expandCommonVariables( $text,
-                                                $TWiki::cfg{HomeTopicName} );
+    $text = Foswiki::Func::expandCommonVariables( $text,
+                                                $Foswiki::cfg{HomeTopicName} );
 
     $text =~ s/<img src=.*?[^>]>/[IMG]/goi;  # remove all images
 
     # add the url host to any in-twiki urls that lack it
     # SMELL: doesn't handle (undocumented) {ScriptUrlPaths}
-    my $sup = $TWiki::cfg{ScriptUrlPath};
+    my $sup = $Foswiki::cfg{ScriptUrlPath};
     $sup =~ s#/$##;
-    my $sun = TWiki::Func::getUrlHost() . $sup;
+    my $sun = Foswiki::Func::getUrlHost() . $sup;
     $text =~ s#href=\"$sup/#href=\"$sun/#ogi;
     $text =~ s/<\/?nop( \/)?>//goi;
 
@@ -405,20 +404,20 @@ sub _findChangesInTopic {
 
     # Recover the rev at the previous date
     my $oldrev =
-      TWiki::Func::getRevisionAtTime( $theWeb, $theTopic, $theDate );
+      Foswiki::Func::getRevisionAtTime( $theWeb, $theTopic, $theDate );
     return unless defined( $oldrev );
 
     $oldrev =~ s/\d+\.(\d+)/$1/o;
     # Recover the action set at that date
-    my $text = TWiki::Func::readTopicText( $theWeb, $theTopic, $oldrev, 1 );
+    my $text = Foswiki::Func::readTopicText( $theWeb, $theTopic, $oldrev, 1 );
 
     my $oldActions =
-      TWiki::Plugins::ActionTrackerPlugin::ActionSet::load( $theWeb,
+      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $theWeb,
                                                             $theTopic, $text );
     # Recover the current action set.
-    $text = TWiki::Func::readTopicText( $theWeb, $theTopic, undef, 1 );
+    $text = Foswiki::Func::readTopicText( $theWeb, $theTopic, undef, 1 );
     my $currentActions =
-      TWiki::Plugins::ActionTrackerPlugin::ActionSet::load( $theWeb,
+      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $theWeb,
                                                             $theTopic, $text );
 
     # find actions that have changed between the two dates. These
@@ -433,11 +432,11 @@ sub _findChangesInTopic {
 # $theDate is a string, not an integer
 sub _findChangesInWeb {
     my ( $web, $topics, $theDate, $format, $notifications ) = @_;
-    my $actions = new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
+    my $actions = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
 
-	my @tops = TWiki::Func::getTopicList( $web );
+	my @tops = Foswiki::Func::getTopicList( $web );
     my $grep =
-      TWiki::Func::searchInWebContent( '%ACTION{.*}%', $web, \@tops,
+      Foswiki::Func::searchInWebContent( '%ACTION{.*}%', $web, \@tops,
                                        { type => 'regex',
                                          casesensitive => 1,
                                          files_without_match => 1 } );
@@ -457,7 +456,7 @@ sub _findChangesInWeb {
 # $date is a string, not an integer
 sub _findChangesInWebs {
     my ( $webs, $topics, $date, $format, $notifications ) = @_;
-    my @weblist = grep { /^$webs$/ } TWiki::Func::getListOfWebs( 'user' );
+    my @weblist = grep { /^$webs$/ } Foswiki::Func::getListOfWebs( 'user' );
     foreach my $web ( @weblist ) {
         _findChangesInWeb( $web, $topics, $date,
                            $format, $notifications );

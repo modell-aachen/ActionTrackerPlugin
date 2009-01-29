@@ -17,13 +17,13 @@
 
 # Perl object that represents a set of actions (possibly interleaved
 # with blocks of topic text)
-package TWiki::Plugins::ActionTrackerPlugin::ActionSet;
+package Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
 
 use strict;
 use integer;
-use TWiki::Func;
+use Foswiki::Func;
 
-use TWiki::Plugins::ActionTrackerPlugin::Format;
+use Foswiki::Plugins::ActionTrackerPlugin::Format;
 
 # PUBLIC constructor
 sub new {
@@ -47,7 +47,7 @@ sub load {
     my ( $web, $topic, $text, $keepText ) = @_;
 
     my @blocks = split( /(%ACTION{.*?}%|%ENDACTION%)/, $text );
-    my $actionSet = new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
+    my $actionSet = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
     my $i = 0;
     my $actionNumber = 0;
     while ($i < scalar(@blocks)) {
@@ -71,7 +71,7 @@ sub load {
                     $descr = $blocks[$i++];
                 }
             }
-            my $action = new TWiki::Plugins::ActionTrackerPlugin::Action(
+            my $action = new Foswiki::Plugins::ActionTrackerPlugin::Action(
                 $web, $topic, $actionNumber++, $attrs, $descr );
             $actionSet->add($action);
         } elsif ($keepText) {
@@ -136,7 +136,7 @@ sub concat {
 sub search {
     my ( $this, $attrs ) = @_;
     my $action;
-    my $chosen = new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
+    my $chosen = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
 
     foreach $action ( @{$this->{ACTIONS}} ) {
         if ( ref($action) && $action->matches( $attrs ) ) {
@@ -261,13 +261,13 @@ sub getActionees {
 sub allActionsInWeb {
     my ( $web, $attrs, $internal ) = @_;
     $internal = 0 unless defined ( $internal );
-    my $actions = new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
-	my @tops = TWiki::Func::getTopicList( $web );
+    my $actions = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
+	my @tops = Foswiki::Func::getTopicList( $web );
 	my $topics = $attrs->{topic};
 
 	@tops = grep( /^$topics$/, @tops ) if ( $topics );
     my $grep =
-      TWiki::Func::searchInWebContent( '%ACTION{.*}%', $web,
+      Foswiki::Func::searchInWebContent( '%ACTION{.*}%', $web,
                                        \@tops,
                                        { type => 'regex',
                                          files_without_match => 1,
@@ -276,11 +276,11 @@ sub allActionsInWeb {
     foreach my $topic ( keys %$grep ) {
         # SMELL: always read the text, because it's faster in the current
         # impl to find the perms embedded in it
-        my $text = TWiki::Func::readTopicText(
+        my $text = Foswiki::Func::readTopicText(
             $web, $topic, undef, $internal );
-        next unless $internal || TWiki::Func::checkAccessPermission(
-            'VIEW', TWiki::Func::getWikiName(), $text, $topic, $web);
-        my $tacts = TWiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+        next unless $internal || Foswiki::Func::checkAccessPermission(
+            'VIEW', Foswiki::Func::getWikiName(), $text, $topic, $web);
+        my $tacts = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
             $web, $topic, $text );
         $tacts = $tacts->search( $attrs );
         $actions->concat( $tacts );
@@ -298,8 +298,8 @@ sub allActionsInWebs {
     my $choice = 'user';
     # Exclude webs flagged as NOSEARCHALL
     $choice .= ',public' if $filter ne $theweb;
-    my @webs = grep { /^$filter$/ } TWiki::Func::getListOfWebs( $choice );
-    my $actions = new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
+    my @webs = grep { /^$filter$/ } Foswiki::Func::getListOfWebs( $choice );
+    my $actions = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
 
     foreach my $web ( @webs ) {
         my $subacts = allActionsInWeb( $web, $attrs, $internal );
@@ -319,8 +319,8 @@ sub splitOnAction {
     }
 
     my $found = undef;
-    my $pre = new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
-    my $post = new TWiki::Plugins::ActionTrackerPlugin::ActionSet();
+    my $pre = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
+    my $post = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
 
     foreach my $action (@{$this->{ACTIONS}}) {
         if( $found ) {

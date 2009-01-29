@@ -13,7 +13,7 @@
 </div>
 It takes the skills of a juggler to keep track of all the demands that modern life makes on us. Wouldn't it be great if we could capture what we have to do _at the time we think of it_, and be able to get a to-do list on demand? No more fighting with post-it notes, no more forgetting actions from the minutes of obscure meetings, and remember your partners birthday every year into the bargain! 
 
-This plugin provides support for tracking actions embedded in TWiki topics. Actions captured this way can then be tracked from anywhere you want.
+This plugin provides support for tracking actions embedded in topics. Actions captured this way can then be tracked from anywhere you want.
 
 This is particularly useful for [[http://en.wikipedia.org/wiki/Minutes][meeting minutes]]. As you write the minutes during the meeting, you simply enter the actions into the text and as soon as the topic is saved, the actions "go live". For example, at a recent meeting of the British Cabinet:
 <verbatim>
@@ -28,12 +28,10 @@ But that's not the only application. The action tracker can also be used for:
    * reminding you of important events
 Actions are nicely formatted for display, and automatic notification of actions is supported using 'cron'.
 
-<div class="twikiBroadcastMessage" style="background-color:#ffc;">WARNING: TWiki-4 only. If you want to use this plugin with an earlier version of TWiki, please use [[http://twiki.org/cgi-bin/attach/Plugins/ActionTrackerPlugin?filename=ActionTrackerPlugin.zip&revInfo=1][revision 22 of the zip]].</div>
-
 %TOC%
 
 ---+ Features
-	* Actions can be embedded in TWiki topics.
+	* Actions can be embedded in  topics.
 	* Actions can be listed using searches.
 	* Automatic action state e-mail notification.
 	* Actions can be assigned to individuals, or to predefined groups.
@@ -46,7 +44,7 @@ Actions are nicely formatted for display, and automatic notification of actions 
 
 __Note:__ if you have previously used this plugin you will note that the syntax of actions has changed. The plugin still recognises the old syntax, and will automatically upgrade topics when you edit them.
 
-Write the command =%<nop>ACTION{= _attributes_ =}% ...  %<nop>ENDACTION%= anywhere in a TWiki topic, where =...= represents the action description. Standard attributes are
+Write the command =%<nop>ACTION{= _attributes_ =}% ...  %<nop>ENDACTION%= anywhere in a topic, where =...= represents the action description. Standard attributes are
 	| *Name* | *Value* | *Description* | *Auto-completed* |
 	| =who= | See [[#PeopleAnchor][People]] | The person or team responsible for completing the action. | current user |
 	| =due= | See [[#DateFormats][Date Formats]] | The due date | |
@@ -75,7 +73,7 @@ Note that the =due= field is not auto-completed. If you don't specify a due date
 
 ---++ Action searches
 
-Write the command =%<nop>ACTIONSEARCH{= _attributes_ =}%= anywhere in a TWiki topic. Standard attributes are
+Write the command =%<nop>ACTIONSEARCH{= _attributes_ =}%= anywhere in a topic. Standard attributes are
 	| *Name* | *Value* | *Description* |
 	| =who= | See [[#PeopleAnchor][People]] | Person responsible for closing the action. |
 	| =notify= | See [[#PeopleAnchor][People]] | Persons who want to be notified of a change |
@@ -159,11 +157,11 @@ People are identified to the action tracker using a wikiname (e.g. =%MAINWEB%.Wi
 
 E-mail addresses of people are found by the process [[#TranslatingNamesToEmailAddresses][described below]].
 
-You can also use the shorthand =me= for the currently logged-in user (this is =TWiki<nop>Guest= unless you have been prompted for a username and password). In actions, this will automatically be expanded when the topic is saved, and in searches it will match the currently logged in user. 
+You can also use the shorthand =me= for the currently logged-in user (this is the guest user unless you have been prompted for a username and password). In actions, this will automatically be expanded when the topic is saved, and in searches it will match the currently logged in user. 
 
 ---++++ Groups
 
-You can assign an action to a group defined using a TWiki group topic (see %SYSTEMWEB%.CompleteDocumentation). Alternatively you can give a list of people as the value of the attribute. For example,
+You can assign an action to a group. Alternatively you can give a list of people as the value of the attribute. For example,
 <pre>
 %ACTION<nop>{who=AdminGroup ...}%
 %ACTION<nop>{who="KnutHaraldsen,MagnusMagnusson" ...}%
@@ -175,7 +173,7 @@ __Note__ in general you should *not* use these mechanisms for assigning actions,
 #UiDs
 ---+++ UIDs
 _For administrators only_:
-Each action is assigned a Unique Identifier (UID) when it is created. This UID is a six-digit number, and is generated when the action is first saved by incrementing a number in a special file (<code>pub/_work_areas/ActionTrackerPlugin/UIDRegister</code> under the TWiki installation). If this file is accidentally deleted, or is not writable, then you will have problems and you may get duplicate UIDs. Normally this won't matter a hoot, as UIDs only _have_ to be unique within a single topic, but if the file is persistantly inaccessible it could be a bit of a nuisance.
+Each action is assigned a Unique Identifier (UID) when it is created. This UID is a six-digit number, and is generated when the action is first saved by incrementing a number in a special file (<code>pub/_work_areas/ActionTrackerPlugin/UIDRegister</code> under the installation). If this file is accidentally deleted, or is not writable, then you will have problems and you may get duplicate UIDs. Normally this won't matter a hoot, as UIDs only _have_ to be unique within a single topic, but if the file is persistantly inaccessible it could be a bit of a nuisance.
 
 #NotiFication
 ---+ Notification
@@ -189,7 +187,7 @@ The frequency with which actions are notified depends on how you set up your cro
 The =actionnotify= script interprets its parameters as a search expression of the same type as that used in %<nop>ACTIONSEARCH%. All actions which match that expression will be notified to their owners.
 For example:
 <pre> actionnotify "header=\"| Assigned to | Due ||\"" format=\"'| $who | $due | $edit |'\" state="open" </pre>
-Note that the =actionnotify= script must be run from the =bin= directory. This is so it can pick up the TWiki path configuration file, =setlib.cfg=.
+Note that the =actionnotify= script must be run from the =bin= directory. This is so it can pick up the path configuration file, =setlib.cfg=.
 
 For example, you could set up the cron jobs as follows:
 <pre>
@@ -338,7 +336,7 @@ will match both of the following actions:
 <!--
 	* Set SHORTDESCRIPTION = Adds support for action tags in topics, and automatic notification of action statuses
 -->
-You can override the defaults for these values in %USERSWEB%.<nop>SitePreferences, the Web<nop>Preferences topic of the current web, or in individual topics. Use the standard TWiki 'Set' syntax e.g:
+You can override the defaults for these values in %USERSWEB%.<nop>SitePreferences, the Web<nop>Preferences topic of the current web, or in individual topics. Use the standard 'Set' syntax e.g:
 <pre>
    *<nop> Set ACTIONTRACKERPLUGIN_EDITORIENT = rows
 </pre>
@@ -399,7 +397,7 @@ Note that if you want to use the =action= template shipped with the Foswiki:Exte
 
 ---+ Plugin Info
 
-Another great TWiki extension from the <a style="text-decoration:none" href="http://wikiring.com"><img src="%ATTACHURLPATH%/wikiringlogo20x20.png" alt="" /> *WikiRing* </a> - __Working together to improve your wiki experience__!
+Another great Foswiki extension from the <a style="text-decoration:none" href="http://wikiring.com"><img src="%ATTACHURLPATH%/wikiringlogo20x20.png" alt="" /> *WikiRing* </a> - __Working together to improve your wiki experience__!
 
 Thanks are due to the following sponsors, who have helped make this plugin possible:
    * [[http://motorola.com][Motorola]]
@@ -408,10 +406,10 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 
 |  Author: | [[http://c-dot.co.uk][CrawfordCurrie]] |
 |  Version: | %$VERSION% |
-|  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2008 Crawford Currie |
+|  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2009 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
-|  5 Dec 2008 | |
+|  29 Jan 2009 | Foswikitask:Item455: port to foswiki Foswikitask:Item5974: correct CSS for search results table Foswikitask:Item5938: load CSS for ACTIONSEARCH Foswikitask:Item5606: Foswikitask:Item5915: respect global settings for time format |
 |  7 May 2008 | TWikibug:Item5607: http: was being doubled up on URLs in mail due to a core bug |
 |  13 Apr 2008 | TWikibug:Item4649: merged TWiki:Main.JoaquinBuendia's fix for AJAX updates on IE. TWikibug:Item4760: fixed WYSIWYG editing of topics containing actions TWikibug:Item5531: added simple button option for state changes |
 |  17 Sep 2007 | TWikibug:Item4648 $formfield wasn't working on 4.1.2 |
