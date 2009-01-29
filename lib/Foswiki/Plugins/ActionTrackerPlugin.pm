@@ -131,10 +131,8 @@ sub beforeEditHandler {
     #my( $text, $topic, $web, $meta ) = @_;
 
     if( Foswiki::Func::getSkin() =~ /\baction\b/ ) {
-print STDERR "Action edit\n";
         return _beforeActionEdit(@_);
     } else {
-print STDERR "Noamrl edit\n";
         return _beforeNormalEdit(@_);
     }
 }
@@ -410,6 +408,7 @@ sub _handleActionSearch {
     my $sep = $attrs->remove( 'separator' );
     my $orient = $attrs->remove( 'orient' );
     my $sort = $attrs->remove( 'sort' );
+    my $reverse = $attrs->remove( 'reverse' );
     if ( defined( $fmts ) || defined( $hdrs ) || defined( $orient )) {
         $fmts = $defaultFormat->getFields() unless ( defined( $fmts ));
         $hdrs = $defaultFormat->getHeaders() unless ( defined( $hdrs ));
@@ -420,7 +419,7 @@ sub _handleActionSearch {
     }
 
     my $actions = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web, $attrs, 0 );
-    $actions->sort( $sort );
+    $actions->sort( $sort, $reverse );
     return $actions->formatAsHTML( $fmt, 'href', $options->{USENEWWINDOW},
                                    'atpSearch' );
 }
@@ -439,6 +438,7 @@ sub _lazyInit {
         require Foswiki::Plugins::ActionTrackerPlugin::Format;
     };
     if ($@) {
+        print STDERR "ActionTrackerPlugin: init failed $@\n";
         Foswiki::Func::writeWarning("ActionTrackerPlugin: init failed $@");
         return 0;
     }

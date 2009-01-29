@@ -144,17 +144,17 @@ sub _expandVar {
     my $vbl = shift;
     my $args = shift;
     my $asHTML = shift;
-    if ( defined( &{ref( $object ) . "::_formatField_$vbl"} ) ) {
+    my $fn = "_formatField_$vbl";
+    if ( $object->can($fn) ) {
         # special format for this field
-        my $fn = "_formatField_$vbl";
         return $object->$fn( $args, $asHTML, @_ );
     }
     my $type = $object->getType( $vbl );
     if( $type ) {
         my $typename = $type->{type};
-        if ( defined( &{ref( $object ) . "::_formatType_$typename"} ) ) {
+        $fn = "_formatType_$typename";
+        if ( $object->can($fn) ) {
             # special format for this type
-            my $fn = "_formatType_$typename";
             return $object->$fn( $vbl, $args, $asHTML, @_ );
         }
     }
@@ -168,65 +168,6 @@ sub _expandVar {
     } else {
         return '';
     }
-}
-
-# PRIVATE STATIC fill in variable expansions in simple text form
-sub _expandString {
-    my $object = shift;
-    my $var = shift;
-    my $args = shift;
-
-    if ( $var eq "dollar") {
-        return "\$";
-    } elsif ($var eq "nop") {
-        return "";
-    } elsif ($var eq "n") {
-        return "\n";
-    } elsif ($var eq "percnt") {
-        return "%";
-    } elsif ($var eq "quot") {
-        return "\"";
-    }
-    my $t = _expandVar( $object, $var, $args, @_ );
-    return $t;
-}
-
-# PUBLIC fill in the text template using values
-# extracted from the given object
-sub _formatAsString {
-    my $this = shift;
-    my $object = shift;
-
-    my $fmt = $this->{TEXTFORM} || '';
-    $fmt =~ s/\$(\w+\b)(?:\((.*?)\))?/
-      _expandString( $object, $1, $2, 0, @_ )/geos;
-
-    return $fmt;
-}
-
-# PRIVATE STATIC fill in variable expansions. If any of the expansions
-# returns a non-zero color, then fill in the passed-by-reference color
-# variable $col with the value returned.
-sub _expandHTML {
-    my $object = shift;
-    my $var = shift;
-    my $args = shift;
-
-    if ( $var eq "dollar") {
-        return "\$";
-    } elsif ($var eq "nop") {
-        return "";
-    } elsif ($var eq "n") {
-        return CGI::br();
-    } elsif ($var eq "percnt") {
-        return "%";
-    } elsif ($var eq "quot") {
-        return "\"";
-    }
-
-    my $t = _expandVar( $object, $var, $args, @_ );
-
-    return $t;
 }
 
 # PUBLIC format a list of actions into a table
@@ -248,8 +189,9 @@ sub formatHTMLTable {
         foreach $i ( @{$this->{FIELDS}} ) {
             my $c;
             my $entry = $i;
+            $entry = Foswiki::Func::decodeFormatTokens($entry);
             $entry =~ s/\$(\w+)(?:\((.*?)\))?/
-              _expandHTML( $object, $1, $2, 1, $jump, $newWindow )/ges;
+              _expandVar( $object, $1, $2, 1, $jump, $newWindow )/ges;
             if( !$anchored ) {
                 $entry = CGI::a( { name=>$object->getAnchor() } ).$entry;
                 $anchored = 1;
@@ -305,8 +247,11 @@ sub formatStringTable {
     my $data = shift;
     my $text = '';
     foreach my $row ( @$data ) {
-        my $horzrow = $this->_formatAsString( $row, @_ );
-        $text .= $horzrow."\n";
+        my $fmt = $this->{TEXTFORM} || '';
+        $fmt = Foswiki::Func::decodeFormatTokens($fmt);
+        $fmt =~ s/\$(\w+\b)(?:\((.*?)\))?/
+          _expandVar( $row, $1, $2, 0, @_ )/geos;
+        $text .= $fmt."\n";
     }
     return $text;
 }

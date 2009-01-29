@@ -88,11 +88,12 @@ my @_sortfields;
 # PUBLIC sort by due date or, if given, by an ordered sequence
 # of attributes by string value
 sub sort {
-    my ( $this, $order ) = @_;
+    my ( $this, $order, $reverse ) = @_;
+    my @ordered;
     if ( defined( $order ) ) {
         $order =~ s/[^\w,]//g;
         @_sortfields = split( /,\s*/, $order );
-        @{$this->{ACTIONS}} = sort {
+        @ordered = sort {
             foreach my $sf ( @_sortfields ) {
                 return -1 unless ref($a);
                 return 1 unless ref($b);
@@ -114,12 +115,17 @@ sub sort {
             return $x <=> $y;
         } @{$this->{ACTIONS}};
     } else {
-        @{$this->{ACTIONS}} =
+        @ordered =
           sort {
               my $x = $a->secsToGo();
               my $y = $b->secsToGo();
               return $x <=> $y;
           } @{$this->{ACTIONS}};
+    }
+    if (Foswiki::Func::isTrue($reverse)) {
+        @{$this->{ACTIONS}} = reverse @ordered;
+    } else {
+        @{$this->{ACTIONS}} = @ordered;
     }
 }
 

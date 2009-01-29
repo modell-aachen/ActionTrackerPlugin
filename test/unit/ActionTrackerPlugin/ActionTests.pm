@@ -458,7 +458,7 @@ sub test_HTMLFormattingOpen {
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
         "", "| \$n\$n()\$nop()\$quot\$percnt\$dollar |", "");
     $s = $fmt->formatHTMLTable([$action], "href", 0, 'atp');
-    $this->assert_html_matches("<td> <br /><br />\"%\$ </td>", $s );
+    $this->assert_html_matches("<td> \n\n\"%\$ </td>", $s );
 
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("1 Jun 2002");
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(

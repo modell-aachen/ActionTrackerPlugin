@@ -9,13 +9,20 @@
    Instead, you could check your fix in, raise a bug in the Bugs web, or mail thge author.
 -->
 <div style="float:right">
-<a href="http://wikiring.com"><img src="%ATTACHURLPATH%/juggle.gif" title="WikiRing: Professional Wiki Innovation and Support" /></a>
+<a href="http://wikiring.com"><img src="%ATTACHURLPATH%/logo.png" title="WikiRing: Professional Wiki Innovation and Support" /></a>
 </div>
-It takes the skills of a juggler to keep track of all the demands that modern life makes on us. Wouldn't it be great if we could capture what we have to do _at the time we think of it_, and be able to get a to-do list on demand? No more fighting with post-it notes, no more forgetting actions from the minutes of obscure meetings, and remember your partners birthday every year into the bargain! 
+This plugin provides support for tracking actions embedded in topics. Actions captured this way can then be searched from any topic in the wiki.
 
-This plugin provides support for tracking actions embedded in topics. Actions captured this way can then be tracked from anywhere you want.
+---+ Features
+   * Actions are be embedded in topics.
+   * List actions using searches.
+   * Automatic e-mail notification of changes.
+   * Assign actions to individuals, or to predefined groups.
+   * Pop-up action editor.
+   * Fully configurable - add your own action attributes.
 
-This is particularly useful for [[http://en.wikipedia.org/wiki/Minutes][meeting minutes]]. As you write the minutes during the meeting, you simply enter the actions into the text and as soon as the topic is saved, the actions "go live". For example, at a recent meeting of the British Cabinet:
+This plugin is particularly useful for [[http://en.wikipedia.org/wiki/Minutes][meeting minutes]]. As you write the minutes during the meeting, you simply enter the actions into the text, and as soon as the topic is saved, the actions "go live". 
+For example, at a recent meeting of the British Cabinet:
 <verbatim>
 GordonBrown agreed to a zero tax rate for all self-employed software engineers, to make up for past unfair treatment.
 %ACTION{who="GordonBrown" due="5th April 2008"}% Repay all unfairly levied taxes %ENDACTION%
@@ -28,14 +35,9 @@ But that's not the only application. The action tracker can also be used for:
    * reminding you of important events
 Actions are nicely formatted for display, and automatic notification of actions is supported using 'cron'.
 
-%TOC%
+Actions are _embedded into topics_ so you can easily edit them, and even process them with other tools. No separate database to worry about!
 
----+ Features
-	* Actions can be embedded in  topics.
-	* Actions can be listed using searches.
-	* Automatic action state e-mail notification.
-	* Actions can be assigned to individuals, or to predefined groups.
-	* Fully configurable.
+%TOC%
 
 ---
 ---+ Syntax Rules
@@ -341,7 +343,7 @@ You can override the defaults for these values in %USERSWEB%.<nop>SitePreference
    *<nop> Set ACTIONTRACKERPLUGIN_EDITORIENT = rows
 </pre>
 ---++ Formatting how actions are displayed
-The format of an action output. The following fields can be output: =web=, =topic=, =text=, =who=, =due=, =notify=, =uid=, =creator=, =state=, =edit=, and any =ACTIONTRACKERPLUGIN_EXTRAS= you may have. These settings can be overridden in an =ACTIONSEARCH= command using the =format= and =header= attributes. =TABLEHEADER= defines the column headings, =TABLEFORMAT= defines the contents of the columns, and if =TABLEORIENT= is set to =rows=, action tables will be aligned as rows of values instead of the default columns of values.
+The default format of an action output, unless overridden by =format=, =header= etc. The following fields can be output: =web=, =topic=, =text=, =who=, =due=, =notify=, =uid=, =creator=, =state=, =edit=, and any =ACTIONTRACKERPLUGIN_EXTRAS= you may have. =TABLEHEADER= defines the column headings, =TABLEFORMAT= defines the contents of the columns, and if =TABLEORIENT= is set to =rows=, action tables will be aligned as rows of values instead of the default columns of values.
    * ACTIONTRACKERPLUGIN_TABLEHEADER =| Assigned to | Due date | Description | State | Notify ||=
    * ACTIONTRACKERPLUGIN_TABLEFORMAT =| $who | $due | $text $link | $state | $notify | $edit |=
    * ACTIONTRACKERPLUGIN_TABLEORIENT =cols=
@@ -409,7 +411,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2009 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
-|  29 Jan 2009 | Foswikitask:Item455: port to foswiki Foswikitask:Item5974: correct CSS for search results table Foswikitask:Item5938: load CSS for ACTIONSEARCH Foswikitask:Item5606: Foswikitask:Item5915: respect global settings for time format |
+|  29 Jan 2009 | Foswikitask:Item455: port to foswiki Foswikitask:Item5974: correct CSS for search results table Foswikitask:Item5938: load CSS for ACTIONSEARCH Foswikitask:Item5606: Foswikitask:Item5915: respect global settings for time format Foswikitask:Item4312: support for header, footer etc. Foswikitask:Item412: added =reverse= |
 |  7 May 2008 | TWikibug:Item5607: http: was being doubled up on URLs in mail due to a core bug |
 |  13 Apr 2008 | TWikibug:Item4649: merged TWiki:Main.JoaquinBuendia's fix for AJAX updates on IE. TWikibug:Item4760: fixed WYSIWYG editing of topics containing actions TWikibug:Item5531: added simple button option for state changes |
 |  17 Sep 2007 | TWikibug:Item4648 $formfield wasn't working on 4.1.2 |
@@ -449,5 +451,5 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Plugin Home: | http://foswiki.org/Extensions/ActionTrackerPlugin |
 
 %META:FILEATTACHMENT{name="styles.css" attr="" comment="Stylesheet for actions"}%
-%META:FILEATTACHMENT{name="juggle.gif" attr="h" comment="Logo"}%
+%META:FILEATTACHMENT{name="logo.png" attr="h" comment="Logo"}%
 %META:FILEATTACHMENT{name="wikiringlogo20x20.png" attr="h" comment="" version="1"}%
