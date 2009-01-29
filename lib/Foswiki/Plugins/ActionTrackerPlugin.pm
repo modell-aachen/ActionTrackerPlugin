@@ -313,7 +313,7 @@ sub afterEditHandler {
     $action->populateMissingFields();
 
     my $text = $action->stringify();
-    $text = "$pretext$text\n$posttext"; 
+    $text = "$pretext$text$posttext";
 
     # take the opportunity to fill in the missing fields in actions
     _addMissingAttributes( $text, $_[1], $_[2] );
