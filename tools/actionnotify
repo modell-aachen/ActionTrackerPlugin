@@ -1,7 +1,5 @@
 #!/usr/bin/perl -w
 #
-# TWiki WikiClone (see wiki.pm for $wikiversion and other info)
-#
 # Copyright (C) 2002 Motorola - all rights reserved
 # Copyright (C) 2004-2006 Crawford Currie http://c-dot.co.uk
 #
