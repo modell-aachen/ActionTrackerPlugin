@@ -1,8 +1,6 @@
 #
 # Copyright (C) Motorola 2002 - All rights reserved
 #
-# TWiki extension that adds tags for action tracking
-#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2

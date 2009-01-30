@@ -193,10 +193,10 @@ Note that the =actionnotify= script must be run from the =bin= directory. This i
 
 For example, you could set up the cron jobs as follows:
 <pre>
-0 * * * * cd /home/twiki/bin && ../tools/actionnotify "state=\"late\""
-0 8,16 * * * cd /home/twiki/bin && ../tools/actionnotify "state=\"open\" within=\"3\""
-0 0 * * * cd /home/twiki/bin && ../tools/actionnotify "state=\"open\" within=\"7\"
-0 0 * * 1 cd /home/twiki/bin && ../tools/actionnotify "state=\"open\" within=\"30\"
+0 * * * * cd /home/foswiki/bin && ../tools/actionnotify "state=\"late\""
+0 8,16 * * * cd /home/foswiki/bin && ../tools/actionnotify "state=\"open\" within=\"3\""
+0 0 * * * cd /home/foswiki/bin && ../tools/actionnotify "state=\"open\" within=\"7\"
+0 0 * * 1 cd /home/foswiki/bin && ../tools/actionnotify "state=\"open\" within=\"30\"
 </pre>
 (If you don't know cron, the first 5 fields are minute, hour, day of month, month and day of week. * means 'every'). This crontab will notify actions according to the schedule:
 	1 Actions that are late will be notified every hour, on the hour
@@ -243,7 +243,7 @@ changedsince="3 days ago"
 
 Obviously you have to be careful to synchronise your =changedsince= expression with the activation of your cron job. The ideal is to specify the same delta as the gap between cron activations. For example,
 <pre>
-0 0 * * * cd /home/twiki/bin && ../tools/actionnotify 'web="News" changedsince="yesterday"'
+0 0 * * * cd /home/foswiki/bin && ../tools/actionnotify 'web="News" changedsince="yesterday"'
 </pre>
 will notify registered users of action changes that occurred in the last 24 hours. Note the use of single quotes to prevent expansion in the shell.
 

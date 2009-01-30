@@ -2,7 +2,7 @@
 # Copyright (C) 2002 Motorola - All rights reserved
 # Copyright (C) 2004-2009 Crawford Currie http://c-dot.co.uk
 #
-# TWiki extension that adds tags for action tracking
+# Extension that adds tags for action tracking
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

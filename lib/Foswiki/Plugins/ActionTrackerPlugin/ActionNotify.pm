@@ -1,7 +1,7 @@
 #
 # Copyright (C) Motorola 2002 - All rights reserved
 #
-# TWiki extension that adds tags for action tracking
+# Extension that adds tags for action tracking
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ my $options;
 
 require Foswiki::Plugins::ActionTrackerPlugin::Options;
 
-# PUBLIC actionnotify script entry point. Reinitialises TWiki.
+# PUBLIC actionnotify script entry point. Reinitialises Foswiki.
 #
 # Notify all persons of actions that match the search expression
 # passed.
@@ -47,19 +47,19 @@ require Foswiki::Plugins::ActionTrackerPlugin::Options;
 sub actionNotify {
     my $expr = shift;
 
-    my $twiki = new Foswiki();
+    my $session = new Foswiki();
     # Assign SESSION so that Func methods work
-    $Foswiki::Plugins::SESSION = $twiki;
+    $Foswiki::Plugins::SESSION = $session;
 
     if ( $expr =~ s/DEBUG//o ) {
-        print doNotifications( $twiki->{webName}, $expr, 1 ),"\n";
+        print doNotifications( $session->{webName}, $expr, 1 ),"\n";
     } else {
-        doNotifications( $twiki->{webName}, $expr, 0 );
+        doNotifications( $session->{webName}, $expr, 0 );
     }
 }
 
 # Entry point separated from main entry point, because we may want
-# to call it in a topic without initialising TWiki.
+# to call it in a topic without re-initialising.
 sub doNotifications {
     my ( $webName, $expr, $debugMailer ) = @_;
 
@@ -378,7 +378,7 @@ HERE
 
     $text =~ s/<img src=.*?[^>]>/[IMG]/goi;  # remove all images
 
-    # add the url host to any in-twiki urls that lack it
+    # add the url host to any internal urls that lack it
     # SMELL: doesn't handle (undocumented) {ScriptUrlPaths}
     my $sup = $Foswiki::cfg{ScriptUrlPath};
     $sup =~ s#/$##;

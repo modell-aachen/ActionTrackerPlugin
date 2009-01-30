@@ -745,7 +745,7 @@ sub _formatField_link {
                                              $this->{topic} ) .
                     '#' . $this->getAnchor() },
                   CGI::img( {
-                      src=>'%PUBURL%/TWiki/DocumentGraphics/target.gif',
+                      src=>'%PUBURL%/%SYSTEMWEB%/DocumentGraphics/target.gif',
                       alt=>'(go to action)'} ));
         $text .= $jump;
     }
@@ -936,8 +936,6 @@ sub formatForEdit {
 __DATA__
 #
 # Copyright (C) Motorola 2002 - All rights reserved
-#
-# TWiki extension that adds tags for action tracking
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
