@@ -19,9 +19,9 @@ sub new {
 BEGIN {
     new Foswiki();
     $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
-};
+}
 
-my ($sup, $ss);
+my ( $sup, $ss );
 
 sub set_up {
     my $this = shift;
@@ -29,23 +29,22 @@ sub set_up {
 
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("2 Jan 2002");
     $this->{actions} = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
-    my $action = new Foswiki::Plugins::ActionTrackerPlugin::Action
-      ("Test", "Topic", 0,
-       "who=A,due=1-Jan-02,open",
-       "Test_Main_A_open_late");
+    my $action =
+      new Foswiki::Plugins::ActionTrackerPlugin::Action( "Test", "Topic", 0,
+        "who=A,due=1-Jan-02,open", "Test_Main_A_open_late" );
     $this->{actions}->add($action);
-    $action = new Foswiki::Plugins::ActionTrackerPlugin::Action
-      ("Test", "Topic", 1,
-       "who=$this->{users_web}.A,due=1-Jan-02,closed",
-       "Test_Main_A_closed_ontime");
+    $action =
+      new Foswiki::Plugins::ActionTrackerPlugin::Action( "Test", "Topic", 1,
+        "who=$this->{users_web}.A,due=1-Jan-02,closed",
+        "Test_Main_A_closed_ontime" );
     $this->{actions}->add($action);
-    $action = new Foswiki::Plugins::ActionTrackerPlugin::Action
-      ("Test", "Topic", 2,
-       "who=Blah.B,due=\"29 Jan 2010\",open",
-       "Test_Blah_B_open_ontime");
+    $action =
+      new Foswiki::Plugins::ActionTrackerPlugin::Action( "Test", "Topic", 2,
+        "who=Blah.B,due=\"29 Jan 2010\",open",
+        "Test_Blah_B_open_ontime" );
     $this->{actions}->add($action);
-    $sup = $Foswiki::cfg{DefaultUrlHost}.$Foswiki::cfg{ScriptUrlPath};
-    $ss = $Foswiki::cfg{ScriptSuffix};
+    $sup = $Foswiki::cfg{DefaultUrlHost} . $Foswiki::cfg{ScriptUrlPath};
+    $ss  = $Foswiki::cfg{ScriptSuffix};
 }
 
 sub tear_down {
@@ -56,17 +55,15 @@ sub tear_down {
 
 sub testAHTable {
     my $this = shift;
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "|Web|Topic|Edit|",
-        "|\$web|\$topic|\$edit|",
-        "rows",
-        "", "");
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Web|Topic|Edit|",
+        "|\$web|\$topic|\$edit|", "rows", "", "" );
     my $s;
     $s = $this->{actions}->formatAsHTML( $fmt, "href", 0, 'atp' );
     $s =~ s/\n//go;
     $s =~ s/(;t=\d+)//g;
     $s =~ s/\s+//g;
-    my $t = $1;
+    my $t   = $1;
     my $cmp = <<HERE;
 <table class="atpSearch">
  <tr>
@@ -96,12 +93,12 @@ sub testAHTable {
 </table>
 HERE
     $cmp =~ s/\s+//g;
-    $this->assert_html_equals($cmp, $s);
+    $this->assert_html_equals( $cmp, $s );
     $s = $this->{actions}->formatAsHTML( $fmt, "name", 0, 'atp' );
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
-    $this->assert_html_equals(<<HERE, $s);
+    $this->assert_html_equals( <<HERE, $s );
 <table class="atpSearch">
 <tr>
 <th align="right">Web</th>
@@ -124,7 +121,7 @@ HERE
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
-    $this->assert_html_equals(<<HERE, $s);
+    $this->assert_html_equals( <<HERE, $s );
 <table class="atpSearch">
 <tr>
 <th align="right">Web</th>
@@ -146,17 +143,15 @@ HERE
 
 sub testAVTable {
     my $this = shift;
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "|Web|Topic|Edit|",
-        "|\$web|\$topic|\$edit|",
-        "cols",
-        "", "",);
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Web|Topic|Edit|",
+        "|\$web|\$topic|\$edit|", "cols", "", "", );
     my $s;
     $s = $this->{actions}->formatAsHTML( $fmt, "href", 0, 'atp' );
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     my $t = $1;
-    $this->assert_html_equals(<<HERE, $s);
+    $this->assert_html_equals( <<HERE, $s );
 <table class="atpSearch">
 <tr>
 <th>Web</th>
@@ -179,7 +174,7 @@ HERE
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
-    $this->assert_html_equals(<<HERE, $s);
+    $this->assert_html_equals( <<HERE, $s );
 <table class="atpSearch">
 <tr>
 <th>Web</th>
@@ -213,7 +208,7 @@ HERE
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
-    $this->assert_html_equals(<<HERE, $s);
+    $this->assert_html_equals( <<HERE, $s );
 <table class="atpSearch">
 <tr>
 <th>Web</th>
@@ -235,109 +230,110 @@ HERE
 }
 
 sub testSearchOpen {
-    my $this = shift;
-    my $attrs = new Foswiki::Attrs("state=open",1);
+    my $this   = shift;
+    my $attrs  = new Foswiki::Attrs( "state=open", 1 );
     my $chosen = $this->{actions}->search($attrs);
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "", "", "", "\$text");
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
     my $text = $chosen->stringify($fmt);
-    $this->assert_matches(qr/Blah_B_open/, $text);
-    $this->assert_matches(qr/A_open/, $text);
-    $this->assert_does_not_match(qr/closed/, $text);
+    $this->assert_matches( qr/Blah_B_open/, $text );
+    $this->assert_matches( qr/A_open/,      $text );
+    $this->assert_does_not_match( qr/closed/, $text );
 }
 
 sub testSearchClosed {
-    my $this = shift;
-    my $attrs = new Foswiki::Attrs("closed",1);
+    my $this   = shift;
+    my $attrs  = new Foswiki::Attrs( "closed", 1 );
     my $chosen = $this->{actions}->search($attrs);
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "", "", "", "\$text");
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
     my $text = $chosen->stringify($fmt);
-    $this->assert_does_not_match(qr/open/o, $text);
+    $this->assert_does_not_match( qr/open/o, $text );
 }
 
 sub testSearchWho {
-    my $this = shift;
-    my $attrs = new Foswiki::Attrs("who=A",1);
+    my $this   = shift;
+    my $attrs  = new Foswiki::Attrs( "who=A", 1 );
     my $chosen = $this->{actions}->search($attrs);
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "", "", "", "\$text");
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
     my $text = $chosen->stringify($fmt);
-    $this->assert_does_not_match(qr/B_open_ontime/o, $text);
+    $this->assert_does_not_match( qr/B_open_ontime/o, $text );
 }
 
 sub testSearchLate {
-    my $this = shift;
-    my $attrs = new Foswiki::Attrs("late",1);
+    my $this   = shift;
+    my $attrs  = new Foswiki::Attrs( "late", 1 );
     my $chosen = $this->{actions}->search($attrs);
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "", "", "", "\$text");
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
     my $text = $chosen->stringify($fmt);
-    $this->assert_matches(qr/Test_Main_A_open_late/, $text);
-    $this->assert_does_not_match(qr/ontime/o, $text);
+    $this->assert_matches( qr/Test_Main_A_open_late/, $text );
+    $this->assert_does_not_match( qr/ontime/o, $text );
 }
 
 sub testSearchLate2 {
-    my $this = shift;
-    my $attrs = new Foswiki::Attrs("state=\"late\"",1);
+    my $this   = shift;
+    my $attrs  = new Foswiki::Attrs( "state=\"late\"", 1 );
     my $chosen = $this->{actions}->search($attrs);
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "", "", "", "\$text");
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
     my $text = $chosen->stringify($fmt);
-    $this->assert_matches(qr/Test_Main_A_open_late/, $text);
-    $this->assert_does_not_match(qr/ontime/o, $text);
+    $this->assert_matches( qr/Test_Main_A_open_late/, $text );
+    $this->assert_does_not_match( qr/ontime/o, $text );
 }
 
 sub testSearchAll {
-    my $this = shift;
-    my $attrs = new Foswiki::Attrs("",1);
+    my $this   = shift;
+    my $attrs  = new Foswiki::Attrs( "", 1 );
     my $chosen = $this->{actions}->search($attrs);
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "", "", "", "\$text");
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
     my $text = $chosen->stringify($fmt);
-    $this->assert_matches(qr/Main_A_open_late/o, $text);
-    $this->assert_matches(qr/Main_A_closed_ontime/o, $text);
-    $this->assert_matches(qr/Blah_B_open_ontime/o, $text);
+    $this->assert_matches( qr/Main_A_open_late/o,     $text );
+    $this->assert_matches( qr/Main_A_closed_ontime/o, $text );
+    $this->assert_matches( qr/Blah_B_open_ontime/o,   $text );
 }
 
 # add more actions to the fixture
 sub addMoreActions {
-    my $this = shift;
+    my $this        = shift;
     my $moreactions = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        "", "", "", "\$text");
-    my $action = new Foswiki::Plugins::ActionTrackerPlugin::Action(
-        "Test", "Topic", 0,
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
+    my $action =
+      new Foswiki::Plugins::ActionTrackerPlugin::Action( "Test", "Topic", 0,
         "who=C,due=\"1 Jan 02\",open",
-        "C_open_late");
+        "C_open_late" );
     $moreactions->add($action);
-    $this->{actions}->concat( $moreactions );
+    $this->{actions}->concat($moreactions);
 }
 
 # x1 so it gets executed second last
 sub testx1Search {
     my $this = shift;
     $this->addMoreActions();
-    my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format("", "", "", "\$text");
-    my $attrs = new Foswiki::Attrs("late",1);
+    my $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "", "\$text" );
+    my $attrs  = new Foswiki::Attrs( "late", 1 );
     my $chosen = $this->{actions}->search($attrs);
-    my $text = $chosen->stringify($fmt);
-    $this->assert_matches(qr/A_open_late/, $text);
-    $this->assert_matches(qr/C_open_late/o, $text);
-    $this->assert_does_not_match(qr/ontime/o, $text);
+    my $text   = $chosen->stringify($fmt);
+    $this->assert_matches( qr/A_open_late/,  $text );
+    $this->assert_matches( qr/C_open_late/o, $text );
+    $this->assert_does_not_match( qr/ontime/o, $text );
 }
 
 # x2 so it gets executed last
 sub testx2Actionees {
     my $this = shift;
     $this->addMoreActions();
-    my $attrs = new Foswiki::Attrs("late",1);
+    my $attrs = new Foswiki::Attrs( "late", 1 );
     my $chosen = $this->{actions}->search($attrs);
     my %peeps;
-    $chosen->getActionees(\%peeps);
-    $this->assert_not_null($peeps{"$this->{users_web}.A"});
-    $this->assert_not_null($peeps{"$this->{users_web}.C"});
-    $this->assert_null($peeps{"Blah.B"});
+    $chosen->getActionees( \%peeps );
+    $this->assert_not_null( $peeps{"$this->{users_web}.A"} );
+    $this->assert_not_null( $peeps{"$this->{users_web}.C"} );
+    $this->assert_null( $peeps{"Blah.B"} );
 }
 
 1;

@@ -12,7 +12,7 @@
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at 
+# GNU General Public License for more details, published at
 # http://www.gnu.org/copyleft/gpl.html
 #
 package Foswiki::Plugins::ActionTrackerPlugin;
@@ -28,10 +28,11 @@ use vars qw( $VERSION $RELEASE $initialised $SHORTDESCRIPTION );
 
 $VERSION = '$Rev$';
 $RELEASE = '21 May 2007';
-$SHORTDESCRIPTION = 'Adds support for action tags in topics, and automatic notification of action statuses';
+$SHORTDESCRIPTION =
+'Adds support for action tags in topics, and automatic notification of action statuses';
 $initialised = 0;
 
-my $doneHeader = 0;
+my $doneHeader   = 0;
 my $actionNumber = 0;
 my $defaultFormat;
 
@@ -42,79 +43,86 @@ sub initPlugin {
 
     # COVERAGE OFF standard plugin code
 
-    if( $Foswiki::Plugins::VERSION < 1.026 ) {
-        Foswiki::Func::writeWarning( 'Version mismatch between ActionTrackerPlugin and Plugins.pm $Foswiki::Plugins::VERSION. 1.026 required.' );
+    if ( $Foswiki::Plugins::VERSION < 1.026 ) {
+        Foswiki::Func::writeWarning(
+'Version mismatch between ActionTrackerPlugin and Plugins.pm $Foswiki::Plugins::VERSION. 1.026 required.'
+        );
     }
+
     # COVERAGE ON
 
     $initialised = 0;
-    $doneHeader = 0;
+    $doneHeader  = 0;
 
     Foswiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
-    Foswiki::Func::registerTagHandler(
-        'ACTIONSEARCH', \&_handleActionSearch, 'context-free');
+    Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
+        'context-free' );
 
     return 1;
-};
+}
 
 sub _addCSSAndJS {
     my $debug = '';
     $debug = '_src' if DEBUG;
 
-    Foswiki::Func::addToHEAD('ACTIONTRACKERPLUGIN_CSS', <<HERE);
+    Foswiki::Func::addToHEAD( 'ACTIONTRACKERPLUGIN_CSS', <<HERE);
 <link rel="stylesheet" href="$options->{CSS}" type="text/css" media="all" />
 HERE
-    Foswiki::Func::addToHEAD('ACTIONTRACKERPLUGIN_JS', <<HERE);
+    Foswiki::Func::addToHEAD( 'ACTIONTRACKERPLUGIN_JS', <<HERE);
 <script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/ActionTrackerPlugin/atp$debug.js'></script>
 HERE
 }
 
 sub commonTagsHandler {
-    my( $otext, $topic, $web, $meta ) = @_;
+    my ( $otext, $topic, $web, $meta ) = @_;
 
     return unless ( $_[0] =~ m/%ACTION.*{.*}%/o );
 
-    return unless _lazyInit($web, $topic);
+    return unless _lazyInit( $web, $topic );
 
     _addCSSAndJS();
 
     # Format actions in the topic.
     # Done this way so we get tables built up by
     # collapsing successive actions.
-    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
-        $web, $topic, $otext, 1);
+    my $as =
+      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
+        $otext, 1 );
     my $actionGroup;
     my $text = '';
 
-    foreach my $entry (@{$as->{ACTIONS}}) {
-        if (ref($entry)) {
-            if (!$actionGroup) {
+    foreach my $entry ( @{ $as->{ACTIONS} } ) {
+        if ( ref($entry) ) {
+            if ( !$actionGroup ) {
                 $actionGroup =
                   new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
             }
             $actionGroup->add($entry);
-        } elsif ($entry =~ /(\S|\n\s*\n)/s) {
+        }
+        elsif ( $entry =~ /(\S|\n\s*\n)/s ) {
             if ($actionGroup) {
-                $text .= $actionGroup->formatAsHTML(
-                    $defaultFormat, 'name',
-                    $options->{USENEWWINDOW},
-                    'atpDef');
+                $text .=
+                  $actionGroup->formatAsHTML( $defaultFormat, 'name',
+                    $options->{USENEWWINDOW}, 'atpDef' );
                 $actionGroup = undef;
             }
             $text .= $entry;
         }
     }
-    if ( $actionGroup ) {
+    if ($actionGroup) {
         $text .=
           $actionGroup->formatAsHTML( $defaultFormat, 'name',
-                                    $options->{USENEWWINDOW}, 'atpDef' );
+            $options->{USENEWWINDOW}, 'atpDef' );
     }
 
     $_[0] = $text;
+
     # COVERAGE OFF debug only
     if ( $options->{DEBUG} ) {
-        $_[0] =~ s/%ACTIONNOTIFICATIONS{(.*?)}%/_handleActionNotify($web, $1)/geo;
+        $_[0] =~
+          s/%ACTIONNOTIFICATIONS{(.*?)}%/_handleActionNotify($web, $1)/geo;
     }
+
     # COVERAGE ON
 
 }
@@ -128,48 +136,53 @@ sub commonTagsHandler {
 # fully populated. This allows us to call either 'save' or 'preview'
 # to terminate the edit, as selected by the NOPREVIEW parameter.
 sub beforeEditHandler {
+
     #my( $text, $topic, $web, $meta ) = @_;
 
-    if( Foswiki::Func::getSkin() =~ /\baction\b/ ) {
+    if ( Foswiki::Func::getSkin() =~ /\baction\b/ ) {
         return _beforeActionEdit(@_);
-    } else {
+    }
+    else {
         return _beforeNormalEdit(@_);
     }
 }
 
 sub _beforeNormalEdit {
+
     #my( $text, $topic, $web, $meta ) = @_;
     # Coarse method of testing if modern action syntax is used
     my $oc = scalar( $_[0] =~ m/%ACTION{.*?}%/g );
     my $cc = scalar( $_[0] =~ m/%ENDACTION%/g );
 
-    if ($cc < $oc) {
-        return unless _lazyInit($_[2], $_[1]);
+    if ( $cc < $oc ) {
+        return unless _lazyInit( $_[2], $_[1] );
 
-        my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
-            $_[2], $_[1], $_[0], 1);
+        my $as =
+          Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
+            $_[0], 1 );
         $_[0] = $as->stringify();
     }
 }
 
 sub _beforeActionEdit {
-    my( $text, $topic, $web, $meta ) = @_;
+    my ( $text, $topic, $web, $meta ) = @_;
 
-    return unless _lazyInit($web, $topic);
+    return unless _lazyInit( $web, $topic );
 
     my $query = Foswiki::Func::getCgiQuery();
 
-    my $uid = $query->param( 'atp_action' );
+    my $uid = $query->param('atp_action');
     return unless defined $uid;
 
     # actionform.tmpl is a sub-template inserted into the parent template
     # as %TEXT%. This is done so we can use the standard template mechanism
     # without screwing up the content of the subtemplate.
-    my $tmpl = Foswiki::Func::readTemplate( 'actionform',
-                                          Foswiki::Func::getSkin());
+    my $tmpl =
+      Foswiki::Func::readTemplate( 'actionform', Foswiki::Func::getSkin() );
 
-    my $date = Foswiki::Func::formatTime( time(), undef,
-                                          $Foswiki::cfg{DisplayTimeValues} );
+    my $date =
+      Foswiki::Func::formatTime( time(), undef,
+        $Foswiki::cfg{DisplayTimeValues} );
 
     die unless ($date);
 
@@ -182,44 +195,46 @@ sub _beforeActionEdit {
     # The 'command' parameter is used to signal to the afterEditHandler and
     # the beforeSaveHandler that they have to handle the fields of the
     # edit differently
-    my $fields = CGI::hidden( -name=>'closeactioneditor', -value=>1 );
-    $fields .= CGI::hidden( -name=>'cmd', -value=>"" );
+    my $fields = CGI::hidden( -name => 'closeactioneditor', -value => 1 );
+    $fields .= CGI::hidden( -name => 'cmd', -value => "" );
 
     # write in hidden fields
-    if( $meta ) {
+    if ($meta) {
         $meta->forEachSelectedValue( qr/FIELD/, undef, \&_hiddenMeta,
-                                     { text => \$fields } );
+            { text => \$fields } );
     }
 
     # Find the action.
-    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
-        $web, $topic, $text, 1);
-    my ( $action, $pre, $post ) = $as->splitOnAction( $uid );
-    my $pretext = $pre->stringify();
+    my $as =
+      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
+        $text, 1 );
+    my ( $action, $pre, $post ) = $as->splitOnAction($uid);
+    my $pretext  = $pre->stringify();
     my $posttext = $post->stringify();
 
-    $fields .= CGI::hidden( -name=>'pretext', -value=>$pretext );
-    $fields .= CGI::hidden( -name=>'posttext', -value=>$posttext );
+    $fields .= CGI::hidden( -name => 'pretext',  -value => $pretext );
+    $fields .= CGI::hidden( -name => 'posttext', -value => $posttext );
 
     $tmpl =~ s/%UID%/$uid/go;
 
-    my $submitCmd = "preview";
+    my $submitCmd     = "preview";
     my $submitCmdName = "Preview";
-    my $submitScript = "";
-    my $cancelScript = "";
-    my $submitCmdOpt = "";
+    my $submitScript  = "";
+    my $cancelScript  = "";
+    my $submitCmdOpt  = "";
 
-    if( $options->{NOPREVIEW} ) {
-        $submitCmd = "save";
+    if ( $options->{NOPREVIEW} ) {
+        $submitCmd     = "save";
         $submitCmdName = "Save";
-        $submitCmdOpt = "?unlock=on";
+        $submitCmdOpt  = "?unlock=on";
         if ( $options->{USENEWWINDOW} ) {
-            # I'd like close the subwindow here, but not sure how. Like this,
-            # the ONCLICK overrides the ACTION and closes the window before
-            # the POST is done. All the various solutions I've found on the
-            # web do something like "wait x seconds" before closing the
-            # subwindow, but this seems very risky.
-            #$submitScript = "onclick=\"document.form.submit();window.close();return true\"";
+
+# I'd like close the subwindow here, but not sure how. Like this,
+# the ONCLICK overrides the ACTION and closes the window before
+# the POST is done. All the various solutions I've found on the
+# web do something like "wait x seconds" before closing the
+# subwindow, but this seems very risky.
+#$submitScript = "onclick=\"document.form.submit();window.close();return true\"";
         }
     }
     if ( $options->{USENEWWINDOW} ) {
@@ -236,14 +251,16 @@ sub _beforeActionEdit {
         $options->{EDITHEADER},
         $options->{EDITFORMAT},
         $options->{EDITORIENT},
-        "", "" );
-    my $editable = $action->formatForEdit( $fmt );
+        "", ""
+    );
+    my $editable = $action->formatForEdit($fmt);
     $tmpl =~ s/%EDITFIELDS%/$editable/o;
 
     $tmpl =~ s/%EBH%/$options->{EDITBOXHEIGHT}/go;
     $tmpl =~ s/%EBW%/$options->{EDITBOXWIDTH}/go;
 
     $text = $action->{text};
+
     # Process the text so it's nice to edit. This gets undone in Action.pm
     # when the action is saved.
     $text =~ s/^\t/   /gos;
@@ -256,23 +273,24 @@ sub _beforeActionEdit {
     $_[0] = $tmpl;
 
     # Add styles and javascript for the calendar
-    Foswiki::Func::addToHEAD(
-        'ATP_CSS',
-        '<style type="text/css" media="all">@import url("%ACTIONTRACKERPLUGIN_CSS%");</style>');
+    Foswiki::Func::addToHEAD( 'ATP_CSS',
+'<style type="text/css" media="all">@import url("%ACTIONTRACKERPLUGIN_CSS%");</style>'
+    );
 
     use Foswiki::Contrib::JSCalendarContrib;
-    if( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
-        Foswiki::Func::writeWarning('JSCalendarContrib not found '.$@);
-    } else {
-        Foswiki::Contrib::JSCalendarContrib::addHEAD( 'foswiki' );
+    if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
+        Foswiki::Func::writeWarning( 'JSCalendarContrib not found ' . $@ );
+    }
+    else {
+        Foswiki::Contrib::JSCalendarContrib::addHEAD('foswiki');
     }
 }
 
 sub _hiddenMeta {
-    my( $value, $options ) = @_;
+    my ( $value, $options ) = @_;
 
     my $name = $options->{_key};
-    ${$options->{text}} .= CGI::hidden( -name => $name, -value => $value );
+    ${ $options->{text} } .= CGI::hidden( -name => $name, -value => $value );
     return $value;
 }
 
@@ -287,28 +305,30 @@ sub afterEditHandler {
     ### my ( $text, $topic, $web ) = @_;
 
     my $query = Foswiki::Func::getCgiQuery();
-    return unless ( $query->param( 'closeactioneditor' ));
+    return unless ( $query->param('closeactioneditor') );
 
-    return unless _lazyInit($_[2], $_[1]);
+    return unless _lazyInit( $_[2], $_[1] );
 
-    my $pretext = $query->param( 'pretext' ) || "";
+    my $pretext = $query->param('pretext') || "";
+
     # Fix from RichardBaar 8/10/03 for Mozilla
-    my $char = chop( $pretext );
+    my $char = chop($pretext);
     $pretext .= $char if ( $char ne "\n" );
     $pretext .= "\n";
+
     # end of fix from RichardBaar 8/10/03
-    my $posttext = $query->param( 'posttext' ) || "";
+    my $posttext = $query->param('posttext') || "";
 
     # count the previous actions so we get the right action number
-    my $an = 0;
+    my $an  = 0;
     my $tmp = "$pretext";
     while ( $tmp =~ s/%ACTION{.*?}%//o ) {
         $an++;
     }
 
     my $action =
-      Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery(
-          $_[2], $_[1], $an, $query );
+      Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery( $_[2],
+        $_[1], $an, $query );
 
     $action->populateMissingFields();
 
@@ -323,39 +343,46 @@ sub afterEditHandler {
 
 # Process the actions and add UIDs and other missing attributes
 sub beforeSaveHandler {
-    my( $text, $topic, $web ) = @_;
+    my ( $text, $topic, $web ) = @_;
 
     return unless $text;
 
-    return unless _lazyInit($web, $topic);
+    return unless _lazyInit( $web, $topic );
 
     my $query = Foswiki::Func::getCgiQuery();
-    return unless ( $query ); # Fix from GarethEdwards 13 Jun 2003
+    return unless ($query);    # Fix from GarethEdwards 13 Jun 2003
 
-    if ( $query->param( 'closeactioneditor' )) {
+    if ( $query->param('closeactioneditor') ) {
+
         # this is a save from the action editor
         # Strip pre and post metadata from the text
-        my $premeta = "";
+        my $premeta  = "";
         my $postmeta = "";
-        my $inpost = 0;
-        my $text = "";
+        my $inpost   = 0;
+        my $text     = "";
         foreach my $line ( split( /\r?\n/, $_[0] ) ) {
-            if( $line =~ /^%META:[^{]+{[^}]*}%/ ) {
-                if ( $inpost) {
+            if ( $line =~ /^%META:[^{]+{[^}]*}%/ ) {
+                if ($inpost) {
                     $postmeta .= "$line\n";
-                } else {
+                }
+                else {
                     $premeta .= "$line\n";
                 }
-            } else {
+            }
+            else {
                 $text .= "$line\n";
                 $inpost = 1;
             }
         }
+
         # compose the text
         afterEditHandler( $text, $topic, $web );
+
         # reattach the metadata
         $_[0] = $premeta . $text . $postmeta;
-    } else {
+    }
+    else {
+
         # take the opportunity to fill in the missing fields in actions
         _addMissingAttributes( $_[0], $topic, $web );
     }
@@ -363,22 +390,25 @@ sub beforeSaveHandler {
 
 # PRIVATE Add missing attributes to all actions that don't have them
 sub _addMissingAttributes {
+
     #my ( $text, $topic, $web ) = @_;
     my $text = "";
     my $descr;
     my $attrs;
     my $gathering;
     my $processAction = 0;
-    my $an = 0;
+    my $an            = 0;
     my %seenUID;
 
-    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
-        $_[2], $_[1], $_[0], 1);
+    my $as =
+      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
+        $_[0], 1 );
 
-    foreach my $action (@{$as->{ACTIONS}}) {
+    foreach my $action ( @{ $as->{ACTIONS} } ) {
         next unless ref($action);
         $action->populateMissingFields();
-        if ( $seenUID{$action->{uid}} ) {
+        if ( $seenUID{ $action->{uid} } ) {
+
             # This can happen if there has been a careless
             # cut and paste. In this case, the first instance
             # of the action gets the old UID. This may banjax
@@ -386,7 +416,7 @@ sub _addMissingAttributes {
             # alternative!
             $action->{uid} = $action->getNewUID();
         }
-        $seenUID{$action->{uid}} = 1;
+        $seenUID{ $action->{uid} } = 1;
     }
     $_[0] = $as->stringify();
 }
@@ -394,39 +424,43 @@ sub _addMissingAttributes {
 # =========================
 # Perform filtered search for all actions
 sub _handleActionSearch {
-    my( $session, $attrs, $topic, $web ) = @_;
+    my ( $session, $attrs, $topic, $web ) = @_;
 
-    return unless _lazyInit($web, $topic);
+    return unless _lazyInit( $web, $topic );
 
     _addCSSAndJS();
 
     # use default format unless overridden
     my $fmt;
-    my $fmts = $attrs->remove( 'format' );
-    my $hdrs = $attrs->remove( 'header' );
-    my $foot = $attrs->remove( 'footer' );
-    my $sep = $attrs->remove( 'separator' );
-    my $orient = $attrs->remove( 'orient' );
-    my $sort = $attrs->remove( 'sort' );
-    my $reverse = $attrs->remove( 'reverse' );
-    if ( defined( $fmts ) || defined( $hdrs ) || defined( $orient )) {
-        $fmts = $defaultFormat->getFields() unless ( defined( $fmts ));
-        $hdrs = $defaultFormat->getHeaders() unless ( defined( $hdrs ));
-        $orient = $defaultFormat->getOrientation() unless ( defined( $orient ));
-        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts, $orient, '', '' );
-    } else {
+    my $fmts    = $attrs->remove('format');
+    my $hdrs    = $attrs->remove('header');
+    my $foot    = $attrs->remove('footer');
+    my $sep     = $attrs->remove('separator');
+    my $orient  = $attrs->remove('orient');
+    my $sort    = $attrs->remove('sort');
+    my $reverse = $attrs->remove('reverse');
+    if ( defined($fmts) || defined($hdrs) || defined($orient) ) {
+        $fmts   = $defaultFormat->getFields()      unless ( defined($fmts) );
+        $hdrs   = $defaultFormat->getHeaders()     unless ( defined($hdrs) );
+        $orient = $defaultFormat->getOrientation() unless ( defined($orient) );
+        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts,
+            $orient, '', '' );
+    }
+    else {
         $fmt = $defaultFormat;
     }
 
-    my $actions = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web, $attrs, 0 );
+    my $actions =
+      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web,
+        $attrs, 0 );
     $actions->sort( $sort, $reverse );
     return $actions->formatAsHTML( $fmt, 'href', $options->{USENEWWINDOW},
-                                   'atpSearch' );
+        'atpSearch' );
 }
 
 # Lazy initialize of plugin 'cause of performance
 sub _lazyInit {
-    my ($web, $topic) = @_;
+    my ( $web, $topic ) = @_;
 
     return 1 if $initialised;
 
@@ -443,23 +477,25 @@ sub _lazyInit {
         return 0;
     }
 
-    $options = Foswiki::Plugins::ActionTrackerPlugin::Options::load(
-        $web, $topic);
+    $options =
+      Foswiki::Plugins::ActionTrackerPlugin::Options::load( $web, $topic );
 
     $defaultFormat = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        $options->{TABLEHEADER},
-        $options->{TABLEFORMAT},
-        $options->{TABLEORIENT},
-        $options->{TEXTFORMAT},
-        $options->{NOTIFYCHANGES} );
+        $options->{TABLEHEADER}, $options->{TABLEFORMAT},
+        $options->{TABLEORIENT}, $options->{TEXTFORMAT},
+        $options->{NOTIFYCHANGES}
+    );
 
-    if( $options->{EXTRAS} ) {
+    if ( $options->{EXTRAS} ) {
         my $e = Foswiki::Plugins::ActionTrackerPlugin::Action::extendTypes(
             $options->{EXTRAS} );
+
         # COVERAGE OFF safety net
-        if ( defined( $e )) {
-            Foswiki::Func::writeWarning( "- Foswiki::Plugins::ActionTrackerPlugin ERROR $e" );
+        if ( defined($e) ) {
+            Foswiki::Func::writeWarning(
+                "- Foswiki::Plugins::ActionTrackerPlugin ERROR $e");
         }
+
         # COVERAGE ON
     }
 
@@ -475,40 +511,44 @@ sub _handleActionNotify {
     my ( $web, $expr ) = @_;
 
     eval 'require Foswiki::Plugins::ActionTrackerPlugin::ActionNotify';
-    if( $@ ) {
+    if ($@) {
         Foswiki::Func::writeWarning("ATP: $@");
         return;
     }
 
-    my $text = Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications( $web, $expr, 1 );
+    my $text =
+      Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications(
+        $web, $expr, 1 );
 
     $text =~ s/<html>/<\/pre>/gios;
     $text =~ s/<\/html>/<pre>/gios;
     $text =~ s/<\/?body>//gios;
     return "<!-- from an --> <pre>$text</pre> <!-- end from an -->";
 }
+
 # COVERAGE ON
 
 sub _updateRESTHandler {
     my $session = shift;
-    my $query = Foswiki::Func::getCgiQuery();
+    my $query   = Foswiki::Func::getCgiQuery();
     try {
         my $topic = $query->param('topic');
         my $web;
-        ($web, $topic) = Foswiki::Func::normalizeWebTopicName(undef, $topic);
-        _lazyInit($web, $topic);
-        _updateSingleAction(
-            $web, $topic,
-            $query->param('uid'),
-            $query->param('field') => $query->param('value'));
-        print CGI::header('text/plain', 200); # simple message
-    } catch Error::Simple with {
+        ( $web, $topic ) =
+          Foswiki::Func::normalizeWebTopicName( undef, $topic );
+        _lazyInit( $web, $topic );
+        _updateSingleAction( $web, $topic, $query->param('uid'),
+            $query->param('field') => $query->param('value') );
+        print CGI::header( 'text/plain', 200 );    # simple message
+    }
+    catch Error::Simple with {
         my $e = shift;
-        print CGI::header('text/plain', 500);
+        print CGI::header( 'text/plain', 500 );
         print $e->{-text};
-    } catch Foswiki::AccessControlException with {
+    }
+    catch Foswiki::AccessControlException with {
         my $e = shift;
-        print CGI::header('text/plain', 500);
+        print CGI::header( 'text/plain', 500 );
         print $e->stringify();
     };
     return undef;
@@ -517,29 +557,30 @@ sub _updateRESTHandler {
 sub _updateSingleAction {
     my ( $web, $topic, $uid, %changes ) = @_;
 
-    my ($meta, $text) = Foswiki::Func::readTopic($web, $topic);
+    my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
 
     my $descr;
     my $attrs;
     my $gathering;
     my $processAction = 0;
-    my $an = 0;
+    my $an            = 0;
     my %seenUID;
 
-    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
-        $web, $topic, $text, 1);
+    my $as =
+      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
+        $text, 1 );
 
-    foreach my $action (@{$as->{ACTIONS}}) {
-        if (ref($action)) {
-            if ($action->{uid} == $uid) {
-                foreach my $key (keys %changes) {
+    foreach my $action ( @{ $as->{ACTIONS} } ) {
+        if ( ref($action) ) {
+            if ( $action->{uid} == $uid ) {
+                foreach my $key ( keys %changes ) {
                     $action->{$key} = $changes{$key};
                 }
             }
         }
     }
-    Foswiki::Func::saveTopic($web, $topic, $meta, $as->stringify(),
-                           { comment => 'atp save' });
+    Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
+        { comment => 'atp save' } );
 }
 
 1;
