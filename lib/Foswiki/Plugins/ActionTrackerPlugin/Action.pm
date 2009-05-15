@@ -52,7 +52,7 @@ require Foswiki::Plugins::ActionTrackerPlugin::Format;
 our $now = time();
 
 # Options for parsedate
-my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1 );
+my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1 );
 
 # Types of standard attributes. The 'noload' type tells us
 # not to load the hash from %ACTION attributes, and the 'nomatch' type
@@ -347,7 +347,7 @@ sub populateMissingFields {
     my $this = shift;
     my $me   = _canonicalName('me');
 
-    if ( !defined( $this->{uid} ) ) {
+    if ( !defined( $this->{uid} ) || $this->{uid} eq "" ) {
         $this->getNewUID();
     }
 

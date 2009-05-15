@@ -33,6 +33,9 @@
 .atpSearch td {
   padding:2px 5px;
 }
+.atpSearch tr {
+  border: solid #ccc 1px;
+}
 
 /* date style (e.g. late action) */
 .atpClosed,

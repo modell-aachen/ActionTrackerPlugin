@@ -21,9 +21,9 @@ BEGIN {
     require 'setlib.cfg';
 }
 
-use TWiki::Plugins::ActionTrackerPlugin::ActionNotify;
+use Foswiki::Plugins::ActionTrackerPlugin::ActionNotify;
 
 my $attrs = join( ',', @ARGV );
-TWiki::Plugins::ActionTrackerPlugin::ActionNotify::actionNotify( $attrs );
+Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::actionNotify( $attrs );
 
 1;
