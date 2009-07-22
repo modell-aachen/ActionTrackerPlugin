@@ -336,7 +336,7 @@ will match both of the following actions:
 #SettingsAnchor
 ---+ <nop>ActionTrackerPlugin Settings
 <!--
-	* Set SHORTDESCRIPTION = Adds support for action tags in topics, and automatic notification of action statuses
+	* Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
 -->
 You can override the defaults for these values in %USERSWEB%.<nop>SitePreferences, the Web<nop>Preferences topic of the current web, or in individual topics. Use the standard 'Set' syntax e.g:
 <pre>
@@ -407,6 +407,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
    * [[http://www.goldstarevents.com][Goldstar Events]]
 
 |  Author: | [[http://c-dot.co.uk][CrawfordCurrie]] |
+|  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2009 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |

@@ -24,13 +24,11 @@ use Error qw( :try );
 require Foswiki::Func;
 require Foswiki::Plugins;
 
-use vars qw( $VERSION $RELEASE $initialised $SHORTDESCRIPTION );
-
-$VERSION = '$Rev$';
-$RELEASE = '15 May 2009';
-$SHORTDESCRIPTION =
+our $VERSION = '$Rev$';
+our $RELEASE = '15 May 2009';
+our $SHORTDESCRIPTION =
 'Adds support for action tags in topics, and automatic notification of action statuses';
-$initialised = 0;
+our $initialised = 0;
 
 my $doneHeader   = 0;
 my $actionNumber = 0;
