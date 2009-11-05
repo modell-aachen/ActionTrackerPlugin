@@ -65,21 +65,21 @@ sub testAHTable {
     $s =~ s/\s+//g;
     my $t   = $1;
     my $cmp = <<HERE;
-<table class="atpSearch">
+<table class="atp atpOrientRows">
  <tr>
-  <th align="right">Web</th>
+  <th>Web</th>
   <td>Test</td>
   <td>Test</td>
   <td>Test</td>
  </tr>
  <tr>
-  <th align="right">Topic</th>
+  <th>Topic</th>
   <td>Topic</td>
   <td>Topic</td>
   <td>Topic</td>
  </tr>
  <tr>
-  <th align="right">Edit</th>
+  <th>Edit</th>
   <td>
    <a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1">edit</a>
   </td>
@@ -99,20 +99,20 @@ HERE
     $s =~ /(;t=\d+)/;
     $t = $1;
     $this->assert_html_equals( <<HERE, $s );
-<table class="atpSearch">
+<table class="atp atpOrientRows">
 <tr>
-<th align="right">Web</th>
+<th>Web</th>
 <td><a name="AcTion0" />Test</td>
 <td><a name="AcTion1" />Test</td>
 <td><a name="AcTion2" />Test</td>
 </tr>
 <tr>
-<th align="right">Topic</th>
+<th>Topic</th>
 <td>Topic</td>
 <td>Topic</td>
 <td>Topic</td></tr>
 <tr>
-<th align="right">Edit</th>
+<th>Edit</th>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t">edit</a></td>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t">edit</a></td>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t">edit</a></td></tr></table>
@@ -122,19 +122,19 @@ HERE
     $s =~ /(;t=\d+)/;
     $t = $1;
     $this->assert_html_equals( <<HERE, $s );
-<table class="atpSearch">
+<table class="atp atpOrientRows">
 <tr>
-<th align="right">Web</th>
+<th>Web</th>
 <td><a name="AcTion0" />Test</td>
 <td><a name="AcTion1" />Test</td>
 <td><a name="AcTion2" />Test</td></tr>
 <tr>
-<th align="right">Topic</th>
+<th>Topic</th>
 <td>Topic</td>
 <td>Topic</td>
 <td>Topic</td></tr>
 <tr>
-<th align="right">Edit</th>
+<th>Edit</th>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t')">edit</a></td>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t')">edit</a></td>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t')">edit</a></td></tr></table>
@@ -152,7 +152,7 @@ sub testAVTable {
     $s =~ /(;t=\d+)/;
     my $t = $1;
     $this->assert_html_equals( <<HERE, $s );
-<table class="atpSearch">
+<table class="atp atpOrientCols">
 <tr>
 <th>Web</th>
 <th>Topic</th>
@@ -175,7 +175,7 @@ HERE
     $s =~ /(;t=\d+)/;
     $t = $1;
     $this->assert_html_equals( <<HERE, $s );
-<table class="atpSearch">
+<table class="atp atpOrientCols">
 <tr>
 <th>Web</th>
 <th>Topic</th>
@@ -209,7 +209,7 @@ HERE
     $s =~ /(;t=\d+)/;
     $t = $1;
     $this->assert_html_equals( <<HERE, $s );
-<table class="atpSearch">
+<table class="atp atpOrientCols">
 <tr>
 <th>Web</th>
 <th>Topic</th>

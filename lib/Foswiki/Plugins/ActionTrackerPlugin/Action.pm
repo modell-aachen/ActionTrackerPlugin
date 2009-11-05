@@ -400,7 +400,7 @@ sub stringify {
             }
         }
     }
-    return '%ACTION{' . $attrs . ' }% ' . $descr . ' %ENDACTION%';
+    return '%ACTION{' . $attrs . ' }% ' . $descr . " %ENDACTION%";
 }
 
 # PRIVATE STATIC make a canonical name (including the web) for a user
@@ -424,7 +424,7 @@ sub _canonicalName {
 # PUBLIC For testing only, force current time to a known value
 sub forceTime {
     my $tim = shift;
-    $now = Time::ParseDate::parsedate($tim);
+    $now = Time::ParseDate::parsedate($tim, %pdopt);
 }
 
 # PRIVATE get the anchor of this action
@@ -538,7 +538,8 @@ sub _matchType_date {
         $cond = '==';
     }
     return 0 unless defined( $this->{$vbl} );
-    my $tim = Time::ParseDate::parsedate( $val, PREFER_PAST => 1, FUZZY => 1 );
+    my $tim = Time::ParseDate::parsedate(
+        $val, %pdopt, PREFER_PAST => 1, FUZZY => 1 );
     return eval "$this->{$vbl} $cond $tim";
 }
 

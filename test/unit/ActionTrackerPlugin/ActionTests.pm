@@ -186,7 +186,7 @@ sub test_MatchesOpen {
 
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("31 May 2002");
     $attrs = new Foswiki::Attrs( "within='+2'", 1 );
-    $this->assert( $action->matches($attrs) );
+    $this->assert( $action->matches($attrs), $action->stringify() );
     $attrs = new Foswiki::Attrs( "within='2'", 1 );
     $this->assert( $action->matches($attrs) );
     $attrs = new Foswiki::Attrs( "within='+1'", 1 );
@@ -214,7 +214,7 @@ sub test_MatchesOpen {
     $this->assert( !$action->matches($attrs) );
 
     $attrs = new Foswiki::Attrs( 'due="2 Jun 02"', 1 );
-    $this->assert( $action->matches($attrs) );
+    $this->assert( $action->matches($attrs), $action->stringify() );
     $attrs = new Foswiki::Attrs( 'due="3 Jun 02"', 1 );
     $this->assert( !$action->matches($attrs) );
     $attrs = new Foswiki::Attrs( 'due="< 3 Jun 02"', 1 );
@@ -394,12 +394,12 @@ sub test_VerticalOrient {
     );
     my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Who|Due|",
         "|\$who|\$due|", "rows" );
-    my $s = $fmt->formatHTMLTable( [$action], "name", 0, 'atp' );
-    $s =~ s/<table class=\"atpSearch\">//;
+    my $s = $fmt->formatHTMLTable( [$action], "name", 0, 'blah' );
+    $s =~ s/<table class=\"blah atpOrientRows\">//;
     $s =~ s/<\/table>//;
     $s =~ s/\n//g;
     $this->assert_str_equals(
-"<tr><th align=\"right\">Who</th><td><a name=\"AcTion0\" />$this->{users_web}.JohnDoe</td></tr><tr><th align=\"right\">Due</th><td><span class=\"atpOpen\">02 Jun 2002</span></td></tr>",
+"<tr><th>Who</th><td><a name=\"AcTion0\" />$this->{users_web}.JohnDoe</td></tr><tr><th>Due</th><td><span class=\"atpOpen\">02 Jun 2002</span></td></tr>",
         $s
     );
 }
@@ -471,7 +471,7 @@ sub test_HTMLFormattingOpen {
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$edit |", "" );
     my $url =
-"$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}/edit$Foswiki::cfg{ScriptSuffix}/Test/Topic\\?skin=action%2cpattern;atp_action=AcTion0;t=";
+"$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}/edit$Foswiki::cfg{ScriptSuffix}/Test/Topic\\?skin=action%2cpattern;atp_action=AcTion0;.*";
     $s = $fmt->formatHTMLTable( [$action], "href", 0 );
     $this->assert( $s =~ m(<td> <a href="(.*?)">edit</a> </td>), $s );
     $this->assert( $1, $s );
@@ -608,7 +608,7 @@ sub test_ToString {
     );
     $action->populateMissingFields();
     $s = $action->stringify();
-    $this->assert_matches( qr/% <<EOFF\nAnother new action\nEOF\nEOFF$/, $s );
+    $this->assert_matches( qr/% Another new action<br\/>EOF %ENDACTION%$/, $s );
 }
 
 sub test_FindByUID {
@@ -629,8 +629,9 @@ EOF";
     my ( $action, $pre, $post ) = $as->splitOnAction("AaAa");
     $this->assert_str_equals( $action->{text}, "AOne" );
     $this->assert_str_equals( "\n",            $pre->stringify() );
-    $this->assert_str_equals(
-'%ACTION{ due="2002-05-30" state="open" uid="BbBb" who="TemporaryActionTestsUsersWeb.Two" }% ATwo %ENDACTION%%ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
+    $this->assert_str_equals('
+%ACTION{ due="2002-05-30" state="open" uid="BbBb" who="TemporaryActionTestsUsersWeb.Two" }% ATwo %ENDACTION%
+%ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
 %ACTION{ due="2002-05-30" state="open" uid="DdDd" who="TemporaryActionTestsUsersWeb.Four" }% AFour %ENDACTION%',
         $post->stringify()
     );
@@ -638,10 +639,11 @@ EOF";
     ( $action, $pre, $post ) = $as->splitOnAction("BbBb");
     $this->assert_str_equals( $action->{text}, "ATwo" );
     $this->assert_str_equals( '
-%ACTION{ due="2002-05-30" state="open" uid="AaAa" who="TemporaryActionTestsUsersWeb.One" }% AOne %ENDACTION%',
+%ACTION{ due="2002-05-30" state="open" uid="AaAa" who="TemporaryActionTestsUsersWeb.One" }% AOne %ENDACTION%
+',
         $pre->stringify() );
-    $this->assert_str_equals(
-'%ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
+    $this->assert_str_equals('
+%ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
 %ACTION{ due="2002-05-30" state="open" uid="DdDd" who="TemporaryActionTestsUsersWeb.Four" }% AFour %ENDACTION%',
         $post->stringify()
     );
@@ -649,7 +651,9 @@ EOF";
 
     $this->assert_str_equals( 'AThree', $action->{text} );
     $this->assert_str_equals( '
-%ACTION{ due="2002-05-30" state="open" uid="AaAa" who="TemporaryActionTestsUsersWeb.One" }% AOne %ENDACTION%%ACTION{ due="2002-05-30" state="open" uid="BbBb" who="TemporaryActionTestsUsersWeb.Two" }% ATwo %ENDACTION%',
+%ACTION{ due="2002-05-30" state="open" uid="AaAa" who="TemporaryActionTestsUsersWeb.One" }% AOne %ENDACTION%
+%ACTION{ due="2002-05-30" state="open" uid="BbBb" who="TemporaryActionTestsUsersWeb.Two" }% ATwo %ENDACTION%
+',
         $pre->stringify() );
     $this->assert_str_equals( '
 %ACTION{ due="2002-05-30" state="open" uid="DdDd" who="TemporaryActionTestsUsersWeb.Four" }% AFour %ENDACTION%',
@@ -658,7 +662,9 @@ EOF";
     ( $action, $pre, $post ) = $as->splitOnAction("DdDd");
     $this->assert_str_equals( $action->{text}, "AFour" );
     $this->assert_str_equals( '
-%ACTION{ due="2002-05-30" state="open" uid="AaAa" who="TemporaryActionTestsUsersWeb.One" }% AOne %ENDACTION%%ACTION{ due="2002-05-30" state="open" uid="BbBb" who="TemporaryActionTestsUsersWeb.Two" }% ATwo %ENDACTION%%ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
+%ACTION{ due="2002-05-30" state="open" uid="AaAa" who="TemporaryActionTestsUsersWeb.One" }% AOne %ENDACTION%
+%ACTION{ due="2002-05-30" state="open" uid="BbBb" who="TemporaryActionTestsUsersWeb.Two" }% ATwo %ENDACTION%
+%ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
 ',
         $pre->stringify() );
     $this->assert_str_equals( "", $post->stringify() );
@@ -696,21 +702,21 @@ sub test_FindChanges {
     $naction->findChanges( $oaction, $fmt, \%not );
     my $text = $not{"$this->{users_web}.SamPeckinpah"}{text};
     $this->assert_matches(
-qr/\|$this->{users_web}.JaneDoe\|2 Jun 2009\|closed\|$this->{users_web}.ThomasMoore\|/,
+qr/\|$this->{users_web}.JaneDoe\|0?2 Jun 2009\|closed\|$this->{users_web}.ThomasMoore\|/,
         $text
     );
     $this->assert_matches( qr/\|A new action<p>with more text\|/, $text );
     $this->assert_matches(
         qr/Attribute \"state\" changed, was \"open\", now \"closed\"/, $text );
     $this->assert_matches(
-        qr/Attribute \"due\" changed, was \"2 Jun 2002\", now \"2 Jun 2009\"/,
+        qr/Attribute \"due\" changed, was \"0?2 Jun 2002\", now \"0?2 Jun 2009\"/,
         $text );
     $this->assert_matches(
 qr/Attribute \"text\" changed, was \"A new action\", now \"A new action<p>with more text\"/,
         $text
     );
     $this->assert_matches(
-        qr/Attribute \"created\" was \"1 Jan 1999\" now removed/, $text );
+        qr/Attribute \"created\" was \"0?1 Jan 1999\" now removed/, $text );
     $this->assert_matches(
 qr/Attribute \"creator\" added with value \"$this->{users_web}.ThomasMoore\"/,
         $text
@@ -862,10 +868,10 @@ sub test_CreateFromQuery {
     $chosen =~ s/ creator="$this->{users_web}.Creator"//o;
     $chosen =~ s/ notify="$this->{users_web}\.Notifyee"//o;
     $chosen =~ s/ closer="$this->{users_web}\.Closer"//o;
-    $chosen =~ s/ due="4-May-2003"//o;
-    $chosen =~ s/ closed="2-May-2003"//o;
+    $chosen =~ s/ due="2003-05-04"//o;
+    $chosen =~ s/ closed="2003-05-02"//o;
     $chosen =~ s/ who="$this->{users_web}\.Who"//o;
-    $chosen =~ s/ created="2003-05-01"//o;
+    $chosen =~ s/ created="2003-05-03"//o;
     $chosen =~ s/ uid="UID"//o;
     $this->assert_matches( qr/^%ACTION{\s*}% Text %ENDACTION%$/, $chosen, );
 }
@@ -876,10 +882,9 @@ sub test_FormatForEditHidden {
     my $action = new Foswiki::Plugins::ActionTrackerPlugin::Action(
         "Web",
         "Topic",
-        9,
-'state="open" creator="$this->{users_web}.Creator" notify="$this->{users_web}.Notifyee" closer="$this->{users_web}.Closer" due="4-May-2003" closed="2-May-2003" who="$this->{users_web}.Who" created="3-May-2003" uid="UID"',
-        "Text"
-    );
+        9, <<EG, "Text");
+state="open" creator="$this->{users_web}.Creator" notify="$this->{users_web}.Notifyee" closer="$this->{users_web}.Closer" due="4-May-2003" closed="2-May-2003" who="$this->{users_web}.Who" created="3-May-2003" uid="UID"
+EG
     my $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Who|", "|\$who|",
         "cols", "", "" );
@@ -887,29 +892,37 @@ sub test_FormatForEditHidden {
 
     # only the who field should be a text; the rest should be hiddens
     $s =~ s(<input (.*?name="state".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/, $1 );
-    $this->assert_matches( qr/value="open"/,  $1 );
+    my $glim = $1;
+    $this->assert_matches( qr/type="hidden"/, $glim );
+    $this->assert_matches( qr/value="open"/,  $glim );
     $s =~ s(<input (.*?name="creator".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/,                       $1 );
-    $this->assert_matches( qr/value="$this->{users_web}\.Creator"/, $1 );
+    $glim = $1;
+    $this->assert_matches( qr/type="hidden"/,                       $glim );
+    $this->assert_matches( qr/value="$this->{users_web}\.Creator"/, $glim );
     $s =~ s(<input (.*?name="notify".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/,                        $1 );
-    $this->assert_matches( qr/value="$this->{users_web}\.Notifyee"/, $1 );
+    $glim = $1;
+    $this->assert_matches( qr/type="hidden"/,                        $glim );
+    $this->assert_matches( qr/value="$this->{users_web}\.Notifyee"/, $glim );
     $s =~ s(<input (.*?name="closer".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/,                      $1 );
-    $this->assert_matches( qr/value="$this->{users_web}\.Closer"/, $1 );
+    $glim = $1;
+    $this->assert_matches( qr/type="hidden"/,                      $glim );
+    $this->assert_matches( qr/value="$this->{users_web}\.Closer"/, $glim );
     $s =~ s(<input (.*?name="due".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/,      $1 );
-    $this->assert_matches( qr/value="4 May 2003"/, $1 );
+    $glim = $1;
+    $this->assert_matches( qr/type="hidden"/,      $glim );
+    $this->assert_matches( qr/value="0?4 May 2003"/, $glim );
     $s =~ s(<input (.*?name="closed".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/,      $1 );
-    $this->assert_matches( qr/value="2 May 2003"/, $1 );
+    $glim = $1;
+    $this->assert_matches( qr/type="hidden"/,      $glim );
+    $this->assert_matches( qr/value="0?2 May 2003"/, $glim );
     $s =~ s(<input (.*?name="created".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/,      $1 );
-    $this->assert_matches( qr/value="3 May 2003"/, $1 );
+    $glim = $1;
+    $this->assert_matches( qr/type="hidden"/,      $glim );
+    $this->assert_matches( qr/value="0?3 May 2003"/, $glim );
     $s =~ s(<input (.*?name="uid".*?)/>)();
-    $this->assert_matches( qr/type="hidden"/, $1 );
-    $this->assert_matches( qr/value="UID"/,   $1 );
+    $glim = $1;
+    $this->assert_matches( qr/type="hidden"/, $glim );
+    $this->assert_matches( qr/value="UID"/,   $glim );
     $this->assert_does_not_match( qr/name="text"/,   $s );
     $this->assert_does_not_match( qr/type="hidden"/, $s );
 }
@@ -972,7 +985,7 @@ s(<td class="atpEdit"><input (.*?name="$n".*?)/><input (.*?)/></td>)(),
             $this->assert_matches( qr/^\s*size="\d+"\s*$/, $d );
         }
     }
-    $this->assert( $s =~ s/^\s*<table class="atpSearch">//, $s );
+    $this->assert( $s =~ s/^\s*<table class="atpEdit atpOrientCols">//, $s );
     $this->assert( $s =~ s/\s*<tr><\/tr>//,                 $s );
     $this->assert( $s =~ s/\s*<tr>// );
     $this->assert( $s =~ s/\s*<td class="atpEdit">// );

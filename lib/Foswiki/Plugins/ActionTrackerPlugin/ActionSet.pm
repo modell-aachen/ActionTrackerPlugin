@@ -44,6 +44,7 @@ sub add {
 sub load {
     my ( $web, $topic, $text, $keepText ) = @_;
 
+    $text =~ s/\r//g;
     my @blocks       = split( /(%ACTION{.*?}%|%ENDACTION%)/, $text );
     my $actionSet    = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
     my $i            = 0;
@@ -53,7 +54,6 @@ sub load {
         if ( $block =~ /^%ACTION{(.*)}%$/ ) {
             my $attrs = $1;
             my $descr;
-
             # Sniff ahead to see if we have a matching ENDACTION
             if (   $i + 1 < scalar(@blocks)
                 && $blocks[ $i + 1 ] =~ /%ENDACTION%/ )
@@ -66,11 +66,11 @@ sub load {
             else {
 
                 # Old syntax
-                if ( $blocks[$i] =~ s/^\s*<<(\w+)(.*)\r?\n\1//s ) {
+                if ( $blocks[$i] =~ s/^\s*<<(\w+)(.*)\n\1//s ) {
                     $descr = $2;
                     $i++ unless length( $blocks[$i] ) && $blocks[$i] =~ /\S/;
                 }
-                elsif ( $blocks[$i] =~ s/^(.*?)\r?\n// ) {
+                elsif ( $blocks[$i] =~ s/^(.*?)\n/\n/s ) {
                     $descr = $1;
                 }
                 else {

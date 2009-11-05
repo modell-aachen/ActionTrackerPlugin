@@ -22,6 +22,7 @@ sub set_up {
 
     # Need this to get the actionnotify template
     $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
+    Foswiki::Func::getContext()->{ActionTrackerPluginEnabled} = 1;
     foreach my $lib (@INC) {
         my $d = "$lib/../templates";
         if ( -e "$d/actionnotify.tmpl" ) {
@@ -134,9 +135,10 @@ Before
 After
 ";
     $Foswiki::Plugins::ActionTrackerPlugin::pluginInitialized = 1;
-    Foswiki::Plugins::ActionTrackerPlugin::commonTagsHandler( $chosen,
-        "Finagle", $this->{users_web} );
-
+    Foswiki::Plugins::ActionTrackerPlugin::commonTagsHandler(
+        $chosen, "Finagle", $this->{users_web} );
+    $chosen = Foswiki::Func::expandCommonVariables(
+        $chosen, "Finagle", $this->{users_web} );
     $this->assert_matches( qr/Test0:/,    $chosen );
     $this->assert_matches( qr/Test1:/,    $chosen );
     $this->assert_matches( qr/Main0:/,    $chosen );
@@ -249,10 +251,10 @@ sub testAfterEditHandler {
     $re = qr/\s+creator=\"$this->{users_web}\.WikiGuest\"\s+/o;
     $this->assert_matches( $re, $first );
     $first =~ s/$re/ /;
-    $re = qr/\s+due=\"3-Jun-2002\"\s+/;
+    $re = qr/\s+due=\"\"\s+/;
     $this->assert_matches( $re, $first );
     $first =~ s/$re/ /;
-    $re = qr/\s+created=\"3-Jun-2002\"\s+/;
+    $re = qr/\s+created=\"2002-06-03\"\s+/;
     $this->assert_matches( $re, $first );
     $first =~ s/$re/ /;
     $re = qr/\s+who=\"$this->{users_web}.WikiGuest\"\s+/;
@@ -281,16 +283,13 @@ sub testBeforeSaveHandler1 {
     $re = qr/ creator=\"$this->{users_web}.WikiGuest\"/o;
     $this->assert_matches( $re, $text );
     $text =~ s/$re//;
-    $re = qr/ created=\"3-Jun-2002\"/o;
+    $re = qr/ created=\"2002-06-03\"/o;
     $this->assert_matches( $re, $text );
     $text =~ s/$re//;
-    $re = qr/ due=\"3-Jun-2002\"/o;
+    $re = qr/ due=\"\"/o;
     $this->assert_matches( $re, $text );
     $text =~ s/$re//;
     $re = qr/ who=\"$this->{users_web}.WikiGuest\"/o;
-    $this->assert_matches( $re, $text );
-    $text =~ s/$re//;
-    $re = qr/ No description/o;
     $this->assert_matches( $re, $text );
     $text =~ s/$re//;
     $re = qr/^%META:TOPICINFO.*$/m;
@@ -336,10 +335,10 @@ EOF
     $re = qr/ creator=\"$this->{users_web}.WikiGuest\"/o;
     $this->assert_matches( $re, $text );
     $text =~ s/$re//;
-    $re = qr/ created=\"3-Jun-2002\"/o;
+    $re = qr/ created=\"2002-06-03\"/o;
     $this->assert_matches( $re, $text );
     $text =~ s/$re//;
-    $re = qr/ due=\"3-Jun-2002\"/o;
+    $re = qr/ due=\"\"/o;
     $this->assert_matches( $re, $text );
     $text =~ s/$re//;
     $re = qr/ who=\"$this->{users_web}.WikiGuest\"/o;

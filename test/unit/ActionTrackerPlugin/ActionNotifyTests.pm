@@ -349,7 +349,7 @@ sub test_C_ChangedSince {
             $re = qr/Changes to actions since 01 Dec 2001 - 00:00/;
             $this->assert_matches( $re, $html );
             $re =
-qr/Attribute "due" changed, was "Fri, 22 Jun 2001 \(LATE\)", now "Sat, 22 Jun 2002"/;
+qr/Attribute "due" changed, was "22 Jun 2001 \(LATE\)", now "22 Jun 2002"/;
             $this->assert_matches( $re, $html );
             $saw .= "A";
         }

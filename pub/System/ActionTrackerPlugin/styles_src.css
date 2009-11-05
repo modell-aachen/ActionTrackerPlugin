@@ -29,6 +29,9 @@
   background-color: #6b7f93;
   color:white;
   padding:2px 5px;
+
+.atpOrientRows th {
+  text-align: right;
 }
 .atpSearch td {
   padding:2px 5px;

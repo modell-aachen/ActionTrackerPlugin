@@ -25,7 +25,7 @@ require Foswiki::Func;
 require Foswiki::Plugins;
 
 our $VERSION = '$Rev$';
-our $RELEASE = '15 May 2009';
+our $RELEASE = '5 Nov 2009';
 our $SHORTDESCRIPTION =
 'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -53,6 +53,7 @@ sub initPlugin {
     $doneHeader  = 0;
 
     Foswiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
+
     Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
         'context-free' );
 
@@ -452,8 +453,9 @@ sub _handleActionSearch {
       Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web,
         $attrs, 0 );
     $actions->sort( $sort, $reverse );
-    return $actions->formatAsHTML( $fmt, 'href', $options->{USENEWWINDOW},
-        'atpSearch' );
+    my $result = $actions->formatAsHTML(
+        $fmt, 'href', $options->{USENEWWINDOW}, 'atpSearch' );
+    return $result;
 }
 
 # Lazy initialize of plugin 'cause of performance

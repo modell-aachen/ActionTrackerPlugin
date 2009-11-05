@@ -425,6 +425,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2009 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  5 Nov 2009 | Foswiki:Tasks/Item8322: documentation improvements Foswiki:Tasks/Item8092: add CSS classes for different table orientations Foswiki:Tasks/1187: standardised entry fields as accepting GMT times only, fixed the test cases |
 |  15 May 2009 | Foswikitask:Item1627: Add horizontal grid lines to separate tasks as it was too difficult to see where one task ends and the next begins. Foswikitask:Item1187 If the server was east of Greenwich the dates in ActionTrackerPlugin were displayed as one day earlier and each time you edited an action the dates would decrement by one day. Foswikitask:Item1364 ActionTrackerPlugin handles actions without uid very badly. Foswikitask:Item1482 actionnotify refered to old name space. |
 |  29 Jan 2009 | Foswikitask:Item455: port to foswiki Foswikitask:Item5974: correct CSS for search results table Foswikitask:Item5938: load CSS for ACTIONSEARCH Foswikitask:Item5606: Foswikitask:Item5915: respect global settings for time format Foswikitask:Item4312: finished support for header, footer etc. Foswikitask:Item412: added =reverse= Foswikitask:Item5962: removed apparently spurious newline |
 |  7 May 2008 | TWikibug:Item5607: http: was being doubled up on URLs in mail due to a core bug |
