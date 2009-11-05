@@ -44,7 +44,7 @@ Actions are _embedded into topics_ so you can easily edit them, and even process
 
 ---++ Actions
 
-__Note:__ if you have previously used this plugin you will note that the syntax of actions has changed. The plugin still recognises the old syntax, and will automatically upgrade topics when you edit them.
+__Note:__ if you have used this plugin with TWiki you may note that the syntax of actions has changed. The plugin still recognises the old syntax, and will automatically upgrade topics when you edit them.
 
 Write the command =%<nop>ACTION{= _attributes_ =}% ...  %<nop>ENDACTION%= anywhere in a topic, where =...= represents the action description. Standard attributes are
 	| *Name* | *Value* | *Description* | *Auto-completed* |
@@ -298,9 +298,9 @@ As well as the standard attributes you can add non-standard attributes to action
 Non-standard attributes must be lower-case words. The following names may not be used for non-standard attributes:
 =closed=, =closer=, =created=, =creator=, =dollar=, =due=, =edit=, =format=, =header=, =late=, =n=, =nop=, =notify=, =percnt=, =quot=, =sort=, =state=, =text=, =topic=, =uid=, =web=, =who=, =within=.
 
-To define non-standard attributes you need to set the value of EXTRAS in this topic (or to the Web<nop>Preferences topic of each web) - see [[#SettingsAnchor][Settings]] below. All attributes must be given a type, which is used by the formatter, the search engine and the action editor. For example,
+To define non-standard attributes you need to set the value of ACTIONTRACKERPLUGIN_EXTRAS - see [[#SettingsAnchor][Settings]] below. All attributes must be given a type, which is used by the formatter, the search engine and the action editor. For example,
 <pre>
-	* <nop>Set EXTRAS = |plaintiffs,names,16|decision,text,16|sentencing,date|sentence,select,"life","5 years","community service"|
+	* <nop>Set ACTIONTRACKERPLUGIN_EXTRAS = |plaintiffs,names,16|decision,text,16|sentencing,date|sentence,select,"life","5 years","community service"|
 </pre>
 The following types are supported:
 | *Type* | *Format* | *Description* |
@@ -310,9 +310,9 @@ The following types are supported:
 | =date= | date, <i>size</i> | A date in one of the formats described above. See [[#DateFormats][Date Formats]] |
 In the above, <i>size</i> is a single number, which is the width (in characters) of the text box in the action editor for =text=, =names= and =date=, and the number of options to show in =select=..
 
-__Note__ that there is one exception to the "no redefinition" rule above; the =state= attribute can be extended to take extra states. However if you want the closure functionality (closed, closer, and late actions) to work, the =closed= state must be retained. To extend the set of states, simply include a definition of =state= in the EXTRAS definition:
+__Note__ that there is one exception to the "no redefinition" rule above; the =state= attribute can be extended to take extra states. However if you want the closure functionality (closed, closer, and late actions) to work, the =closed= state must be retained. To extend the set of states, simply include a definition of =state= in the ACTIONTRACKERPLUGIN_EXTRAS definition:
 <pre>
-	* <nop>Set EXTRAS = |state,select,1,"open","fried","boiled","poached","closed"|
+	* <nop>Set ACTIONTRACKERPLUGIN_EXTRAS = |state,select,1,"open","fried","boiled","poached","closed"|
 </pre>
 
 ---++ Searching for non-standard attributes
@@ -338,53 +338,66 @@ will match both of the following actions:
 <!--
 	* Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
 -->
-You can override the defaults for these values in %USERSWEB%.<nop>SitePreferences, the Web<nop>Preferences topic of the current web, or in individual topics. Use the standard 'Set' syntax e.g:
+The following preferences control different aspects of the action tracker's behaviour.
+You can override the defaults for these preferences in %USERSWEB%.<nop>SitePreferences, the Web<nop>Preferences topic of the current web, or in individual topics, using the standard 'Set' syntax e.g:
 <pre>
    *<nop> Set ACTIONTRACKERPLUGIN_EDITORIENT = rows
 </pre>
 ---++ Formatting how actions are displayed
 The default format of an action output, unless overridden by =format=, =header= etc. The following fields can be output: =web=, =topic=, =text=, =who=, =due=, =notify=, =uid=, =creator=, =state=, =edit=, and any =ACTIONTRACKERPLUGIN_EXTRAS= you may have. =TABLEHEADER= defines the column headings, =TABLEFORMAT= defines the contents of the columns, and if =TABLEORIENT= is set to =rows=, action tables will be aligned as rows of values instead of the default columns of values.
-   * ACTIONTRACKERPLUGIN_TABLEHEADER =| Assigned to | Due date | Description | State | Notify ||=
-   * ACTIONTRACKERPLUGIN_TABLEFORMAT =| $who | $due | $text $link | $state | $notify | $edit |=
-   * ACTIONTRACKERPLUGIN_TABLEORIENT =cols=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_TABLEHEADER= | =&vbar; Assigned to &vbar; Due date &vbar; Description &vbar; State &vbar; Notify &vbar;&vbar;= |
+| =ACTIONTRACKERPLUGIN_TABLEFORMAT= | =&vbar; $who &vbar; $due &vbar; $text $link &vbar; $state &vbar; $notify &vbar; $edit &vbar;= |
+| =ACTIONTRACKERPLUGIN_TABLEORIENT= | =cols= |
 The alternative text format of an action, as seen by a mail recipient who doesn't accept HTML in mail. Used when mailing action or change notifications.
-   * ACTIONTRACKERPLUGIN_TEXTFORMAT =Action for $who, due $due, $state$n$text$n=
+| =ACTIONTRACKERPLUGIN_TEXTFORMAT= | =Action for $who, due $due, $state$n$text$n= |
 Full URL of the CSS to use in formatting actions. This file is also called from the mail generated by the =actionnotify= script, so you have to use an absolute URL here, and the URL has to be visible to anyone who might receive an action notification.
-   * ACTIONTRACKERPLUGIN_CSS =%<nop>PUBURL%/%<nop>SYSTEMWEB%/ActionTrackerPlugin/styles.css=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_CSS= | =%<nop>PUBURL%/%<nop>SYSTEMWEB%/ActionTrackerPlugin/styles.css= |
 If an action has no due date defined when it is created, then it is treated (for sorting etc) as if it was due at this time. This is a number of seconds since 1st Jan 1970, and should be 0 to sort actions that have no due date to the start of a list, or a very large number to sort them to the end.
-   * ACTIONTRACKERPLUGIN_DEFAULTDUE =9999999999=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_DEFAULTDUE= | =9999999999= |
 ---++ Formatting actions for editing
 The format of the fields in the action editor are set by:
-   * ACTIONTRACKERPLUGIN_EDITHEADER =| Assigned to | Due date | State | Notify |=
-   * ACTIONTRACKERPLUGIN_EDITFORMAT =| $who | $due | $state | $notify |=
-   * ACTIONTRACKERPLUGIN_EDITORIENT =cols=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_EDITHEADER= | =&vbar; Assigned to &vbar; Due date &vbar; State &vbar; Notify &vbar;= |
+| =ACTIONTRACKERPLUGIN_EDITFORMAT= | =&vbar; $who &vbar; $due &vbar; $state &vbar; $notify &vbar;= |
+| ACTIONTRACKERPLUGIN_EDITORIENT | =cols= |
 You can also override the default =EDITBOXWIDTH= and =EDITBOXHEIGHT= settings just for the action editor:
-   * ACTIONTRACKERPLUGIN_EDITBOXWIDTH =%EDITBOXWIDTH%=
-   * ACTIONTRACKERPLUGIN_EDITBOXHEIGHT =%EDITBOXHEIGHT%=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_EDITBOXWIDTH= | =%EDITBOXWIDTH%= |
+| =ACTIONTRACKERPLUGIN_EDITBOXHEIGHT= | =%EDITBOXHEIGHT%= |
 If you prefer the action editor to use the same browser window to edit an action, or you don't have Javascript, set this to =0=. If set to 1 will edit an action in a separate browser window.
-   * ACTIONTRACKERPLUGIN_USENEWWINDOW =1=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_USENEWWINDOW= | =1= |
 
 If you want the action editor to offer a 'Preview Changes' button, instead of the usual 'Save Changes', set this to =0=. If this is set, and =USENEWWINDOW= is =1=, the subwindow _should_ close on save, but it won't because I haven't worked out how to do this safely in Java<nop>Script.
-   * ACTIONTRACKERPLUGIN_NOPREVIEW =1=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_NOPREVIEW= | =1= |
 
 #SettingsNotify
 The fields to scan to detect changes for actionnotify. Changes in other fields are ignored.
-   * ACTIONTRACKERPLUGIN_NOTIFYCHANGES =$who,$due,$state,$text=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_NOTIFYCHANGES= | =$who,$due,$state,$text= |
 
 Non-standard attributes - see [[#NonStandardAttributes][Non-standard attributes]] above.
-   * ACTIONTRACKERPLUGIN_EXTRAS _none_
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_EXTRAS= | _none_ |
 
 If set to 1, the action tracker will show action states using a drop-down menu, to allow viewers to quickly and easily change action states. You can disable this feature by setting this to 0.
-   * ACTIONTRACKERPLUGIN_ENABLESTATESHORTCUT =1=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_ENABLESTATESHORTCUT= | =1= |
 Note that each state has an associated CSS class (e.g. =atpStateopen=) that is used to render the HTML 'select' element when =ENABLESTATESHORTCUT= is on. If you extend the range of states, you will need to add new CSS classes as well.
 
 The strings used by the =$button$ switch. A =$closebutton= is a special
-   * ACTIONTRACKERPLUGIN_CLOSEBUTTONNAME =Close=
-   * ACTIONTRACKERPLUGIN_CLOSEBUTTONCLOSED =Closed=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_CLOSEBUTTONNAME= | =Close= |
+| =ACTIONTRACKERPLUGIN_CLOSEBUTTONCLOSED= | =Closed= |
  
 ---++ Debugging
 Set to 1 to enable debug features, including the undocumented =%<nop>ACTIONNOTIFICATIONS{}%= and =%<nop>ACTIONTRACKERPREFS%= features.
-   * ACTIONTRACKERPLUGIN_DEBUG =0=
+| _Preference_ | _Default_ |
+| =ACTIONTRACKERPLUGIN_DEBUG= | =0= |
 
 ---
 ---+ Plugin Installation Instructions
