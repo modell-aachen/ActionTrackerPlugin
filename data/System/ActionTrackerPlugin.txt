@@ -350,8 +350,8 @@ You can override the defaults for these preferences in %USERSWEB%.<nop>SitePrefe
 ---++ Formatting how actions are displayed
 The default format of an action output, unless overridden by =format=, =header= etc. The following fields can be output: =web=, =topic=, =text=, =who=, =due=, =notify=, =uid=, =creator=, =state=, =edit=, and any =ACTIONTRACKERPLUGIN_EXTRAS= you may have. =TABLEHEADER= defines the column headings, =TABLEFORMAT= defines the contents of the columns, and if =TABLEORIENT= is set to =rows=, action tables will be aligned as rows of values instead of the default columns of values.
 | _Preference_ | _Default_ |
-| =ACTIONTRACKERPLUGIN_TABLEHEADER= | =&vbar; Assigned to &vbar; Due date &vbar; Description &vbar; State &vbar; Notify &vbar;&vbar;= |
-| =ACTIONTRACKERPLUGIN_TABLEFORMAT= | =&vbar; $who &vbar; $due &vbar; $text $link &vbar; $state &vbar; $notify &vbar; $edit &vbar;= |
+| =ACTIONTRACKERPLUGIN_TABLEHEADER= | =| Assigned to | Due date | Description | State | Notify ||= |
+| =ACTIONTRACKERPLUGIN_TABLEFORMAT= | =| $who | $due | $text $link | $state | $notify | $edit |= |
 | =ACTIONTRACKERPLUGIN_TABLEORIENT= | =cols= |
 The alternative text format of an action, as seen by a mail recipient who doesn't accept HTML in mail. Used when mailing action or change notifications.
 | =ACTIONTRACKERPLUGIN_TEXTFORMAT= | =Action for $who, due $due, $state$n$text$n= |
@@ -364,8 +364,8 @@ If an action has no due date defined when it is created, then it is treated (for
 ---++ Formatting actions for editing
 The format of the fields in the action editor are set by:
 | _Preference_ | _Default_ |
-| =ACTIONTRACKERPLUGIN_EDITHEADER= | =&vbar; Assigned to &vbar; Due date &vbar; State &vbar; Notify &vbar;= |
-| =ACTIONTRACKERPLUGIN_EDITFORMAT= | =&vbar; $who &vbar; $due &vbar; $state &vbar; $notify &vbar;= |
+| =ACTIONTRACKERPLUGIN_EDITHEADER= | =| Assigned to | Due date | State | Notify |= |
+| =ACTIONTRACKERPLUGIN_EDITFORMAT= | =| $who | $due | $state | $notify |= |
 | ACTIONTRACKERPLUGIN_EDITORIENT | =cols= |
 You can also override the default =EDITBOXWIDTH= and =EDITBOXHEIGHT= settings just for the action editor:
 | _Preference_ | _Default_ |
@@ -429,6 +429,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2009 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  4 Jan 2010 | Foswiki:Tasks/Item8376: doc fix |
 |             | Foswiki:Tasks/Item2467: fix stylesheet. Foswiki:Tasks/Item2474: doc updates |
 |  5 Nov 2009 | Foswiki:Tasks/Item8322: documentation improvements Foswiki:Tasks/Item8092: add CSS classes for different table orientations Foswiki:Tasks/1187: standardised entry fields as accepting GMT times only, fixed the test cases |
 |  15 May 2009 | Foswikitask:Item1627: Add horizontal grid lines to separate tasks as it was too difficult to see where one task ends and the next begins. Foswikitask:Item1187 If the server was east of Greenwich the dates in ActionTrackerPlugin were displayed as one day earlier and each time you edited an action the dates would decrement by one day. Foswikitask:Item1364 ActionTrackerPlugin handles actions without uid very badly. Foswikitask:Item1482 actionnotify refered to old name space. |
