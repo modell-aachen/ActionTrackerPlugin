@@ -362,7 +362,12 @@ sub splitOnAction {
         if ($found) {
             $post->add($action);
         }
-        elsif ( ref($action) && $action->{uid} eq $uid ) {
+        elsif ( ref($action) && !defined( $action->{uid}) &&
+                  $action->{ACTION_NUMBER} eq $uid ) {
+            $found = $action;
+        }
+        elsif ( ref($action) && defined( $action->{uid}) &&
+                  $action->{uid} eq $uid ) {
             $found = $action;
         }
         else {

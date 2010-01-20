@@ -25,7 +25,7 @@ require Foswiki::Func;
 require Foswiki::Plugins;
 
 our $VERSION = '$Rev$';
-our $RELEASE = '8 Dec 2009';
+our $RELEASE = '20 Jan 2010';
 our $SHORTDESCRIPTION =
 'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -207,6 +207,7 @@ sub _beforeActionEdit {
     my $as =
       Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
         $text, 1 );
+
     my ( $action, $pre, $post ) = $as->splitOnAction($uid);
     my $pretext  = $pre->stringify();
     my $posttext = $post->stringify();

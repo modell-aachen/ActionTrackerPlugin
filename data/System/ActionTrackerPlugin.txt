@@ -23,12 +23,12 @@ This plugin provides support for tracking actions embedded in topics. Actions ca
 
 This plugin is particularly useful for [[http://en.wikipedia.org/wiki/Minutes][meeting minutes]]. As you write the minutes during the meeting, you simply enter the actions into the text, and as soon as the topic is saved, the actions "go live". 
 For example, at a recent meeting of the British Cabinet:
-<verbatim>
+<pre>
 GordonBrown agreed to a zero tax rate for all self-employed software engineers, to make up for past unfair treatment.
-%ACTION{who="GordonBrown" due="5th April 2008"}% Repay all unfairly levied taxes %ENDACTION%
-%ACTION{who="AlistairDarling" due="25th Dec 2007"}% Contact Santa to find out who is going to pay for it %ENDACTION%
+%<nop>ACTION{who="GordonBrown" due="5th April 2008"}% Repay all unfairly levied taxes %ENDACTION%
+%<nop>ACTION{who="AlistairDarling" due="25th Dec 2007"}% Contact Santa to find out who is going to pay for it %ENDACTION%
 AlistairDarling observed that this might adversely impact the government hors d'ouvres budget.
-</verbatim>
+</pre>
 But that's not the only application. The action tracker can also be used for:
    * personal to-do lists
    * highlighting things for attention
@@ -429,49 +429,17 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2009 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  20 Jan 2010 | Foswiki:Tasks/Item8400: fix for editing in the plugin topic page |
 |  4 Jan 2010 | Foswiki:Tasks/Item8376: doc fix |
 |             | Foswiki:Tasks/Item2467: fix stylesheet. Foswiki:Tasks/Item2474: doc updates |
 |  5 Nov 2009 | Foswiki:Tasks/Item8322: documentation improvements Foswiki:Tasks/Item8092: add CSS classes for different table orientations Foswiki:Tasks/1187: standardised entry fields as accepting GMT times only, fixed the test cases |
 |  15 May 2009 | Foswikitask:Item1627: Add horizontal grid lines to separate tasks as it was too difficult to see where one task ends and the next begins. Foswikitask:Item1187 If the server was east of Greenwich the dates in ActionTrackerPlugin were displayed as one day earlier and each time you edited an action the dates would decrement by one day. Foswikitask:Item1364 ActionTrackerPlugin handles actions without uid very badly. Foswikitask:Item1482 actionnotify refered to old name space. |
 |  29 Jan 2009 | Foswikitask:Item455: port to foswiki Foswikitask:Item5974: correct CSS for search results table Foswikitask:Item5938: load CSS for ACTIONSEARCH Foswikitask:Item5606: Foswikitask:Item5915: respect global settings for time format Foswikitask:Item4312: finished support for header, footer etc. Foswikitask:Item412: added =reverse= Foswikitask:Item5962: removed apparently spurious newline |
-|  7 May 2008 | TWikibug:Item5607: http: was being doubled up on URLs in mail due to a core bug |
-|  13 Apr 2008 | TWikibug:Item4649: merged TWiki:Main.JoaquinBuendia's fix for AJAX updates on IE. TWikibug:Item4760: fixed WYSIWYG editing of topics containing actions TWikibug:Item5531: added simple button option for state changes |
-|  17 Sep 2007 | TWikibug:Item4648 $formfield wasn't working on 4.1.2 |
-|  12 Sep 2007 | TWikibug:Item4609 fixed IE cacheing of edit screen - TWiki:Main.JoaquinBuendia |
-|  9 Sep 2007 | TWikibug:Item4427, TWikibug:Item4591 add the ability to search for multiple states using a regular expression TWikibug:Item4574 fix interaction with !TinyMCEPlugin |
-|  31 Aug 2007 | TWikibug:Item4528 - Support $formfield in ACTIONSEARCH (same semantics as for formatted search) TWikibug:Item4529 - Remove link from description of action in the $text field of format. Sponsored by [[http://www.goldstarevents.com][Goldstar Events]]. |
-|  13 Aug 2007 | TWikibug:Item4086 - =header= and =format= parameters give more control over formatting, improved mail sent for notifications (Richard Vinke)<br /> TWikibug:Item4373 - added support for TBD action dates; in the process, changed default date store format to ISO for consistency with TWiki. (Crawford Currie)<br /> TWikibug:Item4374 - support AJAX-like state changes from the view screen (Crawford Currie)<br /> TWikibug:Item4442 - moved preference defaults out of the plugin topic, and verified correct function (Crawford Currie, sponsored by [[http://www.goldstarevents.com][Goldstar Events]]) |
-|  21 May 2007 | TWikibug:Item3969 - 8bit email fix (TWiki:Main.WillNorris) |
-|  12958 | TWikibug:Item3638 Fixed edit link for IE7 |
-|  12878 | putting styles.css file at the top of the html header so that \
-         skins have a chance to override the defaults; \
-         fixed generation of css classes; \
-         added aptOpen and aptClose;\
-         render actions correctly in twiki lists (TWiki:Main/MichaelDaum) |
-|  12652 | Fixes for TWikibug:Item3446, TWikibug:Item2127. Updates to tests and templates for recent core changes. |
-|  11556 | QBE topic made much friendlier using TWiki-4 features; minor bugfixes |
-|  10919 | TWikibug:Item2606  actionnotify can now read email addresses from password manager as well as new TWiki4 style user topics. actionnotify requires TWiki-4.0.4 + hotfix-4.0.4-1 |
-|  8385 | TWikibug:Item1443  style sheet bug makes yellow warning not show |
-|  8372 | TWikibug:Item1434  moved actionnotify from bin into tools |
-|  8304 | TWikibug:Item1305  removing dotted style from AT. Looks horrible in IE |
-|  8090 | TWikibug:Item1304  removed unnecessary warning that may be breaking some sites |
-|  8089 | TWikibug:Item1305  changed dotted to solid gray, as requested |
-|  26 Mar 2005 | 2.022 Corrected JSCalendar problems, and cleaned up lazy-loading of libraries. Added relative date specs to searches. |
-|  8 Feb 2005 | 2.021 Documentation fixes. |
-|  19 Nov 2004 | 2.020 Added conditions for date matching, and fixed config so that tests pass again. |
-|  13 Oct 2004 | 2.013 If a user cuts and pastes an action with a uid in it, the action editor would get confused. This update ensures all action UIDs are unique within a topic when it is saved. |
-|  16 Aug 2004 | 2.012 Dependency automation and Cairo readiness, further change to =within= behaviour (bidirectionality) |
-|  3 Feb 2004 | Fixes for internationalisation, name matching, QBE, within= behaviour, documentation. |
-|  21 May 2003 | Non-standard fields. Configurability of tables and action editor. Non-standard attributes. Eliminated chdir. Multi-line actions. Optimisation of notifies. |
-|  30 Apr 2003 | Version 2.0; Large sections rewritten to take advantage of improvements in Plugin support, eliminating two scripts in bin. Added UIDs and formattable action searches |
-|  30 Jan 2003 | Query-by-example action search with notify field; notification of change emails and actions email are sent as one; notify field was added to topic view and edit; various bug fixes by TWiki:Main/PaulineCheung |
-|  26 Sep 2002 | Added changedsince notify support, added support for editing in a seperate window, incorporated attribute syntax corrections contributed by Main.PeterThoeny, sorted ACTIONSEARCH output and action notifications |
-|  14 Feb 2002 | Sorted ACTIONSEARCH results by due date; Fixed bugs editaction kills form data, Actions flagged as late the day before, TWiki table and bullet formatting doesn't work within action text |
-|  11 Jan 2002 | Added ACTIONSEARCH for selected webs and topics; Changed action editor to use a template; Eliminated UNIX dependencies; Fixed formatting of actions in bulleted lists |
-|  9 Jan 2002 | Bugfix version |
+|  9 Jan 2002 | First version |
 |  Dependencies: | %$DEPENDENCIES% |
 |  Plugin Home: | http://foswiki.org/Extensions/ActionTrackerPlugin |
 
 %META:FILEATTACHMENT{name="styles.css" attr="h" comment="Stylesheet for actions"}%
 %META:FILEATTACHMENT{name="logo.png" attr="h" comment="Logo"}%
 %META:FILEATTACHMENT{name="wikiringlogo20x20.png" attr="h" comment="" version="1"}%
+%META:FILEATTACHMENT{name="Screenshot.png" attr="h" comment="Screenshot" version="1"}%
