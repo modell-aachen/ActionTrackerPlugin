@@ -304,7 +304,6 @@ sub allActionsInWeb {
     );
 
     foreach my $topic ( keys %$grep ) {
-
         # SMELL: always read the text, because it's faster in the current
         # impl to find the perms embedded in it
         my $text =

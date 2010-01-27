@@ -39,15 +39,15 @@ package Foswiki::Plugins::ActionTrackerPlugin::Action;
 use strict;
 use integer;
 
-require CGI;
-require Text::Soundex;
-require Time::ParseDate;
+use CGI ();
+use Text::Soundex ();
+use Time::ParseDate ();
 
-require Foswiki::Func;
-require Foswiki::Attrs;
+use Foswiki::Func ();
+use Foswiki::Attrs ();
 
-require Foswiki::Plugins::ActionTrackerPlugin::AttrDef;
-require Foswiki::Plugins::ActionTrackerPlugin::Format;
+use Foswiki::Plugins::ActionTrackerPlugin::AttrDef ();
+use Foswiki::Plugins::ActionTrackerPlugin::Format ();
 
 our $now = time();
 
@@ -226,6 +226,7 @@ sub extendTypes {
     my $defs = shift;
     $defs =~ s/^\s*\|//o;
     $defs =~ s/\|\s*$//o;
+
     foreach my $def ( split( /\s*\|\s*/, $defs ) ) {
         if ( $def =~ m/^\s*(\w+)\s*,\s*(\w+)\s*(,\s*(\d+)\s*)?(,\s*(.*))?$/o ) {
             my $name   = $1;
@@ -624,7 +625,6 @@ sub matches {
         my $attrType = getBaseType($attrName);
         my $class    = ref($this);
         if ( defined( &{ $class . "::_matchField_$attrName" } ) ) {
-
             # function match
             my $fn = "_matchField_$attrName";
             if ( !$this->$fn($attrVal) ) {
@@ -642,7 +642,6 @@ sub matches {
         elsif (defined($attrVal)
             && defined( $this->{$attrName} ) )
         {
-
             # re match
             my $r;
             eval { $r = ( $this->{$attrName} !~ m/$attrVal/ ); };

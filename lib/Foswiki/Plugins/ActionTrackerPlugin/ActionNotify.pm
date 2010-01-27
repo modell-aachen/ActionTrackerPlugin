@@ -24,20 +24,13 @@ use integer;
 # Added by NKO to fix problem with non danish names
 use locale;
 
-require Time::ParseDate;
-
-require Foswiki::Net;
-
-require Foswiki::Attrs;
-
-require Foswiki::Plugins::ActionTrackerPlugin::Action;
-require Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
-require Foswiki::Plugins::ActionTrackerPlugin::Format;
+use Time::ParseDate ();
+use Foswiki::Net ();
+use Foswiki::Attrs ();
+use Foswiki::Plugins::ActionTrackerPlugin ();
 
 my $wikiWordRE;
 my $options;
-
-require Foswiki::Plugins::ActionTrackerPlugin::Options;
 
 # PUBLIC actionnotify script entry point. Reinitialises Foswiki.
 #
@@ -51,6 +44,8 @@ sub actionNotify {
 
     # Assign SESSION so that Func methods work
     $Foswiki::Plugins::SESSION = $session;
+
+    Foswiki::Plugins::ActionTrackerPlugin::lazyInit($session->{webName}, $session->{topicName});
 
     if ( $expr =~ s/DEBUG//o ) {
         print doNotifications( $session->{webName}, $expr, 1 ), "\n";

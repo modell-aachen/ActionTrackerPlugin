@@ -21,8 +21,8 @@ use strict;
 use Assert;
 use Error qw( :try );
 
-require Foswiki::Func;
-require Foswiki::Plugins;
+use Foswiki::Func ();
+use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
 our $RELEASE = '20 Jan 2010';
@@ -77,7 +77,7 @@ sub commonTagsHandler {
 
     return unless ( $_[0] =~ m/%ACTION.*{.*}%/o );
 
-    return unless _lazyInit( $web, $topic );
+    return unless lazyInit( $web, $topic );
 
     _addCSSAndJS();
 
@@ -154,7 +154,7 @@ sub _beforeNormalEdit {
     my $cc = scalar( $_[0] =~ m/%ENDACTION%/g );
 
     if ( $cc < $oc ) {
-        return unless _lazyInit( $_[2], $_[1] );
+        return unless lazyInit( $_[2], $_[1] );
 
         my $as =
           Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
@@ -166,7 +166,7 @@ sub _beforeNormalEdit {
 sub _beforeActionEdit {
     my ( $text, $topic, $web, $meta ) = @_;
 
-    return unless _lazyInit( $web, $topic );
+    return unless lazyInit( $web, $topic );
 
     my $query = Foswiki::Func::getCgiQuery();
 
@@ -273,9 +273,7 @@ sub _beforeActionEdit {
     $_[0] = $tmpl;
 
     # Add styles and javascript for the calendar
-    Foswiki::Func::addToHEAD( 'ATP_CSS',
-'<style type="text/css" media="all">@import url("%ACTIONTRACKERPLUGIN_CSS%");</style>'
-    );
+    _addCSSAndJS();
 
     use Foswiki::Contrib::JSCalendarContrib;
     if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
@@ -307,7 +305,7 @@ sub afterEditHandler {
     my $query = Foswiki::Func::getCgiQuery();
     return unless ( $query->param('closeactioneditor') );
 
-    return unless _lazyInit( $_[2], $_[1] );
+    return unless lazyInit( $_[2], $_[1] );
 
     my $pretext = $query->param('pretext') || "";
 
@@ -347,7 +345,7 @@ sub beforeSaveHandler {
 
     return unless $text;
 
-    return unless _lazyInit( $web, $topic );
+    return unless lazyInit( $web, $topic );
 
     my $query = Foswiki::Func::getCgiQuery();
     return unless ($query);    # Fix from GarethEdwards 13 Jun 2003
@@ -426,7 +424,7 @@ sub _addMissingAttributes {
 sub _handleActionSearch {
     my ( $session, $attrs, $topic, $web ) = @_;
 
-    return unless _lazyInit( $web, $topic );
+    return unless lazyInit( $web, $topic );
 
     _addCSSAndJS();
 
@@ -460,7 +458,7 @@ sub _handleActionSearch {
 }
 
 # Lazy initialize of plugin 'cause of performance
-sub _lazyInit {
+sub lazyInit {
     my ( $web, $topic ) = @_;
 
     return 1 if $initialised;
@@ -537,7 +535,7 @@ sub _updateRESTHandler {
         my $web;
         ( $web, $topic ) =
           Foswiki::Func::normalizeWebTopicName( undef, $topic );
-        _lazyInit( $web, $topic );
+        lazyInit( $web, $topic );
         _updateSingleAction( $web, $topic, $query->param('uid'),
             $query->param('field') => $query->param('value') );
         print CGI::header( 'text/plain', 200 );    # simple message

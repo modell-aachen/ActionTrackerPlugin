@@ -31,7 +31,7 @@ package Foswiki::Plugins::ActionTrackerPlugin::Format;
 use strict;
 use integer;
 
-require Foswiki::Func;
+use Foswiki::Func ();
 
 # PUBLIC Constructor
 # $header is the format of the HTML table header representation
