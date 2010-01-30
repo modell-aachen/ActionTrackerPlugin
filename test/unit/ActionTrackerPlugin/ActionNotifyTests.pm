@@ -22,6 +22,9 @@ sub set_up {
     $this->SUPER::set_up();
     $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
 
+    # Make the test work when the local timezone is not GMT
+    $Foswiki::cfg{DisplayTimeValues} = 'servertime';
+
     # Need this to get the actionnotify template
     foreach my $lib (@INC) {
         my $d = "$lib/../templates";

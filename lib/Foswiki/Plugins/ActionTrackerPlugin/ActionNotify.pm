@@ -45,6 +45,10 @@ sub actionNotify {
     # Assign SESSION so that Func methods work
     $Foswiki::Plugins::SESSION = $session;
 
+    if ($expr =~ /\bweb="([^" ,*]+)"/) {
+        Foswiki::Func::pushTopicContext($1, 'WebHome');
+    }
+
     Foswiki::Plugins::ActionTrackerPlugin::lazyInit($session->{webName}, $session->{topicName});
 
     if ( $expr =~ s/DEBUG//o ) {
