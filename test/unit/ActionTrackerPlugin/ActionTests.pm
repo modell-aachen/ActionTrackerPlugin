@@ -1,7 +1,6 @@
 # Tests for module Action.pm
 package ActionTests;
 use FoswikiFnTestCase;
-our @ISA = qw( FoswikiFnTestCase );
 
 use strict;
 
@@ -17,6 +16,7 @@ sub new {
 
 # Have to do this to force a read of the configuration
 BEGIN {
+    our @ISA = qw( FoswikiFnTestCase );
     new Foswiki();
     $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
 }

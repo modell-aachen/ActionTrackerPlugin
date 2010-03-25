@@ -1,7 +1,6 @@
 # Tests for module Action.pm
 package SimpleActionSetTests;
 use FoswikiFnTestCase;
-our @ISA = qw( FoswikiFnTestCase );
 
 use strict;
 
@@ -18,6 +17,7 @@ sub new {
 }
 
 BEGIN {
+    our @ISA = qw( FoswikiFnTestCase );
     new Foswiki();
     $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
 }

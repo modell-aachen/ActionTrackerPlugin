@@ -1,6 +1,5 @@
 package LiveActionSetTests;
 use FoswikiFnTestCase;
-our @ISA = qw( FoswikiFnTestCase );
 
 use strict;
 
@@ -13,6 +12,7 @@ use CGI;
 my $bit = time();
 
 BEGIN {
+    our @ISA = qw( FoswikiFnTestCase );
     new Foswiki();
     $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Enabled} = 1;
 }
