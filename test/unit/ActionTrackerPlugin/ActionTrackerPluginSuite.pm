@@ -1,5 +1,6 @@
 package ActionTrackerPluginSuite;
-use base qw(Unit::TestSuite);
+use Unit::TestSuite;
+our @ISA = qw( Unit::TestSuite );
 
 sub include_tests {
     qw( ActionTests SimpleActionSetTests FileActionSetTests ExtendedActionSetTests ActionNotifyTests LiveActionSetTests ActionTrackerPluginTests );

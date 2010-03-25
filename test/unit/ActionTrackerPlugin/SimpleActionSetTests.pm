@@ -1,6 +1,7 @@
 # Tests for module Action.pm
 package SimpleActionSetTests;
-use base qw( FoswikiFnTestCase );
+use FoswikiFnTestCase;
+our @ISA = qw( FoswikiFnTestCase );
 
 use strict;
 
