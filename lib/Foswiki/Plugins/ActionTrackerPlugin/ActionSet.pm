@@ -303,6 +303,16 @@ sub allActionsInWeb {
         }
     );
 
+    if( ref( $grep ) ne 'HASH' ) { # New Func implementation
+        my %oldResultSet;
+        while( $grep->hasNext() ) {
+            my $webtopic = $grep->next();
+            my ($foundWeb, $topic) = Foswiki::Func::normalizeWebTopicName($web, $webtopic);
+            $oldResultSet{$topic} = 1;
+        }
+        $grep = \%oldResultSet;
+    }
+
     foreach my $topic ( keys %$grep ) {
         # SMELL: always read the text, because it's faster in the current
         # impl to find the perms embedded in it

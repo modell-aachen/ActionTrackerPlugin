@@ -25,7 +25,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '07 Feb 2010';
+our $RELEASE = '17 Oct 2010';
 our $SHORTDESCRIPTION =
 'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;

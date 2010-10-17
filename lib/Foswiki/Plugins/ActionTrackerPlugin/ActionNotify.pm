@@ -481,9 +481,19 @@ sub _findChangesInWeb {
         }
     );
 
-    foreach my $topic ( keys %$grep ) {
-        _findChangesInTopic( $web, $topic, $theDate, $format, $notifications );
+    if( ref( $grep ) eq 'HASH' ) {
+        foreach my $topic ( keys %$grep ) {
+            _findChangesInTopic( $web, $topic, $theDate, $format, $notifications );
+        }
     }
+    else {
+        while( $grep->hasNext() ) {
+            my $webtopic = $grep->next();
+            my ($foundWeb, $topic) = Foswiki::Func::normalizeWebTopicName($web, $webtopic);
+            _findChangesInTopic( $web, $topic, $theDate, $format, $notifications );
+        }
+    }
+
 }
 
 # PRIVATE STATIC

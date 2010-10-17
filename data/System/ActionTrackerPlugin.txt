@@ -485,6 +485,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2009 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  17 Oct 2010 | Foswiki:Tasks/Item9825: Update for Foswiki 1.1.0 compatibility. No other fixes in this revision |
 |  07 Feb 2010 | Foswiki:Tasks/Item8362: fix table separator in IE -- Foswiki:Main.AndrewJones |
 |  20 Jan 2010 | Foswiki:Tasks/Item8400: fix for editing in the plugin topic page |
 |  4 Jan 2010 | Foswiki:Tasks/Item8376: doc fix |
