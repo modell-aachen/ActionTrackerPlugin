@@ -25,7 +25,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '3 Nov 2010';
+our $RELEASE = '03 Nov 2010';
 our $SHORTDESCRIPTION =
 'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -377,7 +377,8 @@ sub beforeSaveHandler {
         afterEditHandler( $text, $topic, $web );
 
         # reattach the metadata
-	$text .= "\n" unless $text =~ /\n$/s;
+        $text .= "\n" unless $text =~ /\n$/s;
+        $postmeta = "\n$postmeta" if $postmeta;
         $_[0] = $premeta . $text . $postmeta;
     }
     else {
