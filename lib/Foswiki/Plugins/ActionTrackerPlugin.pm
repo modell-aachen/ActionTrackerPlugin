@@ -377,6 +377,7 @@ sub beforeSaveHandler {
         afterEditHandler( $text, $topic, $web );
 
         # reattach the metadata
+	$text .= "\n" unless $text =~ /\n$/s;
         $_[0] = $premeta . $text . $postmeta;
     }
     else {
