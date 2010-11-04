@@ -52,6 +52,11 @@ use Foswiki::Plugins::ActionTrackerPlugin::Format ();
 our $now = time();
 
 # Options for parsedate
+# Note that it is intentional that we use GMT no matter what the server
+# is setup for or which time zone we are in
+# We want all dates the user enters to remain unconverted. The date you
+# enter must always be the date you see. By using GMT when both parsing
+# and formatting we ensure that no conversion happens.
 my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1 );
 
 # Types of standard attributes. The 'noload' type tells us
@@ -443,6 +448,11 @@ sub getAnchor {
 }
 
 # PRIVATE STATIC format a time string
+# Note that it is intentional that we use gmtime no matter what the server
+# is setup for or which time zone we are in
+# We want all dates the user enters to remain unconverted. The date you
+# enter must always be the date you see. By using GMT when both parsing
+# and formatting we ensure that no conversion happens.
 sub formatTime {
     my ( $time, $format ) = @_;
     my $stime;
@@ -455,13 +465,13 @@ sub formatTime {
     }
     elsif ( $format eq 'attr' ) {
         $stime =
-          Foswiki::Func::formatTime( $time, '$year-$mo-$day', 'servertime' );
+          Foswiki::Func::formatTime( $time, '$year-$mo-$day', 'gmtime' );
     }
     else {
         $stime = Foswiki::Func::formatTime(
             $time,
             $Foswiki::cfg{DefaultDateFormat},
-            $Foswiki::cfg{DisplayTimeValues}
+            'gmtime'
         );
     }
     return $stime;

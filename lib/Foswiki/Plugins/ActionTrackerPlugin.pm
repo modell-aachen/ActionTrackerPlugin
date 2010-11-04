@@ -25,7 +25,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '03 Nov 2010';
+our $RELEASE = '04 Nov 2010';
 our $SHORTDESCRIPTION =
 'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -179,6 +179,8 @@ sub _beforeActionEdit {
     my $tmpl =
       Foswiki::Func::readTemplate( 'actionform', Foswiki::Func::getSkin() );
 
+    # Here we want to show the current time in same time format as the user
+    # sees elsewhere in his browser on Foswiki.
     my $date =
       Foswiki::Func::formatTime( time(), undef,
         $Foswiki::cfg{DisplayTimeValues} );
