@@ -94,21 +94,42 @@ sub load {
 my @_sortfields;
 
 # PUBLIC sort by due date or, if given, by an ordered sequence
-# of attributes by string value
+# of attributes by string value (or numeric value if they are all numbers)
 sub sort {
     my ( $this, $order, $reverse ) = @_;
     my @ordered;
     if ( defined($order) ) {
         $order =~ s/[^\w,]//g;
-        @_sortfields = split( /,\s*/, $order );
+        @_sortfields = (split( /,\s*/, $order ));
+
+	# Determine sort type - numeric or string. Dates are held as numbers.
+	my %num_sort = map { $_ => 1 } @_sortfields;
+	foreach my $act (@{ $this->{ACTIONS} }) {
+	    my $all_string = 1;
+	    foreach my $sf (@_sortfields) {
+		next unless defined($act->{$sf}); # ignore undefs, they can't help us decide
+		if ($num_sort{$sf}) {
+		    if ($act->{$sf} =~ /^(\d+\.\d+|\d+\.|\.\d+|\d+)([eE][+-]?\d+)?\s*$/) {
+			$all_string = 0;
+		    } else {
+			$num_sort{$sf} = 0;
+		    }
+		}
+	    }
+	    last if $all_string;
+	}
         @ordered = sort {
-            foreach my $sf (@_sortfields)
-            {
+            foreach my $sf (@_sortfields) {
                 return -1 unless ref($a);
                 return 1  unless ref($b);
                 my ( $x, $y ) = ( $a->{$sf}, $b->{$sf} );
                 if ( defined($x) && defined($y) ) {
-                    my $c = ( $x cmp $y );
+		    my $c;
+                    if ($num_sort{$sf}) {
+			$c = ($x <=> $y);
+		    } else {
+			$c = ( $x cmp $y );
+		    }
                     return $c if ( $c != 0 );
 
                     # COVERAGE OFF should never be needed
