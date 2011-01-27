@@ -163,6 +163,9 @@ sub _beforeNormalEdit {
     }
 }
 
+# Note: a simple return will effectively ignore the action tracker for
+# purposes of this edit. However the skin template will still be expanded,
+# so for clean error handling, make sure $_[0] is set to something.
 sub _beforeActionEdit {
     my ( $text, $topic, $web, $meta ) = @_;
 
@@ -171,7 +174,10 @@ sub _beforeActionEdit {
     my $query = Foswiki::Func::getCgiQuery();
 
     my $uid = $query->param('atp_action');
-    return unless defined $uid;
+    unless (defined $uid) {
+	$_[0] = "Bad URL parameters; atp_action is not set";
+	return;
+    }
 
     # actionform.tmpl is a sub-template inserted into the parent template
     # as %TEXT%. This is done so we can use the standard template mechanism
@@ -211,6 +217,12 @@ sub _beforeActionEdit {
         $text, 1 );
 
     my ( $action, $pre, $post ) = $as->splitOnAction($uid);
+    # Make sure the action currently exists
+    unless( $action ) {
+	$_[0] = "Action does not exist - cannot edit";
+	return
+    };
+
     my $pretext  = $pre->stringify();
     my $posttext = $post->stringify();
 
