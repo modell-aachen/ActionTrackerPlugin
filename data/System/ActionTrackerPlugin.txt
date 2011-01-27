@@ -94,6 +94,7 @@ Write the command =%<nop>ACTIONSEARCH{= _attributes_ =}%= anywhere in a topic. S
    | =closer= | See [[#PeopleAnchor][People]] | Who closed the action. |
    | =uid= | 6 digit number | Unique ID of the action. |
    | =format= | Presentation format | See [[#CustomIsation][Formatting tables]] |
+   | =nohtml= | Presentation control | See [[#CustomIsation][Formatting tables]] |
    | =header= | Presentation format | See [[#CustomIsation][Formatting tables]] |
    | =footer= | Presentation format | See [[#CustomIsation][Formatting tables]] |
    | =orient= | Presentation format | See [[#CustomIsation][Formatting tables]] |
@@ -314,6 +315,8 @@ The header and format parameters can also be used with the actionnotify script.
 
 A default format for actions and action search results can be defined in this topic or the Web<nop>Preferences topic of the current web. See [[#SettingsAnchor][Settings]] for more details.
 
+Because it is useful most of the time to format the output using HTML for links and highlighting, this is the default. If you just want a plain TML table (for example, if you are going to post-process the output) then set =nohtml="on"=.
+
 #NonStandardAttributes
 ---+++ Non-standard Attributes
 
@@ -485,7 +488,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2011 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
-|  27 Jan 2011 | Foswiki:Tasks/Item8263: Merged Kent Dozier's enhancement for display of select-type fields. Foswiki:Tasks/Item10282: Ensure a link to a missing action gives a meaningful error. Foswiki:Tasks/Item9636: correct parsing of manually-entered dates to default to international standards. Foswiki:Tasks/Item8564: numeric-sort in columns containing numeric data |
+|  27 Jan 2011 | Foswiki:Tasks/Item8263: Merged Kent Dozier's enhancement for display of select-type fields. Foswiki:Tasks/Item10282: Ensure a link to a missing action gives a meaningful error. Foswiki:Tasks/Item9636: correct parsing of manually-entered dates to default to international standards. Foswiki:Tasks/Item8564: numeric-sort in columns containing numeric data. Foswiki:Tasks/Item10190: support plain-text output from ACTIONSEARCH |
 |  04 Nov 2010 | Foswiki:Tasks/Item1187: Improved the fix for unwanted date changes when you create or edit an action. Now it should also work for servers west of Greenwich.  |
 |  03 Nov 2010 | Foswiki:Tasks/Item9083: Ensure there's at least one newline at the end of the topic text after an action edit, and always one empty line between topic content and meta; otherwise attachment meta-data may get eaten |
 |  17 Oct 2010 | Foswiki:Tasks/Item9825: Update for Foswiki 1.1.0 compatibility. No other fixes in this revision |

@@ -447,6 +447,7 @@ sub _handleActionSearch {
     # use default format unless overridden
     my $fmt;
     my $fmts    = $attrs->remove('format');
+    my $plain   = Foswiki::Func::isTrue($attrs->remove('nohtml'));
     my $hdrs    = $attrs->remove('header');
     my $foot    = $attrs->remove('footer');
     my $sep     = $attrs->remove('separator');
@@ -458,7 +459,7 @@ sub _handleActionSearch {
         $hdrs   = $defaultFormat->getHeaders()     unless ( defined($hdrs) );
         $orient = $defaultFormat->getOrientation() unless ( defined($orient) );
         $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts,
-            $orient, '', '' );
+            $orient, $fmts, '' );
     }
     else {
         $fmt = $defaultFormat;
@@ -468,8 +469,13 @@ sub _handleActionSearch {
       Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web,
         $attrs, 0 );
     $actions->sort( $sort, $reverse );
-    my $result = $actions->formatAsHTML(
-        $fmt, 'href', $options->{USENEWWINDOW}, 'atpSearch' );
+    my $result;
+    if ($plain) {
+	$result = $actions->formatAsString( $fmt );
+    } else {
+	$result = $actions->formatAsHTML(
+	    $fmt, 'href', $options->{USENEWWINDOW}, 'atpSearch' );
+    }
     return $result;
 }
 
