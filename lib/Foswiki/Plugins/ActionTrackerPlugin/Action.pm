@@ -7,30 +7,18 @@
 Object that represents a single action
 
 Fields:
-web:
-         Web the action was found in
-topic:
-         Topic the action was found in
-ACTION_NUMBER:
-         The number of the action in the topic (deprecated)
-text:
-         The text of the action
-who:
-         The person responsible for the action
-due:
-         When the action is due
-notify:
-         List of people to notify when the action changes
-uid:
-         Unique identifier for the action
-creator:
-         Who created the action
-created:
-         When the action was created
-closer:
-         Who closed the action
-closed:
-         When the action was closed
+   * web:           Web the action was found in
+   * topic:         Topic the action was found in
+   * ACTION_NUMBER: The number of the action in the topic (deprecated)
+   * text:          The text of the action
+   * who:           The person responsible for the action
+   * due:           When the action is due
+   * notify:        List of people to notify when the action changes
+   * uid:           Unique identifier for the action
+   * creator:       Who created the action
+   * created:       When the action was created
+   * closer:        Who closed the action
+   * closed:        When the action was closed
 
 =cut
 
@@ -670,6 +658,51 @@ sub _formatType_date {
     return formatTime( $this->{$fld}, 'string' );
 }
 
+# PRIVATE format the given select box type
+# Contributed by Kent Dozier
+sub _formatType_select {
+    my ( $this, $fld, $args, $asHTML ) = @_;
+
+    # Old behavior is to simply return the text as usual.
+    # Do this anyway if the state field isn't being allowed
+    # to edit on the fly without going to edit mode.
+    require Foswiki::Plugins::ActionTrackerPlugin::Options;
+    unless ($Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT}) {
+	return (defined $this->{$fld}) ? $this->{$fld} : '';
+    }
+
+    # Turn the select into a fully populated drop down box
+    my $type = $this->getType( $fld );
+    my $size = $type->{size};
+    my $fields = '';
+    my $any_selected = 0;
+    foreach my $option ( @{$type->{values}} ) {
+	my @extras = ();
+	if ( defined( $this->{$fld} ) &&
+	     $this->{$fld} eq $option ) {
+	    push( @extras, selected => "selected" );
+	    $any_selected = 1;
+	}
+	$fields .= CGI::option({ value=>$option, @extras }, $option);
+    }
+
+    # If nothing was selected, add an empty selection at the top
+    # That way, it can display a blank box, but can be changed.
+    # Ones with a value already can not be changed to blank.
+    if (!$any_selected) {
+	$fields = CGI::option({ value=>"NuLL", selected=>"selected" }, "") . $fields;
+    }
+
+    return CGI::Select(
+	{ name => $fld,
+	  size => $size,
+	  onChange => 'atp_update(this, "%SCRIPTURLPATH{rest}%/ActionTrackerPlugin/update?topic='.
+	      $this->{web}.'.'.$this->{topic}.
+	      ';uid='.$this->{uid}.'", "' . $fld . '")',
+	},
+	$fields );
+}
+
 sub _formatField_formfield {
     my ( $this, $args, $asHTML ) = @_;
 
@@ -1000,9 +1033,11 @@ sub createFromQuery {
 sub formatForEdit {
     my ( $this, $format ) = @_;
 
+    # Generate visible fields
     my %expanded;
     my $table = $format->formatEditableFields( $this, \%expanded );
 
+    # Generate unexpanded fields using hidden inputs
     foreach my $attrname ( keys %types ) {
         if ( !$expanded{$attrname} ) {
             my $type = $types{$attrname};
@@ -1017,7 +1052,8 @@ sub formatForEdit {
 1;
 __DATA__
 #
-# Copyright (C) Motorola 2002 - All rights reserved
+# Copyright (C) 2002-2003 Motorola UK Ltd - All rights reserved
+# Copyright (C) 2004-2011 Crawford Currie http://c-dot.co.uk
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
