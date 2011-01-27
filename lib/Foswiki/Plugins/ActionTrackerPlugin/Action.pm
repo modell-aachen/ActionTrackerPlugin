@@ -45,7 +45,7 @@ our $now = time();
 # We want all dates the user enters to remain unconverted. The date you
 # enter must always be the date you see. By using GMT when both parsing
 # and formatting we ensure that no conversion happens.
-my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1 );
+my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1, UK => 1 );
 
 # Types of standard attributes. The 'noload' type tells us
 # not to load the hash from %ACTION attributes, and the 'nomatch' type
