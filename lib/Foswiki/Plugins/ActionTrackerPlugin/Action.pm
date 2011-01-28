@@ -424,9 +424,10 @@ sub _canonicalName {
         if ( $who eq 'me' ) {
             $who = Foswiki::Func::getWikiName();
         }
-        if ( $who !~ /\./o ) {
-            $who = Foswiki::Func::getMainWebname() . '.' . $who;
-        }
+	if ($who) {
+	    my ($w, $t) = Foswiki::Func::normalizeWebTopicName(undef, $who);
+	    $who = "$w.$t";
+	}
     }
     return $who;
 }
@@ -528,15 +529,17 @@ sub isLate {
 sub _matchType_names {
     my ( $this, $vbl, $val ) = @_;
 
+    return (!$this->{$vbl}) if (!$val);
+
     return 0 unless ( defined( $this->{$vbl} ) );
 
     foreach my $name ( split( /\s*,\s*/, $val ) ) {
         my $who = _canonicalName($name);
 
-        $who =~ s/\./\\./go;
+        $who =~ s/.*\.//;
         my $r;
         eval {
-            $r = ( $this->{$vbl} =~ m/$who,\s*/ || $this->{$vbl} =~ m/$who$/ );
+            $r = ( $this->{$vbl} =~ m/\b$who\b/ || $this->{$vbl} =~ m/$who$/ );
         };
         return 1 if ($r);
     }
