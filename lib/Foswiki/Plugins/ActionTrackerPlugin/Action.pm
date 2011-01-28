@@ -557,7 +557,8 @@ sub _matchType_date {
     }
     return 0 unless defined( $this->{$vbl} );
     my $tim = Time::ParseDate::parsedate(
-        $val, %pdopt, PREFER_PAST => 1, FUZZY => 1 );
+        $val, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1, UK => 1,
+	PREFER_PAST => 1, FUZZY => 1 );
     return eval "$this->{$vbl} $cond $tim";
 }
 
