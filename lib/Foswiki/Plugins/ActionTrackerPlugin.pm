@@ -25,7 +25,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '04 Nov 2010';
+our $RELEASE = '28 Jan 2011';
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -38,16 +38,6 @@ my $defaultFormat;
 our $options;
 
 sub initPlugin {
-
-    # COVERAGE OFF standard plugin code
-
-    if ( $Foswiki::Plugins::VERSION < 1.026 ) {
-        Foswiki::Func::writeWarning(
-	    'Version mismatch between ActionTrackerPlugin and Plugins.pm $Foswiki::Plugins::VERSION. 1.026 required.'
-	    );
-    }
-
-    # COVERAGE ON
 
     $initialised = 0;
     $doneHeader  = 0;
