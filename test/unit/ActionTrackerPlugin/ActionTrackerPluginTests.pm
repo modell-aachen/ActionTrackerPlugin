@@ -189,7 +189,7 @@ sub edit {
     my $url =
 "%SCRIPTURLPATH%/edit%SCRIPTSUFFIX%/TheWeb/TheTopic?skin=action&action=$tag&t={*\\d+*}";
     return
-      "<a href=\"$url\" onclick=\"return atp_editWindow('$url')\">edit</a>";
+      "<a href=\"$url\" class=\"atp_edit\">edit</a>";
 }
 
 sub action {

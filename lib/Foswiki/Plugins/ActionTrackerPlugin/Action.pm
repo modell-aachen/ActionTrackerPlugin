@@ -28,6 +28,7 @@ use strict;
 use integer;
 
 use CGI ();
+use JSON;
 use Text::Soundex ();
 use Time::ParseDate ();
 
@@ -397,6 +398,21 @@ sub stringify {
     return '%ACTION{' . $attrs . ' }% ' . $descr . " %ENDACTION%";
 }
 
+# Assemble a form for an update of the given field value
+sub _form {
+    my ($this, $fld, $value, $input) = @_;
+    return
+	CGI::start_form(
+	    -action => '%SCRIPTURLPATH{rest}%/ActionTrackerPlugin/update',
+	    -method => 'POST')
+	. CGI::hidden(-name => 'topic', -value => "$this->{web}.$this->{topic}")
+	. CGI::hidden(-name => 'uid', -value => $this->{uid})
+	. CGI::hidden(-name => 'field', -value => $fld)
+	. CGI::hidden(-name => 'value', -value => $value)
+	. $input
+	. CGI::end_form();
+}
+
 # PRIVATE STATIC make a canonical name (including the web) for a user
 # unless it's an email address.
 sub _canonicalName {
@@ -693,14 +709,14 @@ sub _formatType_select {
 	$fields = CGI::option({ value=>"NuLL", selected=>"selected" }, "") . $fields;
     }
 
-    return CGI::Select(
-	{ name => $fld,
-	  size => $size,
-	  onChange => 'atp_update(this, "%SCRIPTURLPATH{rest}%/ActionTrackerPlugin/update?topic='.
-	      $this->{web}.'.'.$this->{topic}.
-	      ';uid='.$this->{uid}.'", "' . $fld . '")',
-	},
-	$fields );
+    return $this->_form(
+	$fld, undef,
+	CGI::Select(
+	    { name => $fld,
+	      size => $size,
+	      class => 'atp_update userval'
+	    },
+	    $fields ));
 }
 
 sub _formatField_formfield {
@@ -779,18 +795,14 @@ sub _formatField_state {
         $attrs{value} = $option;    # Item4649
         $input .= CGI::option( \%attrs, $option );
     }
-    return CGI::Select(
+    return $this->_form(
+	'state', undef,
+	CGI::Select(
         {
-            onChange => 'atp_update(this,'
-              . '"%SCRIPTURLPATH{rest}%/ActionTrackerPlugin/update?topic='
-              . $this->{web} . '.'
-              . $this->{topic} . ';uid='
-              . $this->{uid}
-              . '","state",this.value)',
-            class => 'atpState' . $this->{state},
+	    name => 'state',
+            class => "atpState$this->{state} atp_update userval"
         },
-        $input
-    );
+        $input));
 }
 
 # Special 'close' button field for transition between any state and 'closed'
@@ -805,16 +817,13 @@ sub _formatField_statebutton {
     }
     return '' if ( $this->{state} eq $tgtState );
 
-    return CGI::input(
-        {
+    return $this->_form(
+	'state', 'closed',
+        CGI::input({
             type  => 'button',
             value => $buttonName,
-            onclick =>
-              "atp_update(this,'%SCRIPTURLPATH{rest}%/ActionTrackerPlugin"
-              . "/update?topic=$this->{web}.$this->{topic}"
-              . ";uid=$this->{uid}','state','closed')",
-        }
-    );
+            class => "atp_update"
+        }));
 }
 
 # PRIVATE format text field
@@ -856,7 +865,7 @@ sub _formatField_link {
 
 # PRIVATE format edit field
 sub _formatField_edit {
-    my ( $this, $args, $asHTML, $type, $newWindow ) = @_;
+    my ( $this, $args, $asHTML, $type ) = @_;
 
     if ( !$asHTML ) {
 
@@ -873,12 +882,8 @@ sub _formatField_edit {
         nowysiwyg  => 1,                    # SMELL: could do better!
         t          => time()
     );
-    my $attrs = { href => $url };
-    if ($newWindow) {
+    my $attrs = { href => $url, title => 'Edit', class => "atp_edit ui-icon ui-icon-pencil" };
 
-        # Javascript window call
-        $attrs->{onclick} = "return atp_editWindow('$url')";
-    }
     return CGI::a( $attrs, 'edit' );
 }
 
@@ -990,7 +995,7 @@ sub findChanges {
     my $plain_text = $format->formatStringTable( [$this] );
     $plain_text .= "\n$changes\n";
     my $html_text =
-      $format->formatHTMLTable( [$this], 'href', 0, 'atpChanges' );
+      $format->formatHTMLTable( [$this], 'href', 'atpChanges' );
     $html_text .= $format->formatChangesAsHTML( $old, $this );
 
     # Add text to people interested in notification

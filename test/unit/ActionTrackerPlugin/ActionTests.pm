@@ -395,7 +395,7 @@ sub test_VerticalOrient {
     );
     my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Who|Due|",
         "|\$who|\$due|", "rows" );
-    my $s = $fmt->formatHTMLTable( [$action], "name", 0, 'blah' );
+    my $s = $fmt->formatHTMLTable( [$action], "name", 'blah' );
     $s =~ s/<table class=\"blah atpOrientRows\">//;
     $s =~ s/<\/table>//;
     $s =~ s/\n//g;
@@ -418,14 +418,14 @@ sub test_HTMLFormattingOpen {
 
     my $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "|\$who|" );
-    my $s = $fmt->formatHTMLTable( [$action], "name", 0, 'atp' );
+    my $s = $fmt->formatHTMLTable( [$action], "name", 'atp' );
     $this->assert_html_matches(
         "<td><a name=\"AcTion0\" />$this->{users_web}.JohnDoe</td>", $s );
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$due |" );
 
     # make it late
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("3 Jun 2002");
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches(
         "<td> <span class=\"atpWarn\">02 Jun 2002</span> </td>", $s );
 
@@ -433,7 +433,7 @@ sub test_HTMLFormattingOpen {
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("1 Jun 2002");
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$due |", "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches(
         "<td> <span class=\"atpOpen\">02 Jun 2002</span>  </td>", $s );
 
@@ -441,62 +441,62 @@ sub test_HTMLFormattingOpen {
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("3 Jun 2002");
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$state |",
         "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches( "<td> open </td>", $s );
 
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$notify |" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches(
 "<td> $this->{users_web}.SamPeckinpah, $this->{users_web}.QuentinTarantino, $this->{users_web}.DavidLynch </td>",
         $s
     );
 
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$uid |" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches( "<td> &nbsp; </td>", $s );
 
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$creator |",
         "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches( "<td> $this->{users_web}.ThomasMoore </td>",
         $s );
 
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$created |",
         "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches( "<td> 01 Jan 1999 </td>", $s );
 
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$edit |", "" );
     my $url =
 "$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}/edit$Foswiki::cfg{ScriptSuffix}/Test/Topic\\?skin=action%2cpattern;atp_action=AcTion0;.*";
-    $s = $fmt->formatHTMLTable( [$action], "href", 0 );
+    $s = $fmt->formatHTMLTable( [$action], "href" );
     $this->assert( $s =~ m(<td> <a href="(.*?)">edit</a> </td>), $s );
     $this->assert( $1, $s );
     $this->assert_matches( qr(^$url\d+$), $1 );
 
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$edit |", "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 1, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_not_null($s);
     $this->assert( $s =~ m(<td>\s*<a (.*?)>edit</a>\s*</td>), $s );
     my $x = $1;
     $this->assert_matches( qr/href="$url\d+"/, $x );
-    $this->assert_matches( qr/onclick="return atp_editWindow\('$url\d+'\)"/,
+    $this->assert_matches( qr/class="atp_edit"/,
         $x );
 
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "",
         "| \$web.\$topic |", "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href" 'atp' );
     $this->assert_not_null($s);
     $this->assert_html_matches( '<td> Test.Topic </td>', $s );
 
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$text |", "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'XXX' );
+    $s = $fmt->formatHTMLTable( [$action], "href" 'XXX' );
     $this->assert(
         $s =~
 /<td> A new action <a href="$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}\/view$Foswiki::cfg{ScriptSuffix}\/Test\/Topic#AcTion0">/,
@@ -505,19 +505,19 @@ sub test_HTMLFormattingOpen {
 
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "",
         "| \$n\$n()\$nop()\$quot\$percnt\$dollar |", "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href" 'atp' );
     $this->assert_html_matches( "<td> \n\n\"%\$ </td>", $s );
 
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("1 Jun 2002");
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$due |", "" );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href" 'atp' );
     $this->assert_html_matches(
         "<td> <span class=\"atpOpen\">02 Jun 2002</span> </td>", $s );
 
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "",
         "|\$who|\$creator|", "" );
-    $s = $fmt->formatHTMLTable( [$action], "name", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "name", 'atp' );
     $this->assert_html_matches(
 "<td><a name=\"AcTion0\" />$this->{users_web}.JohnDoe</td><td>$this->{users_web}.ThomasMoore</td>",
         $s
@@ -533,7 +533,7 @@ sub test_HTMLFormattingClose {
         "A new action" );
     my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "",
         "|\$closed|\$closer|", "" );
-    my $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    my $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_html_matches(
         "<td>01 Jan 2003</td><td>$this->{users_web}.LucBesson</td>", $s );
 }
@@ -724,7 +724,7 @@ qr/Attribute \"creator\" added with value \"$this->{users_web}.ThomasMoore\"/,
     );
 
     $text = $not{"$this->{users_web}.QuentinTarantino"}{html};
-    my $jane = $fmt->formatHTMLTable( [$naction], "href", 0, 'atpChanges' );
+    my $jane = $fmt->formatHTMLTable( [$naction], "href", 'atpChanges' );
     $this->assert_html_matches( $jane, $text );
     $this->assert_html_matches(
 "<tr class=\"atpChanges\"><td class=\"atpChanges\">who</td><td class=\"atpChanges\">$this->{users_web}.JohnDoe</td><td class=\"atpChanges\">$this->{users_web}.JaneDoe</td></tr>",
@@ -786,7 +786,7 @@ sub test_XtendTypes {
     $s = $fmt->formatStringTable( [$action] );
     $this->assert_str_equals(
         "fred.bloggs\@limp.net, $this->{users_web}.JoeShmoe\n", $s );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_matches(
         qr/<td>fred.bloggs\@limp.net, $this->{users_web}.JoeShmoe<\/td>/, $s );
 
@@ -795,7 +795,7 @@ sub test_XtendTypes {
         "\$decision" );
     $s = $fmt->formatStringTable( [$action] );
     $this->assert_str_equals( "cut off their heads\n", $s );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_matches( qr/<td>cut off their heads<\/td>/, $s );
 
     $fmt =
@@ -803,7 +803,7 @@ sub test_XtendTypes {
         "\$sentence" );
     $s = $fmt->formatStringTable( [$action] );
     $this->assert_str_equals( "5 years\n", $s );
-    $s = $fmt->formatHTMLTable( [$action], "href", 0, 'atp' );
+    $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_matches( qr/<td>5 years<\/td>/, $s );
 
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "",

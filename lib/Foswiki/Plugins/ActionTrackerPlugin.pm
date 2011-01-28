@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2002 Motorola - All rights reserved
-# Copyright (C) 2004-2009 Crawford Currie http://c-dot.co.uk
+# Copyright (C) 2004-2011 Crawford Currie http://c-dot.co.uk
 #
 # Extension that adds tags for action tracking
 #
@@ -27,7 +27,7 @@ use Foswiki::Plugins ();
 our $VERSION = '$Rev$';
 our $RELEASE = '04 Nov 2010';
 our $SHORTDESCRIPTION =
-'Adds support for action tags in topics, and automatic notification of action statuses';
+    'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
 
 my $doneHeader   = 0;
@@ -35,7 +35,7 @@ my $actionNumber = 0;
 my $defaultFormat;
 
 # Map default options
-my $options;
+our $options;
 
 sub initPlugin {
 
@@ -43,8 +43,8 @@ sub initPlugin {
 
     if ( $Foswiki::Plugins::VERSION < 1.026 ) {
         Foswiki::Func::writeWarning(
-'Version mismatch between ActionTrackerPlugin and Plugins.pm $Foswiki::Plugins::VERSION. 1.026 required.'
-        );
+	    'Version mismatch between ActionTrackerPlugin and Plugins.pm $Foswiki::Plugins::VERSION. 1.026 required.'
+	    );
     }
 
     # COVERAGE ON
@@ -55,21 +55,9 @@ sub initPlugin {
     Foswiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
 
     Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
-        'context-free' );
+				       'context-free' );
 
     return 1;
-}
-
-sub _addCSSAndJS {
-    my $debug = '';
-    $debug = '_src' if DEBUG;
-
-    Foswiki::Func::addToHEAD( 'ACTIONTRACKERPLUGIN_CSS', <<HERE);
-<link rel="stylesheet" href="$options->{CSS}" type="text/css" media="all" />
-HERE
-    Foswiki::Func::addToHEAD( 'ACTIONTRACKERPLUGIN_JS', <<HERE);
-<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/ActionTrackerPlugin/atp$debug.js'></script>
-HERE
 }
 
 sub commonTagsHandler {
@@ -79,14 +67,11 @@ sub commonTagsHandler {
 
     return unless lazyInit( $web, $topic );
 
-    _addCSSAndJS();
-
     # Format actions in the topic.
     # Done this way so we get tables built up by
     # collapsing successive actions.
-    my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
-        $otext, 1 );
+    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+	$web, $topic, $otext, 1 );
     my $actionGroup;
     my $text = '';
 
@@ -94,15 +79,15 @@ sub commonTagsHandler {
         if ( ref($entry) ) {
             if ( !$actionGroup ) {
                 $actionGroup =
-                  new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
+		    new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
             }
             $actionGroup->add($entry);
         }
         elsif ( $entry =~ /(\S|\n\s*\n)/s ) {
             if ($actionGroup) {
                 $text .=
-                  $actionGroup->formatAsHTML( $defaultFormat, 'name',
-                    $options->{USENEWWINDOW}, 'atpDef' );
+		    $actionGroup->formatAsHTML(
+			$defaultFormat, 'name', 'atpDef' );
                 $actionGroup = undef;
             }
             $text .= $entry;
@@ -110,8 +95,7 @@ sub commonTagsHandler {
     }
     if ($actionGroup) {
         $text .=
-          $actionGroup->formatAsHTML( $defaultFormat, 'name',
-            $options->{USENEWWINDOW}, 'atpDef' );
+	    $actionGroup->formatAsHTML( $defaultFormat, 'name', 'atpDef' );
     }
 
     $_[0] = $text;
@@ -119,7 +103,7 @@ sub commonTagsHandler {
     # COVERAGE OFF debug only
     if ( $options->{DEBUG} ) {
         $_[0] =~
-          s/%ACTIONNOTIFICATIONS{(.*?)}%/_handleActionNotify($web, $1)/geo;
+	    s/%ACTIONNOTIFICATIONS{(.*?)}%/_handleActionNotify($web, $1)/geo;
     }
 
     # COVERAGE ON
@@ -157,8 +141,8 @@ sub _beforeNormalEdit {
         return unless lazyInit( $_[2], $_[1] );
 
         my $as =
-          Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
-            $_[0], 1 );
+	    Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
+								    $_[0], 1 );
         $_[0] = $as->stringify();
     }
 }
@@ -183,13 +167,13 @@ sub _beforeActionEdit {
     # as %TEXT%. This is done so we can use the standard template mechanism
     # without screwing up the content of the subtemplate.
     my $tmpl =
-      Foswiki::Func::readTemplate( 'actionform', Foswiki::Func::getSkin() );
+	Foswiki::Func::readTemplate( 'actionform', Foswiki::Func::getSkin() );
 
     # Here we want to show the current time in same time format as the user
     # sees elsewhere in his browser on Foswiki.
     my $date =
-      Foswiki::Func::formatTime( time(), undef,
-        $Foswiki::cfg{DisplayTimeValues} );
+	Foswiki::Func::formatTime( time(), undef,
+				   $Foswiki::cfg{DisplayTimeValues} );
 
     die unless ($date);
 
@@ -208,13 +192,13 @@ sub _beforeActionEdit {
     # write in hidden fields
     if ($meta) {
         $meta->forEachSelectedValue( qr/FIELD/, undef, \&_hiddenMeta,
-            { text => \$fields } );
+				     { text => \$fields } );
     }
 
     # Find the action.
     my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
-        $text, 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
+								$text, 1 );
 
     my ( $action, $pre, $post ) = $as->splitOnAction($uid);
     # Make sure the action currently exists
@@ -233,30 +217,14 @@ sub _beforeActionEdit {
 
     my $submitCmd     = "preview";
     my $submitCmdName = "Preview";
-    my $submitScript  = "";
-    my $cancelScript  = "";
     my $submitCmdOpt  = "";
 
     if ( $options->{NOPREVIEW} ) {
         $submitCmd     = "save";
         $submitCmdName = "Save";
         $submitCmdOpt  = "?unlock=on";
-        if ( $options->{USENEWWINDOW} ) {
-
-# I'd like close the subwindow here, but not sure how. Like this,
-# the ONCLICK overrides the ACTION and closes the window before
-# the POST is done. All the various solutions I've found on the
-# web do something like "wait x seconds" before closing the
-# subwindow, but this seems very risky.
-#$submitScript = "onclick=\"document.form.submit();window.close();return true\"";
-        }
-    }
-    if ( $options->{USENEWWINDOW} ) {
-        $cancelScript = "onclick=\"window.close();\"";
     }
 
-    $tmpl =~ s/%CANCELSCRIPT%/$cancelScript/go;
-    $tmpl =~ s/%SUBMITSCRIPT%/$submitScript/go;
     $tmpl =~ s/%SUBMITCMDNAME%/$submitCmdName/go;
     $tmpl =~ s/%SUBMITCMDOPT%/$submitCmdOpt/go;
     $tmpl =~ s/%SUBMITCOMMAND%/$submitCmd/go;
@@ -266,7 +234,7 @@ sub _beforeActionEdit {
         $options->{EDITFORMAT},
         $options->{EDITORIENT},
         "", ""
-    );
+	);
     my $editable = $action->formatForEdit($fmt);
     $tmpl =~ s/%EDITFIELDS%/$editable/o;
 
@@ -285,9 +253,6 @@ sub _beforeActionEdit {
     $tmpl =~ s/%HIDDENFIELDS%/$fields/go;
 
     $_[0] = $tmpl;
-
-    # Add styles and javascript for the calendar
-    _addCSSAndJS();
 
     use Foswiki::Contrib::JSCalendarContrib;
     if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
@@ -339,8 +304,8 @@ sub afterEditHandler {
     }
 
     my $action =
-      Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery( $_[2],
-        $_[1], $an, $query );
+	Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery( $_[2],
+									$_[1], $an, $query );
 
     $action->populateMissingFields();
 
@@ -415,8 +380,8 @@ sub _addMissingAttributes {
     my %seenUID;
 
     my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
-        $_[0], 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
+								$_[0], 1 );
 
     foreach my $action ( @{ $as->{ACTIONS} } ) {
         next unless ref($action);
@@ -442,8 +407,6 @@ sub _handleActionSearch {
 
     return unless lazyInit( $web, $topic );
 
-    _addCSSAndJS();
-
     # use default format unless overridden
     my $fmt;
     my $fmts    = $attrs->remove('format');
@@ -458,23 +421,22 @@ sub _handleActionSearch {
         $fmts   = $defaultFormat->getFields()      unless ( defined($fmts) );
         $hdrs   = $defaultFormat->getHeaders()     unless ( defined($hdrs) );
         $orient = $defaultFormat->getOrientation() unless ( defined($orient) );
-        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts,
-            $orient, $fmts, '' );
+        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
+	    $hdrs, $fmts, $orient, $fmts, '' );
     }
     else {
         $fmt = $defaultFormat;
     }
 
     my $actions =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web,
-        $attrs, 0 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs(
+	    $web, $attrs, 0 );
     $actions->sort( $sort, $reverse );
     my $result;
     if ($plain) {
 	$result = $actions->formatAsString( $fmt );
     } else {
-	$result = $actions->formatAsHTML(
-	    $fmt, 'href', $options->{USENEWWINDOW}, 'atpSearch' );
+	$result = $actions->formatAsHTML( $fmt, 'href', 'atpSearch' );
     }
     return $result;
 }
@@ -485,27 +447,35 @@ sub lazyInit {
 
     return 1 if $initialised;
 
-    eval {
-        require Foswiki::Attrs;
-        require Foswiki::Plugins::ActionTrackerPlugin::Options;
-        require Foswiki::Plugins::ActionTrackerPlugin::Action;
-        require Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
-        require Foswiki::Plugins::ActionTrackerPlugin::Format;
-    };
-    if ($@) {
-        print STDERR "ActionTrackerPlugin: init failed $@\n";
-        Foswiki::Func::writeWarning("ActionTrackerPlugin: init failed $@");
-        return 0;
+    Foswiki::Plugins::JQueryPlugin::registerPlugin(
+	"ActionTracker",
+	'Foswiki::Plugins::ActionTrackerPlugin::JQuery');
+    unless( Foswiki::Plugins::JQueryPlugin::createPlugin(
+		"ActionTracker", $Foswiki::Plugins::SESSION )) {
+	die "Fucking POOF";
     }
 
+    require Foswiki::Attrs;
+    require Foswiki::Plugins::ActionTrackerPlugin::Options;
+    require Foswiki::Plugins::ActionTrackerPlugin::Action;
+    require Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
+    require Foswiki::Plugins::ActionTrackerPlugin::Format;
+
     $options =
-      Foswiki::Plugins::ActionTrackerPlugin::Options::load( $web, $topic );
+	Foswiki::Plugins::ActionTrackerPlugin::Options::load( $web, $topic );
+
+    # Add the ATP CSS (conditionally included from $options, which is why
+    # it's not done in the JQuery plugin decl)
+    my $src = (DEBUG) ? '_src' : '';
+    Foswiki::Func::addToZone("head", "JQUERYPLUGIN::ActionTracker::CSS", <<"HERE");
+<link rel='stylesheet' href='$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}' type='text/css' media='all' />
+HERE
 
     $defaultFormat = new Foswiki::Plugins::ActionTrackerPlugin::Format(
         $options->{TABLEHEADER}, $options->{TABLEFORMAT},
         $options->{TABLEORIENT}, $options->{TEXTFORMAT},
         $options->{NOTIFYCHANGES}
-    );
+	);
 
     if ( $options->{EXTRAS} ) {
         my $e = Foswiki::Plugins::ActionTrackerPlugin::Action::extendTypes(
@@ -538,8 +508,8 @@ sub _handleActionNotify {
     }
 
     my $text =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications(
-        $web, $expr, 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications(
+	    $web, $expr, 1 );
 
     $text =~ s/<html>/<\/pre>/gios;
     $text =~ s/<\/html>/<pre>/gios;
@@ -556,10 +526,10 @@ sub _updateRESTHandler {
         my $topic = $query->param('topic');
         my $web;
         ( $web, $topic ) =
-          Foswiki::Func::normalizeWebTopicName( undef, $topic );
+	    Foswiki::Func::normalizeWebTopicName( undef, $topic );
         lazyInit( $web, $topic );
         _updateSingleAction( $web, $topic, $query->param('uid'),
-            $query->param('field') => $query->param('value') );
+			     $query->param('field') => $query->param('value') );
         print CGI::header( 'text/plain', 200 );    # simple message
     }
     catch Error::Simple with {
@@ -588,8 +558,8 @@ sub _updateSingleAction {
     my %seenUID;
 
     my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
-        $text, 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
+								$text, 1 );
 
     foreach my $action ( @{ $as->{ACTIONS} } ) {
         if ( ref($action) ) {
@@ -601,7 +571,7 @@ sub _updateSingleAction {
         }
     }
     Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
-        { comment => 'atp save' } );
+			      { comment => 'atp save' } );
 }
 
 1;

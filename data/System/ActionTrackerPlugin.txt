@@ -421,11 +421,6 @@ You can also override the default =EDITBOXWIDTH= and =EDITBOXHEIGHT= settings ju
 | =ACTIONTRACKERPLUGIN_EDITBOXWIDTH= | =%EDITBOXWIDTH%= |
 | =ACTIONTRACKERPLUGIN_EDITBOXHEIGHT= | =%EDITBOXHEIGHT%= |
 
-If you prefer the action editor to use the same browser window to edit an action, or you don't have Javascript, set this to =0=. If set to 1 will edit an action in a separate browser window.
-
-| *Preference* | *Default* |
-| =ACTIONTRACKERPLUGIN_USENEWWINDOW= | =1= |
-
 If you want the action editor to offer a 'Preview Changes' button, instead of the usual 'Save Changes', set this to =0=. If this is set, and =USENEWWINDOW= is =1=, the subwindow _should_ close on save, but it won't because I haven't worked out how to do this safely in Java<nop>Script.
 
 | *Preference* | *Default* |
@@ -488,7 +483,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2011 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
-|  27 Jan 2011 | Foswiki:Tasks/Item8263: Merged Kent Dozier's enhancement for display of select-type fields. Foswiki:Tasks/Item10282: Ensure a link to a missing action gives a meaningful error. Foswiki:Tasks/Item9636: correct parsing of manually-entered dates to default to international standards. Foswiki:Tasks/Item8564: numeric-sort in columns containing numeric data. Foswiki:Tasks/Item10190: support plain-text output from ACTIONSEARCH |
+|  27 Jan 2011 | Foswiki:Tasks/Item8263: Merged Kent Dozier's enhancement for display of select-type fields. Foswiki:Tasks/Item10282: Ensure a link to a missing action gives a meaningful error. Foswiki:Tasks/Item9636: correct parsing of manually-entered dates to default to international standards. Foswiki:Tasks/Item8564: numeric-sort in columns containing numeric data. Foswiki:Tasks/Item10190: support plain-text output from ACTIONSEARCH. Foswiki:Tasks/Item868: Use JQueryPlugin to streamline action editing (including refreshing the topic when an edited action is saved) |
 |  04 Nov 2010 | Foswiki:Tasks/Item1187: Improved the fix for unwanted date changes when you create or edit an action. Now it should also work for servers west of Greenwich.  |
 |  03 Nov 2010 | Foswiki:Tasks/Item9083: Ensure there's at least one newline at the end of the topic text after an action edit, and always one empty line between topic content and meta; otherwise attachment meta-data may get eaten |
 |  17 Oct 2010 | Foswiki:Tasks/Item9825: Update for Foswiki 1.1.0 compatibility. No other fixes in this revision |

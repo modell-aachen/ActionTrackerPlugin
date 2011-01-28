@@ -60,7 +60,7 @@ sub testAHTable {
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Web|Topic|Edit|",
         "|\$web|\$topic|\$edit|", "rows", "", "" );
     my $s;
-    $s = $this->{actions}->formatAsHTML( $fmt, "href", 0, 'atp' );
+    $s = $this->{actions}->formatAsHTML( $fmt, "href", 'atp' );
     $s =~ s/\n//go;
     $s =~ s/(;t=\d+)//g;
     $s =~ s/\s+//g;
@@ -95,7 +95,7 @@ sub testAHTable {
 HERE
     $cmp =~ s/\s+//g;
     $this->assert_html_equals( $cmp, $s );
-    $s = $this->{actions}->formatAsHTML( $fmt, "name", 0, 'atp' );
+    $s = $this->{actions}->formatAsHTML( $fmt, "name", 'atp' );
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
@@ -118,7 +118,7 @@ HERE
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t">edit</a></td>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t">edit</a></td></tr></table>
 HERE
-    $s = $this->{actions}->formatAsHTML( $fmt, "name", 1, 'atp' );
+    $s = $this->{actions}->formatAsHTML( $fmt, "name", 'atp' );
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
@@ -136,9 +136,9 @@ HERE
 <td>Topic</td></tr>
 <tr>
 <th>Edit</th>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t')">edit</a></td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t')">edit</a></td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t')">edit</a></td></tr></table>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit">edit</a></td>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit">edit</a></td>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit">edit</a></td></tr></table>
 HERE
 }
 
@@ -148,7 +148,7 @@ sub testAVTable {
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Web|Topic|Edit|",
         "|\$web|\$topic|\$edit|", "cols", "", "", );
     my $s;
-    $s = $this->{actions}->formatAsHTML( $fmt, "href", 0, 'atp' );
+    $s = $this->{actions}->formatAsHTML( $fmt, "href", 'atp' );
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     my $t = $1;
@@ -171,7 +171,7 @@ sub testAVTable {
 <td>Topic</td>
 <td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t">edit</a></td></tr></table>
 HERE
-    $s = $this->{actions}->formatAsHTML( $fmt, "name", 0, 'atp' );
+    $s = $this->{actions}->formatAsHTML( $fmt, "name", 'atp' );
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
@@ -205,7 +205,7 @@ Test</td>
 </tr>
 </table>
 HERE
-    $s = $this->{actions}->formatAsHTML( $fmt, "name", 1, 'atp' );
+    $s = $this->{actions}->formatAsHTML( $fmt, "name", 'atp' );
     $s =~ s/\n//go;
     $s =~ /(;t=\d+)/;
     $t = $1;
@@ -218,15 +218,15 @@ HERE
 <tr>
 <td><a name="AcTion0" />Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t')">edit</a></td></tr>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit">edit</a></td></tr>
 <tr>
 <td><a name="AcTion1" />Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t')">edit</a></td></tr>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit">edit</a></td></tr>
 <tr>
 <td><a name="AcTion2" />Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" onclick="return atp_editWindow('$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t')">edit</a></td></tr></table>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit"">edit</a></td></tr></table>
 HERE
 }
 

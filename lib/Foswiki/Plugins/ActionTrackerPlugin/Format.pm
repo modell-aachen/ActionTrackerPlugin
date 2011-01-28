@@ -179,7 +179,6 @@ sub formatHTMLTable {
     my $this      = shift;
     my $data      = shift;
     my $jump      = shift;
-    my $newWindow = shift;
     my $class     = shift;
     my $a         = {};
     $a->{class} = $class if $class;
@@ -195,7 +194,7 @@ sub formatHTMLTable {
             my $entry = $i;
             $entry = Foswiki::Func::decodeFormatTokens($entry);
             $entry =~ s/\$(\w+)(?:\((.*?)\))?/
-              _expandVar( $object, $1, $2, 1, $jump, $newWindow )/ges;
+              _expandVar( $object, $1, $2, 1, $jump )/ges;
             if ( !$anchored ) {
                 $entry = CGI::a( { name => $object->getAnchor() } ) . $entry;
                 $anchored = 1;
