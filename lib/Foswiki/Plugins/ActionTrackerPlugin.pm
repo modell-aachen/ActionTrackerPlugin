@@ -1,20 +1,4 @@
-#
-# Copyright (C) 2002 Motorola - All rights reserved
-# Copyright (C) 2004-2011 Crawford Currie http://c-dot.co.uk
-#
-# Extension that adds tags for action tracking
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at
-# http://www.gnu.org/copyleft/gpl.html
-#
+# See bottom of file for license and copyright information
 package Foswiki::Plugins::ActionTrackerPlugin;
 
 use strict;
@@ -278,12 +262,10 @@ sub afterEditHandler {
 
     my $pretext = $query->param('pretext') || "";
 
-    # Fix from RichardBaar 8/10/03 for Mozilla
     my $char = chop($pretext);
     $pretext .= $char if ( $char ne "\n" );
     $pretext .= "\n";
 
-    # end of fix from RichardBaar 8/10/03
     my $posttext = $query->param('posttext') || "";
 
     # count the previous actions so we get the right action number
@@ -294,8 +276,8 @@ sub afterEditHandler {
     }
 
     my $action =
-	Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery( $_[2],
-									$_[1], $an, $query );
+	Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery(
+	    $_[2], $_[1], $an, $query );
 
     $action->populateMissingFields();
 
@@ -317,7 +299,7 @@ sub beforeSaveHandler {
     return unless lazyInit( $web, $topic );
 
     my $query = Foswiki::Func::getCgiQuery();
-    return unless ($query);    # Fix from GarethEdwards 13 Jun 2003
+    return unless ($query);
 
     if ( $query->param('closeactioneditor') ) {
 
@@ -438,11 +420,11 @@ sub lazyInit {
     return 1 if $initialised;
 
     Foswiki::Plugins::JQueryPlugin::registerPlugin(
-	"ActionTracker",
+	'ActionTracker',
 	'Foswiki::Plugins::ActionTrackerPlugin::JQuery');
     unless( Foswiki::Plugins::JQueryPlugin::createPlugin(
-		"ActionTracker", $Foswiki::Plugins::SESSION )) {
-	die "Fucking POOF";
+		'ActionTracker', $Foswiki::Plugins::SESSION )) {
+	die 'Failed to register JQuery plugin';
     }
 
     require Foswiki::Attrs;
@@ -565,3 +547,19 @@ sub _updateSingleAction {
 }
 
 1;
+__END__
+
+Copyright (C) 2002-2003 Motorola UK Ltd - All rights reserved
+Copyright (C) 2004-2011 Crawford Currie http://c-dot.co.uk
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details, published at 
+http://www.gnu.org/copyleft/gpl.html
+

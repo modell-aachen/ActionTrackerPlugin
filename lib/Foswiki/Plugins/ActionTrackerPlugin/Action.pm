@@ -886,6 +886,7 @@ sub _formatField_edit {
         nowysiwyg  => 1,                    # SMELL: could do better!
         t          => time()
     );
+    $url =~ s/%2c/,/g;
     my $attrs = { href => $url, title => 'Edit', class => "atp_edit ui-icon ui-icon-pencil" };
 
     return CGI::a( $attrs, 'edit' );
@@ -1059,19 +1060,19 @@ sub formatForEdit {
 }
 
 1;
-__DATA__
-#
-# Copyright (C) 2002-2003 Motorola UK Ltd - All rights reserved
-# Copyright (C) 2004-2011 Crawford Currie http://c-dot.co.uk
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at 
-# http://www.gnu.org/copyleft/gpl.html
-#
+__END__
+
+Copyright (C) 2002-2003 Motorola UK Ltd - All rights reserved
+Copyright (C) 2004-2011 Crawford Currie http://c-dot.co.uk
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details, published at 
+http://www.gnu.org/copyleft/gpl.html
+

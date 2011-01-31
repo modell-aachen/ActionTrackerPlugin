@@ -1,18 +1,5 @@
-#
-# Copyright (C) Motorola 2002 - All rights reserved
-# Copyright (C) 2004-2009 Crawford Currie http://c-dot.co.uk
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details, published at
-# http://www.gnu.org/copyleft/gpl.html
-#
+# See bottom of file for license and copyright information
+
 # Object that represents a header and fields format
 # This is where all formatting should be done; there should
 # be no HTML tags anywhere else in the code!
@@ -450,3 +437,17 @@ sub formatHidden {
 }
 
 1;
+__END__
+Copyright (C) Motorola 2002 - All rights reserved
+Copyright (C) 2004-2011 Crawford Currie http://c-dot.co.uk
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details, published at
+http://www.gnu.org/copyleft/gpl.html

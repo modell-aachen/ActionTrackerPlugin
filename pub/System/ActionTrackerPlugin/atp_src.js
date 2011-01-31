@@ -39,10 +39,28 @@
     });
 
     $('#atp_editor input[type="submit"]').livequery(function() {
-	$(this).button();
 	$(this).click(function() {
 	    $("#atp_editor").dialog("close");
 	    return true;
 	});
     });
+
+    $("#atp_editor form[name='loginform']").livequery("submit",
+	function() {
+	    var form = $(this);
+	    $.ajax({
+		url: form.attr("action"),
+		data: form.serialize(),
+		success: function(d, t, r) {
+		    // Dialog will have been closed by the submit. That's
+		    // OK, as we want to relayout anyway.
+		    $("#atp_editor").html(d).dialog("open");
+		},
+		error: function(r, t, e) {
+		    // IE fails validation of the login
+		    alert("Buggeration");
+		}
+	    });
+	    return false;
+	});
 })(jQuery); 

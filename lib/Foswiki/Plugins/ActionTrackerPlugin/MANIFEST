@@ -10,6 +10,7 @@ pub/System/ActionTrackerPlugin/wikiringlogo20x20.png 0660
 tools/actionnotify 0555 Mailer script
 templates/actionnotify.tmpl 0440 Page template for notify message
 templates/edit.action.tmpl 0440 Action editor page template
+templates/login.action.tmpl 0440 Action login page template
 templates/actionform.tmpl 0440 Action editor page subtemplate
 lib/Foswiki/Plugins/ActionTrackerPlugin.pm 0440 Plugin Perl module
 lib/Foswiki/Plugins/ActionTrackerPlugin/Action.pm 0440 Perl support module
