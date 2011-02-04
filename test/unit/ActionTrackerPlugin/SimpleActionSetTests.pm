@@ -82,13 +82,13 @@ sub testAHTable {
  <tr>
   <th>Edit</th>
   <td>
-   <a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
+   <a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion0;nowysiwyg=1" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
   </td>
   <td>
-   <a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
+   <a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion1;nowysiwyg=1" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
   </td>
   <td>
-   <a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
+   <a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion2;nowysiwyg=1" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
   </td>
  </tr>
 </table>
@@ -114,9 +114,9 @@ HERE
 <td>Topic</td></tr>
 <tr>
 <th>Edit</th>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
 HERE
     $s = $this->{actions}->formatAsHTML( $fmt, "name", 'atp' );
     $s =~ s/\n//go;
@@ -136,9 +136,9 @@ HERE
 <td>Topic</td></tr>
 <tr>
 <th>Edit</th>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t"  class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t"  class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t"  class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion0;nowysiwyg=1$t"  class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion1;nowysiwyg=1$t"  class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion2;nowysiwyg=1$t"  class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
 HERE
 }
 
@@ -161,15 +161,15 @@ sub testAVTable {
 <tr>
 <td>Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
 <tr>
 <td>Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
 <tr>
 <td>Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
 HERE
     $s = $this->{actions}->formatAsHTML( $fmt, "name", 'atp' );
     $s =~ s/\n//go;
@@ -187,20 +187,20 @@ HERE
 Test</td>
 <td>Topic</td>
 <td>
-<a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
+<a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
 </td></tr>
 <tr>
 <td>
 <a name="AcTion1" />
 Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
 <tr>
 <td>
 <a name="AcTion2" />
 Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a>
 </td>
 </tr>
 </table>
@@ -218,15 +218,15 @@ HERE
 <tr>
 <td><a name="AcTion0" />Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion0;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
 <tr>
 <td><a name="AcTion1" />Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion1;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr>
 <tr>
 <td><a name="AcTion2" />Test</td>
 <td>Topic</td>
-<td><a href="$sup/edit$ss/Test/Topic?skin=action%2cpattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
+<td><a href="$sup/edit$ss/Test/Topic?skin=action,pattern;atp_action=AcTion2;nowysiwyg=1$t" class="atp_edit ui-icon ui-icon-pencil" title="Edit">edit</a></td></tr></table>
 HERE
 }
 

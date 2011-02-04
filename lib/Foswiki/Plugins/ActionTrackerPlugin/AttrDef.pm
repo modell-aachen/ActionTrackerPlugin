@@ -6,14 +6,11 @@ use integer;
 package Foswiki::Plugins::ActionTrackerPlugin::AttrDef;
 
 sub new {
-    my ( $class, $type, $size, $match, $candef, $values ) = @_;
-    my $this = ();
+    my ( $class, %options) = @_;
+    my $this = { %options };
 
-    $this->{type}       = $type;
-    $this->{size}       = $size || 1;
-    $this->{match}      = $match || 1;
-    $this->{defineable} = $candef;
-    $this->{values}     = $values;
+    $this->{size}       ||= 1;
+    $this->{match}      ||= 1;
 
     return bless( $this, $class );
 }
@@ -41,7 +38,7 @@ sub firstSelect {
 sub isRedefinable {
     my $this = shift;
 
-    return $this->{defineable} == 1;
+    return $this->{defineable} ? 1 : 0;
 }
 
 1;

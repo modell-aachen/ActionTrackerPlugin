@@ -97,7 +97,7 @@ sub set_up {
         $this->{test_web}, "User", "Blah" );
 }
 
-sub testActionSearchFn {
+sub test_ActionSearchFn {
     my $this = shift;
     my $chosen =
       Foswiki::Plugins::ActionTrackerPlugin::_handleActionSearch( $twiki,
@@ -111,7 +111,7 @@ sub testActionSearchFn {
 
 }
 
-sub testActionSearchFnSorted {
+sub test_ActionSearchFnSorted {
     my $this = shift;
     my $chosen =
       Foswiki::Plugins::ActionTrackerPlugin::_handleActionSearch( $twiki,
@@ -126,7 +126,7 @@ sub testActionSearchFnSorted {
         $chosen );
 }
 
-sub test2CommonTagsHandler {
+sub test_2CommonTagsHandler {
     my $this   = shift;
     my $chosen = "
 Before
@@ -150,7 +150,7 @@ After
 }
 
 # Must be first test, because we check JavaScript handling here
-sub test1CommonTagsHandler {
+sub test_1CommonTagsHandler {
     my $this = shift;
     my $text = <<HERE;
 %ACTION{uid=\"UidOnFirst\" who=ActorOne, due=11/01/02}% __Unknown__ =status= www.twiki.org
@@ -205,7 +205,7 @@ sub action {
     return $text;
 }
 
-sub testBeforeEditHandler {
+sub test_BeforeEditHandler {
     my $this = shift;
     my $q    = new Unit::Request(
         {
@@ -218,7 +218,7 @@ sub testBeforeEditHandler {
     my $text =
 '%ACTION{uid="666" who=Fred,due="2 Jan 02",open}% Test1: Fred_open_ontime';
     Foswiki::Plugins::ActionTrackerPlugin::beforeEditHandler( $text, "Topic2",
-        $this->{users_web}, undef );
+        $this->{users_web}, Foswiki::Meta->new($this->{session}, $this->{users_web}, "Topic2") );
     $text = $this->assert_html_matches(
 "<input type=\"text\" name=\"who\" value=\"$this->{users_web}\.Fred\" size=\"35\"/>",
         $text
@@ -230,20 +230,23 @@ sub testAfterEditHandler {
     my $q    = new Unit::Request(
         {
             closeactioneditor => 1,
-            pretext           => "%ACTION{}% Before\n",
-            posttext          => "After",
+	    uid               => '1',
+	    originalrev       => '0',
             who               => "AlexanderPope",
             due               => "3 may 2009",
-            state             => "closed"
+            state             => "open",
+	    text => "Chickens and eggs"
         }
     );
-
+    Foswiki::Func::saveTopic($this->{test_web}, "EditTopic", undef, <<HERE);
+%ACTION{uid="0" state="open"}% Sponge %ENDACTION%
+%ACTION{uid="1"}% Cake %ENDACTION%
+HERE
     # populate with edit fields
     $this->{session}->{request} = $q;
-    my $text = "%ACTION{}%";
-    Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler( $text, "Topic",
-        "Web" );
-    $this->assert( $text =~ m/(%ACTION.*)(%ACTION.*)$/so );
+    my $text = '';
+    Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler( $text, "EditTopic", $this->{test_web} );
+    $this->assert( $text =~ m/(%ACTION.*%ENDACTION%)\s*(%ACTION.*%ENDACTION%)$/s );
     my $first  = $1;
     my $second = $2;
     my $re     = qr/\s+state=\"open\"\s+/;
@@ -263,7 +266,7 @@ sub testAfterEditHandler {
     $first =~ s/$re/ /;
 }
 
-sub testBeforeSaveHandler1 {
+sub test_BeforeSaveHandler1 {
     my $this = shift;
     my $q = new CGI( { closeactioneditor => 1, } );
     $this->{session}->{cgiQuery} = $q;
@@ -313,7 +316,7 @@ sub testBeforeSaveHandler1 {
     $text =~ s/$re//m;
 }
 
-sub testBeforeSaveHandler2 {
+sub test_BeforeSaveHandler2 {
     my $this = shift;
     my $q = new CGI( { closeactioneditor => 0, } );
     $this->{session}->{cgiQuery} = $q;
@@ -347,7 +350,7 @@ EOF
     $text =~ s/$re//;
 }
 
-sub test_formfield_format {
+sub test__formfield_format {
     my $this = shift;
 
     my $text = <<HERE;

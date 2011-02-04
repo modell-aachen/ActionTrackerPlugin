@@ -28,8 +28,9 @@ sub set_up {
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("2 Jan 2002");
 
     my $t2 = "$this->{test_web}2";
-    Foswiki::Func::createWeb($t2);
     $this->{test_web_2} = $t2;
+    my $webObject = Foswiki::Meta->new( $this->{session}, $t2 );
+    $webObject->populateNewWeb();
 
     Foswiki::Func::saveTopic( $this->{test_web}, "Topic1", undef, <<HERE);
 %ACTION{who=$Foswiki::cfg{UsersWebName}.C,due="3 Jan 02",open}% C_open_ontime"),

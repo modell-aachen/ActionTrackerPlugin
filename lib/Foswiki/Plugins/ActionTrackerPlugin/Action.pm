@@ -61,79 +61,79 @@ my $dw        = 16;
 my $nw        = 35;
 my %basetypes = (
     changedsince => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     closed => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'date', $dw, 1, 0, undef
+        type => 'date', size => $dw, match => 1
     ),
     closer => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'names', $nw, 1, 0, undef
+        type => 'names', size => $nw, match => 1
     ),
     created => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'date', $dw, 1, 0, undef
+        type => 'date', size => $dw, match => 1
     ),
     creator => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'names', $nw, 1, 0, undef
+        type => 'names', size => $nw, match => 1
     ),
     dollar => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     due => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'date', $dw, 1, 0, undef
+        type => 'date', size => $dw, match => 1
     ),
     edit => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     format => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     header => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     late => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     n => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     nop => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     notify => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'names', $nw, 1, 0, undef
+        type => 'names', size => $nw, match => 1
     ),
     percnt => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     quot => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     sort => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
     state => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'select', 1, 1, 1, [ 'open', 'closed' ]
+        type => 'select', size => 1, match => 1, defineable => 1, values => [ 'open', 'closed' ]
     ),
     text => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 1, 0, undef
+        type => 'noload', match => 1, merge => 1
     ),
     topic => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 1, 0, undef
+        type => 'noload', match => 1
     ),
     uid => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'text', $nw, 1, 0, undef
+        type => 'text', size => $nw, match => 1
     ),
     web => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 1, 0, undef
+        type => 'noload', match => 1
     ),
     who => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'names', $nw, 1, 0, undef
+        type => 'names', size => $nw, match => 1
     ),
     within => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 1, 0, undef
+        type => 'noload', match => 1
     ),
     ACTION_NUMBER => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        'noload', 0, 0, 0, undef
+        type => 'noload'
     ),
 );
 
@@ -241,8 +241,9 @@ sub extendTypes {
                 }
             }
             $types{$name} =
-              new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( $type, $size,
-                1, 1, \@values );
+              new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
+		  type => $type, size => $size,
+		  match => 1, defineable => 1, values => \@values );
         }
         else {
             return 'Bad EXTRAS definition \'' . $def . '\' in EXTRAS';
@@ -1038,6 +1039,37 @@ sub createFromQuery {
     }
     return new Foswiki::Plugins::ActionTrackerPlugin::Action( $web, $topic, $an,
         $attrs, $desc );
+}
+
+# Copy noload attributes from a copy of the action
+sub updateFromCopy {
+    my ( $this, $copy, $mustMerge, $curRev, $origRev, $ancestoraction ) = @_;
+    foreach my $attrname ( keys %types ) {
+        if ( defined $copy->{$attrname}
+	    && (!defined($this->{attrname}) || $copy->{attrname} ne $this->{$attrname})) {
+	    if ($mustMerge && $ancestoraction && $types{$attrname}->{merge}) {
+		# must attempt to merge
+		require Foswiki::Merge;
+		if ($ancestoraction) {
+		    $this->{$attrname} =
+			Foswiki::Merge::merge3(
+			    $origRev, $ancestoraction->{$attrname},
+			    $curRev, $this->{$attrname},
+			    'new', $copy->{$attrname},
+			    '.*?\n', $Foswiki::Plugins::SESSION );
+		} else {
+		    $this->{$attrname} =
+			Foswiki::Merge::merge2(
+			    $curRev, $this->{$attrname},
+			    'new', $copy->{$attrname},
+			    '.*?\n', $Foswiki::Plugins::SESSION );
+		}
+	    } else {
+		# Take the value from the action editor
+		$this->{$attrname} = $copy->{$attrname};
+	    }
+	}
+    }
 }
 
 sub formatForEdit {

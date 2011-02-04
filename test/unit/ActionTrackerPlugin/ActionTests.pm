@@ -472,7 +472,7 @@ sub test_HTMLFormattingOpen {
     $fmt =
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "| \$edit |", "" );
     my $url =
-"$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}/edit$Foswiki::cfg{ScriptSuffix}/Test/Topic\\?skin=action%2cpattern;atp_action=AcTion0;.*";
+"$Foswiki::cfg{DefaultUrlHost}$Foswiki::cfg{ScriptUrlPath}/edit$Foswiki::cfg{ScriptSuffix}/Test/Topic\\?skin=action,pattern;atp_action=AcTion0;.*";
     $s = $fmt->formatHTMLTable( [$action], "href" );
     $this->assert( $s =~ m(<td> <a href="(.*?)">edit</a> </td>), $s );
     $this->assert( $1, $s );

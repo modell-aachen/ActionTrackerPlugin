@@ -27,6 +27,12 @@ sub add {
     push @{ $this->{ACTIONS} }, $action;
 }
 
+sub first {
+    my $this = shift;
+    return undef unless scalar(@{$this->{ACTIONS}});
+    return $this->{ACTIONS}->[0];
+}
+
 # PUBLIC STATIC load an action set from a block of text
 sub load {
     my ( $web, $topic, $text, $keepText ) = @_;
