@@ -487,19 +487,20 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2011 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
-|  4 Feb 2011 | Foswiki:Tasks/10281: Correct handling of parallel edits. |
-|  28 Jan 2011 | Foswiki:Tasks/Item8263: Merged Kent Dozier's enhancement for display of select-type fields. Foswiki:Tasks/Item10282: Ensure a link to a missing action gives a meaningful error. Foswiki:Tasks/Item9636: correct parsing of manually-entered dates to default to international standards. Foswiki:Tasks/Item8564: numeric-sort in columns containing numeric data. Foswiki:Tasks/Item10190: support plain-text output from ACTIONSEARCH. Foswiki:Tasks/Item868: Use JQueryPlugin to streamline action editing (including refreshing the topic when an edited action is saved). Foswiki:Tasks/Item1946: The name search is now able to search for orphaned actions. Foswiki:Tasks/Item9687: relative dates in search expressions fixed. |
-|  04 Nov 2010 | Foswiki:Tasks/Item1187: Improved the fix for unwanted date changes when you create or edit an action. Now it should also work for servers west of Greenwich.  |
-|  03 Nov 2010 | Foswiki:Tasks/Item9083: Ensure there's at least one newline at the end of the topic text after an action edit, and always one empty line between topic content and meta; otherwise attachment meta-data may get eaten |
-|  17 Oct 2010 | Foswiki:Tasks/Item9825: Update for Foswiki 1.1.0 compatibility. No other fixes in this revision |
-|  07 Feb 2010 | Foswiki:Tasks/Item8362: fix table separator in IE -- Foswiki:Main.AndrewJones |
-|  20 Jan 2010 | Foswiki:Tasks/Item8400: fix for editing in the plugin topic page |
-|  04 Jan 2010 | Foswiki:Tasks/Item8376: doc fix |
+|  2.4.3 (19 Apr 2011) | Foswiki:Tasks/Item10613: Fix for calendar popup in action edit form |
+|  2.4.2 (4 Feb 2011) | Foswiki:Tasks/10281: Correct handling of parallel edits. |
+|  2.4.0 (28 Jan 2011) | Foswiki:Tasks/Item8263: Merged Kent Dozier's enhancement for display of select-type fields. Foswiki:Tasks/Item10282: Ensure a link to a missing action gives a meaningful error. Foswiki:Tasks/Item9636: correct parsing of manually-entered dates to default to international standards. Foswiki:Tasks/Item8564: numeric-sort in columns containing numeric data. Foswiki:Tasks/Item10190: support plain-text output from ACTIONSEARCH. Foswiki:Tasks/Item868: Use JQueryPlugin to streamline action editing (including refreshing the topic when an edited action is saved). Foswiki:Tasks/Item1946: The name search is now able to search for orphaned actions. Foswiki:Tasks/Item9687: relative dates in search expressions fixed. |
+|  2.3.2 (04 Nov 2010) | Foswiki:Tasks/Item1187: Improved the fix for unwanted date changes when you create or edit an action. Now it should also work for servers west of Greenwich.  |
+|  2.3.1 (03 Nov 2010) | Foswiki:Tasks/Item9083: Ensure there's at least one newline at the end of the topic text after an action edit, and always one empty line between topic content and meta; otherwise attachment meta-data may get eaten |
+|  2.3.0 (17 Oct 2010) | Foswiki:Tasks/Item9825: Update for Foswiki 1.1.0 compatibility. No other fixes in this revision |
+|  2.2.3 (07 Feb 2010) | Foswiki:Tasks/Item8362: fix table separator in IE -- Foswiki:Main.AndrewJones |
+|  2.2.2 (20 Jan 2010) | Foswiki:Tasks/Item8400: fix for editing in the plugin topic page |
+|  2.2.1 (04 Jan 2010) | Foswiki:Tasks/Item8376: doc fix |
 |              | Foswiki:Tasks/Item2467: fix stylesheet. Foswiki:Tasks/Item2474: doc updates |
-|  05 Nov 2009 | Foswiki:Tasks/Item8322: documentation improvements Foswiki:Tasks/Item8092: add CSS classes for different table orientations Foswiki:Tasks/1187: standardised entry fields as accepting GMT times only, fixed the test cases |
-|  15 May 2009 | Foswikitask:Item1627: Add horizontal grid lines to separate tasks as it was too difficult to see where one task ends and the next begins. Foswikitask:Item1187 If the server was east of Greenwich the dates in ActionTrackerPlugin were displayed as one day earlier and each time you edited an action the dates would decrement by one day. Foswikitask:Item1364 ActionTrackerPlugin handles actions without uid very badly. Foswikitask:Item1482 actionnotify referred to old name space. |
-|  29 Jan 2009 | Foswikitask:Item455: port to foswiki Foswikitask:Item5974: correct CSS for search results table Foswikitask:Item5938: load CSS for ACTIONSEARCH Foswikitask:Item5606: Foswikitask:Item5915: respect global settings for time format Foswikitask:Item4312: finished support for header, footer etc. Foswikitask:Item412: added =reverse= Foswikitask:Item5962: removed apparently spurious newline |
-|  09 Jan 2002 | First version |
+|  2.2.0 (05 Nov 2009) | Foswiki:Tasks/Item8322: documentation improvements Foswiki:Tasks/Item8092: add CSS classes for different table orientations Foswiki:Tasks/1187: standardised entry fields as accepting GMT times only, fixed the test cases |
+|  2.1.0 (15 May 2009) | Foswikitask:Item1627: Add horizontal grid lines to separate tasks as it was too difficult to see where one task ends and the next begins. Foswikitask:Item1187 If the server was east of Greenwich the dates in ActionTrackerPlugin were displayed as one day earlier and each time you edited an action the dates would decrement by one day. Foswikitask:Item1364 ActionTrackerPlugin handles actions without uid very badly. Foswikitask:Item1482 actionnotify referred to old name space. |
+|  2.0.0 (29 Jan 2009) | Foswikitask:Item455: port to foswiki Foswikitask:Item5974: correct CSS for search results table Foswikitask:Item5938: load CSS for ACTIONSEARCH Foswikitask:Item5606: Foswikitask:Item5915: respect global settings for time format Foswikitask:Item4312: finished support for header, footer etc. Foswikitask:Item412: added =reverse= Foswikitask:Item5962: removed apparently spurious newline |
+|  1.0.0 (09 Jan 2002) | First version |
 |  Dependencies: | %$DEPENDENCIES% |
 |  Home page: | http://foswiki.org/Extensions/ActionTrackerPlugin |
 

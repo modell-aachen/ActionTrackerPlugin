@@ -9,7 +9,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '4 Feb 2011';
+our $RELEASE = '2.4.3';
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -30,6 +30,13 @@ sub initPlugin {
 
     Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
 				       'context-free' );
+    use Foswiki::Contrib::JSCalendarContrib;
+    if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
+        Foswiki::Func::writeWarning( 'JSCalendarContrib not found ' . $@ );
+    }
+    else {
+        Foswiki::Contrib::JSCalendarContrib::addHEAD('foswiki');
+    }
 
     return 1;
 }
@@ -226,14 +233,6 @@ sub _beforeActionEdit {
     $tmpl =~ s/%HIDDENFIELDS%/$fields/go;
 
     $_[0] = $tmpl;
-
-    use Foswiki::Contrib::JSCalendarContrib;
-    if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
-        Foswiki::Func::writeWarning( 'JSCalendarContrib not found ' . $@ );
-    }
-    else {
-        Foswiki::Contrib::JSCalendarContrib::addHEAD('foswiki');
-    }
 }
 
 sub _hiddenMeta {
