@@ -64,16 +64,10 @@
 }
 
 /* CSS classes used for the SELECT element when ENABLESTATESHORTCUT is on. */
-.atpStateopen { 
+select[name="state"][class~="value_open"] { 
   background-color: orange;
 }
-.atpStateclosed { 
-  background-color: #D0D0D0;
-}
 
-.atpSignopen { 
-}
-
-.atpSignclosed { 
+select.value_closed { 
   background-color: #D0D0D0;
 }

@@ -413,7 +413,7 @@ The format of the fields in the action editor are set by:
 | *Preference* | *Default* |
 | =ACTIONTRACKERPLUGIN_EDITHEADER= | =&#124; Assigned to &#124; Due date &#124; State &#124; Notify &#124;= |
 | =ACTIONTRACKERPLUGIN_EDITFORMAT= | =&#124; $who &#124; $due &#124; $state &#124; $notify &#124;= |
-| ACTIONTRACKERPLUGIN_EDITORIENT | =cols= |
+| =ACTIONTRACKERPLUGIN_EDITORIENT= | =cols= |
 
 You can also override the default =EDITBOXWIDTH= and =EDITBOXHEIGHT= settings just for the action editor:
 
@@ -487,6 +487,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2011 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  2.4.4 (18 May 2011) | Foswiki:Tasks/Item10615: fix pop-up editing when an extra select field is not included in the editor. Improve the presentation when a state field changes. |
 |  2.4.3 (19 Apr 2011) | Foswiki:Tasks/Item10613: Fix for calendar popup in action edit form |
 |  2.4.2 (4 Feb 2011) | Foswiki:Tasks/10281: Correct handling of parallel edits. |
 |  2.4.0 (28 Jan 2011) | Foswiki:Tasks/Item8263: Merged Kent Dozier's enhancement for display of select-type fields. Foswiki:Tasks/Item10282: Ensure a link to a missing action gives a meaningful error. Foswiki:Tasks/Item9636: correct parsing of manually-entered dates to default to international standards. Foswiki:Tasks/Item8564: numeric-sort in columns containing numeric data. Foswiki:Tasks/Item10190: support plain-text output from ACTIONSEARCH. Foswiki:Tasks/Item868: Use JQueryPlugin to streamline action editing (including refreshing the topic when an edited action is saved). Foswiki:Tasks/Item1946: The name search is now able to search for orphaned actions. Foswiki:Tasks/Item9687: relative dates in search expressions fixed. |

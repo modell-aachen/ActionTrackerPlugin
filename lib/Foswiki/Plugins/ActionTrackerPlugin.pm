@@ -474,7 +474,7 @@ sub lazyInit {
     # it's not done in the JQuery plugin decl)
     my $src = (DEBUG) ? '_src' : '';
     Foswiki::Func::addToZone("head", "JQUERYPLUGIN::ActionTracker::CSS", <<"HERE");
-<link rel='stylesheet' href='$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}' type='text/css' media='all' />
+<link rel='stylesheet' href='$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}$src.css' type='text/css' media='all' />
 HERE
 
     $defaultFormat = new Foswiki::Plugins::ActionTrackerPlugin::Format(

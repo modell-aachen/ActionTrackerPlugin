@@ -7,7 +7,7 @@ package Foswiki::Plugins::ActionTrackerPlugin::Options;
 use vars qw ( %options );
 
 my %defaults = (
-    CSS   => '%PUBURL%/%SYSTEMWEB%/ActionTrackerPlugin/styles.css',
+    CSS   => '%PUBURL%/%SYSTEMWEB%/ActionTrackerPlugin/styles',
     DEBUG => '0',
     DEFAULTDUE    => 9999999999,                             # far in the future
     EDITBOXHEIGHT => '%EDITBOXHEIGHT%',

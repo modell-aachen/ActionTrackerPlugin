@@ -684,11 +684,8 @@ sub _formatType_date {
 sub _formatType_select {
     my ( $this, $fld, $args, $asHTML ) = @_;
 
-    # Old behavior is to simply return the text as usual.
-    # Do this anyway if the state field isn't being allowed
-    # to edit on the fly without going to edit mode.
-    require Foswiki::Plugins::ActionTrackerPlugin::Options;
-    unless ($Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT}) {
+    # If HTML isn't wanted, just throw back the value
+    unless ( $asHTML ) {
 	return (defined $this->{$fld}) ? $this->{$fld} : '';
     }
 
@@ -698,18 +695,17 @@ sub _formatType_select {
     my $fields = '';
     my $any_selected = 0;
     foreach my $option ( @{$type->{values}} ) {
-	my @extras = ();
+	my $attrs = { value => $option };
 	if ( defined( $this->{$fld} ) &&
 	     $this->{$fld} eq $option ) {
-	    push( @extras, selected => "selected" );
+	    $attrs->{selected} = "selected";
 	    $any_selected = 1;
 	}
-	$fields .= CGI::option({ value=>$option, @extras }, $option);
+	$fields .= CGI::option( $attrs, $option );
     }
 
     # If nothing was selected, add an empty selection at the top
     # That way, it can display a blank box, but can be changed.
-    # Ones with a value already can not be changed to blank.
     if (!$any_selected) {
 	$fields = CGI::option({ value=>"NuLL", selected=>"selected" }, "") . $fields;
     }
@@ -719,7 +715,7 @@ sub _formatType_select {
 	CGI::Select(
 	    { name => $fld,
 	      size => $size,
-	      class => 'atp_update userval'
+	      class => 'atp_update userval value_' . $this->{$fld}
 	    },
 	    $fields ));
 }
@@ -784,7 +780,7 @@ sub _formatField_due {
 
 sub _formatField_state {
     my ( $this, $args, $asHTML ) = @_;
-    return $this->{state} unless $asHTML;
+
     return $this->{state} unless $this->{uid};
 
     # SMELL: assumes a prior call has loaded the options
@@ -793,21 +789,7 @@ sub _formatField_state {
       unless
         $Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT};
 
-    my $input = '';
-    foreach my $option ( @{ $types{state}->{values} } ) {
-        my %attrs;
-        $attrs{selected} = 'selected' if ( $option eq $this->{state} );
-        $attrs{value} = $option;    # Item4649
-        $input .= CGI::option( \%attrs, $option );
-    }
-    return $this->_form(
-	'state', undef,
-	CGI::Select(
-        {
-	    name => 'state',
-            class => "atpState$this->{state} atp_update userval"
-        },
-        $input));
+    return $this->_formatType_select('state', $args, $asHTML);
 }
 
 # Special 'close' button field for transition between any state and 'closed'

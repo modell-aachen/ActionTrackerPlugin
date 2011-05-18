@@ -13,7 +13,11 @@
 	    data: form.serialize(),
 	    //dataType: "json",
 	    success: function(d, t, r) {
-		console.debug(t);
+		//console.debug(t);
+		if (input.attr("tagName") == "SELECT") {
+		    input.attr("class", input.attr("class").replace(/\s*\bvalue_\S+\b/, ''));
+		    input.addClass("value_" + input.val());
+		}
 	    },
 	    error: function(r, t, e) {
 		alert(t);
