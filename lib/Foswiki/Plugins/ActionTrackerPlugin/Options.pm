@@ -22,7 +22,7 @@ my %defaults = (
     TABLEFORMAT => '| $who | $due | $text $link | $state | $notify | $edit |',
     TABLEHEADER => '| Assigned to | Due date | Description | State | Notify ||',
     TABLEORIENT => 'cols',
-    TEXTFORMAT  => 'Action for $who, due $due, $state$n$text$n'
+    TEXTFORMAT  => 'Action for $who, due $due, $state$n$text$n$link$n'
 );
 %options = %defaults;
 

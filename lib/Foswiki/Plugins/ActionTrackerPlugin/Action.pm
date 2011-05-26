@@ -846,6 +846,10 @@ sub _formatField_link {
             )
           );
         $text .= $jump;
+    } else {
+	$text = Foswiki::Func::getViewUrl( $this->{web}, $this->{topic} )
+                  . '#'
+                  . $this->getAnchor();
     }
     return $text;
 }

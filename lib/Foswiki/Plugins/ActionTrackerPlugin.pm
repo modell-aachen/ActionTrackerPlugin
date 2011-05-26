@@ -9,7 +9,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '2.4.4';
+our $RELEASE = '2.4.5';
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
