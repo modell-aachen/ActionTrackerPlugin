@@ -9,7 +9,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '2.4.5';
+our $RELEASE = '2.4.6';
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -68,7 +68,7 @@ sub commonTagsHandler {
             if ($actionGroup) {
                 $text .=
 		    $actionGroup->formatAsHTML(
-			$defaultFormat, 'name', 'atpDef' );
+			$defaultFormat, 'href', 'atpDef' );
                 $actionGroup = undef;
             }
             $text .= $entry;
@@ -76,7 +76,7 @@ sub commonTagsHandler {
     }
     if ($actionGroup) {
         $text .=
-	    $actionGroup->formatAsHTML( $defaultFormat, 'name', 'atpDef' );
+	    $actionGroup->formatAsHTML( $defaultFormat, 'href', 'atpDef' );
     }
 
     $_[0] = $text;

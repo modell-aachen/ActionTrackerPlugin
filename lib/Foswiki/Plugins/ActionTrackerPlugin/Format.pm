@@ -165,7 +165,7 @@ sub _expandVar {
 sub formatHTMLTable {
     my $this      = shift;
     my $data      = shift;
-    my $jump      = shift;
+    my $jump      = shift; # 'name' for plain text, or 'href' for a link
     my $class     = shift;
     my $a         = {};
     $a->{class} = $class if $class;

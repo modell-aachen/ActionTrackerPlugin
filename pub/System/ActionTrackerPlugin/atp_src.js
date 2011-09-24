@@ -62,7 +62,7 @@
 		},
 		error: function(r, t, e) {
 		    // IE fails validation of the login
-		    alert("Buggeration");
+		    alert("Sorry, validation failed, possibly because someone else is already editing the action. Please try again in a few minutes.");
 		}
 	    });
 	    return false;
