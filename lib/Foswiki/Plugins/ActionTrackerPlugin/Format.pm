@@ -400,11 +400,14 @@ sub _formatFieldForEdit {
             # make sure JSCalendar is there
             eval 'use Foswiki::Contrib::JSCalendarContrib';
             unless ($@) {
+                my $dateformat = Foswiki::Func::getPreferencesValue('JSCALENDARCONTRIB_FORMAT') ||
+                                 $Foswiki::cfg{JSCalendarContrib}{format} ||
+                                 '%e %B %Y';
                 @extras = ( id => "date_$attrname" );
                 $content = CGI::image_button(
                     -name => 'calendar',
                     -onclick =>
-                      "return showCalendar('date_$attrname','%e %B %Y')",
+                      "return showCalendar('date_$attrname','$dateformat')",
                     -src => Foswiki::Func::getPubUrlPath() . '/'
                       . $Foswiki::cfg{SystemWebName}
                       . '/JSCalendarContrib/img.gif',

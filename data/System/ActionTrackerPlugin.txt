@@ -449,6 +449,12 @@ The strings used by the =$button$ switch. A =$closebutton= is a special
 | =ACTIONTRACKERPLUGIN_CLOSEBUTTONNAME= | =Close= |
 | =ACTIONTRACKERPLUGIN_CLOSEBUTTONCLOSED= | =Closed= |
  
+---+++ Formatting dates produced by the pop-up editor
+
+ActionTrackerPlugin will use the extension [[Foswiki:Extensions/JSCalendarContrib]] for displaying the calendar popup allowing for date selection when editing actions. It will format the selected date according to the settings specified for JSCalendarContrib.
+
+Refer to the System.JSCalendarContrib documentation to learn [[System.JSCalendarContrib#CustomizingTheAppearance][how to customize]] these settings system-wide, for a web or topic using the available date [[System.JSCalendarContrib#FormatSpecifiers][format specifiers]] for this extension.
+
 ---+++ Known Limitations and Debugging
 
 ---++++ Limitations
@@ -486,6 +492,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2011 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  2.4.7 (27 Oct 2011) | Foswiki:Tasks/Item11155: Use Foswiki date format settings for rendering the pop-up calendar dates instead of hardcoding them - Foswiki:Main.RaulFRodriguez |
 |  2.4.6 (24 Sep 2011) | Foswiki:Tasks/Item11141: corrected problem with rendering $link in view |
 |  2.4.5 (26 May 2011) | Foswiki:Tasks/Item2021: added a ink to the text mail notification format |
 |  2.4.4 (18 May 2011) | Foswiki:Tasks/Item10615: fix pop-up editing when an extra select field is not included in the editor. Improve the presentation when a state field changes. |
