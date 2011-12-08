@@ -53,7 +53,7 @@ sub set_up {
     # email: actor5\@correct.address
     # Should be notified with: A3 A6 A7
     # Actor 6 - wikiname in main and wrong address in Main.WebNotify
-    # email: actor6\@correct-address
+    # email: actor6\@correct-address.tv
     # Should be notified with: A3 A6 A8
     # Actor 7 - email address on action line
     # email: actor.7\@seven.net
@@ -79,7 +79,7 @@ sub set_up {
     $this->registerUser( "ActorFour", "Actor", "Four",
         'actorfour@yet-another-address.net' );
     $this->registerUser( "ActorFive", "Actor", "Five", 'actor5@example.com' );
-    $this->registerUser( "ActorSix", "Actor", "Six", 'actor6@correct-address' );
+    $this->registerUser( "ActorSix", "Actor", "Six", 'actor6@correct-address.tv' );
 
     Foswiki::Func::saveTopic( $this->{users_web}, "TWikiFormGroup", undef,
         <<'HERE');
@@ -234,6 +234,9 @@ sub test_B_NotifyLate {
 
     my $ok = "";
     while ( $html = shift(@FoswikiFnTestCase::mails) ) {
+	# Ensure all macros are expanded in the output
+        $this->assert_does_not_match( qr/%\w+%/, $html, $html );
+
         $this->assert_does_not_match( qr/A[12]:/, $html, $html );
         if ( $html =~ /To: actor-1\@an-address\.net/ ) {
             $this->assert_matches( qr/A3:/, $html, $html );
@@ -280,7 +283,7 @@ sub test_B_NotifyLate {
             $this->assert_does_not_match( qr/A8:/, $html, $html );
             $ok .= "E";
         }
-        elsif ( $html =~ /To: actor6\@correct-address/ ) {
+        elsif ( $html =~ /To: actor6\@correct-address\.tv/ ) {
             $this->assert_matches( qr/A3:/, $html, $html );
             $this->assert_does_not_match( qr/A4:/, $html, $html );
             $this->assert_does_not_match( qr/A5:/, $html, $html );

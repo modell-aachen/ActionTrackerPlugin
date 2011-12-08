@@ -9,7 +9,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '2.4.7';
+our $RELEASE = '2.4.8';
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -467,14 +467,12 @@ sub lazyInit {
     require Foswiki::Plugins::ActionTrackerPlugin::ActionSet;
     require Foswiki::Plugins::ActionTrackerPlugin::Format;
 
-    $options =
-	Foswiki::Plugins::ActionTrackerPlugin::Options::load( $web, $topic );
+    $options = Foswiki::Plugins::ActionTrackerPlugin::Options::load();
 
     # Add the ATP CSS (conditionally included from $options, which is why
     # it's not done in the JQuery plugin decl)
-    my $src = (DEBUG) ? '_src' : '';
     Foswiki::Func::addToZone("head", "JQUERYPLUGIN::ActionTracker::CSS", <<"HERE");
-<link rel='stylesheet' href='$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}$src.css' type='text/css' media='all' />
+<link rel='stylesheet' href='$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}' type='text/css' media='all' />
 HERE
 
     $defaultFormat = new Foswiki::Plugins::ActionTrackerPlugin::Format(

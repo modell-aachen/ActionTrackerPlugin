@@ -6,8 +6,8 @@ package Foswiki::Plugins::ActionTrackerPlugin::ActionNotify;
 use strict;
 use integer;
 
-# Added by NKO to fix problem with non danish names
-use locale;
+use locale; # required for international names
+use Assert;
 
 use Time::ParseDate ();
 use Foswiki::Net ();
@@ -347,6 +347,9 @@ Content-Type: text/plain
 
 ERROR: No actionnotify template installed - please inform %WIKIWEBMASTER%
 HERE
+
+    $text =~ Foswiki::Func::expandCommonVariables($text);
+    $text =~ s/%ACTIONTRACKERPLUGIN_CSS%/$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}/;
 
     my $subject = '';
     if ($actionsString) {

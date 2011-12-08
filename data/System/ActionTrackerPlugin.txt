@@ -492,6 +492,7 @@ Thanks are due to the following sponsors, who have helped make this plugin possi
 |  Copyright | Copyright &copy; 2002-2003 Motorola. All Rights Reserved.%BR% Copyright &copy; 2004-2011 Crawford Currie |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Change History: | |
+|  2.4.8 (8 Dec 2011) | Foswiki:Tasks/Item11340: Fix ACTIONTRACKERPLUGIN_CSS as per documentation |
 |  2.4.7 (27 Oct 2011) | Foswiki:Tasks/Item11155: Use Foswiki date format settings for rendering the pop-up calendar dates instead of hardcoding them - Foswiki:Main.RaulFRodriguez |
 |  2.4.6 (24 Sep 2011) | Foswiki:Tasks/Item11141: corrected problem with rendering $link in view |
 |  2.4.5 (26 May 2011) | Foswiki:Tasks/Item2021: added a ink to the text mail notification format |

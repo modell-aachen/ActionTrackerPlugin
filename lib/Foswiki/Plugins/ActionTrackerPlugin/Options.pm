@@ -1,13 +1,15 @@
 # See bottom of file for license and copyright information
 package Foswiki::Plugins::ActionTrackerPlugin::Options;
 
+use Assert;
+my $src =  ((DEBUG) ? '' : '_src');
+
 # Define a global so that submodules can access options without needing the
 # result of the load. Nasty, but this is refactored over existing code, so
 # pragmatic.
-use vars qw ( %options );
 
 my %defaults = (
-    CSS   => '%PUBURL%/%SYSTEMWEB%/ActionTrackerPlugin/styles',
+    CSS   => "%PUBURL%/%SYSTEMWEB%/ActionTrackerPlugin/styles$src.css",
     DEBUG => '0',
     DEFAULTDUE    => 9999999999,                             # far in the future
     EDITBOXHEIGHT => '%EDITBOXHEIGHT%',
@@ -24,21 +26,25 @@ my %defaults = (
     TABLEORIENT => 'cols',
     TEXTFORMAT  => 'Action for $who, due $due, $state$n$text$n$link$n'
 );
-%options = %defaults;
+
+our %options = %defaults;
 
 sub load {
-    my ( $web, $topic ) = @_;
-
     # Set defaults, will be overwritten by user prefs
     %options = %defaults;
 
     require Foswiki::Func;
     foreach my $ky ( keys %options ) {
         my $sk = 'ACTIONTRACKERPLUGIN_' . $ky;
-        $sk = Foswiki::Func::getPreferencesValue($sk);
-        $options{$ky} = $sk if ( defined $sk );
-        $options{$ky} =
-          Foswiki::Func::expandCommonVariables( $options{$ky}, $topic, $web );
+        my $skv = Foswiki::Func::getPreferencesValue($sk);
+	next unless ( defined $skv || defined $options{$ky} );
+        if ( !defined $skv ) {
+	    # Copy back into preferences so it gets expanded in templates
+	    $skv = $options{$ky};
+	    Foswiki::Func::setPreferencesValue( $sk, $skv );
+	}
+	# SMELL: this should be done when the template is used
+	$options{$ky} = Foswiki::Func::expandCommonVariables( $skv );
     }
 
     return \%options;
