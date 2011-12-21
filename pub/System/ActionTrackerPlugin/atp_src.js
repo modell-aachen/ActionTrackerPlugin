@@ -37,7 +37,12 @@
 	}
 	div.load(this.href,
 		 function(done) {
-		     div.dialog("open");
+		     var m = /<!-- ATP_CONFLICT (?:[^\s.]+\.)?(\S+) -->/.exec(done, "s");
+		     if (m) {
+			 alert("Page is already being edited by " + m[1] + "; please try again later");
+		     } else {
+			 div.dialog("open");
+		     }
 		 });
 	return false;
     });
