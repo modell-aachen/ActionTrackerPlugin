@@ -36,10 +36,15 @@
 	    div.dialog({autoOpen: false, width: 600});
 	}
 	div.load(this.href,
-		 function(done) {
-		     var m = /<!-- ATP_CONFLICT (?:[^\s.]+\.)?(\S+) -->/.exec(done, "s");
+		 function(done, status) {
+		     var m = /<!-- ATP_CONFLICT (.*?)#(.*?)#(.*?)# -->/.exec(done, "s");
 		     if (m) {
-			 alert("Page is already being edited by " + m[1] + "; please try again later");
+			 alert(m[1] + " has been editing the topic for " + m[2] +
+			       " and the lease is still active for another " + m[3] +
+			       "; please try again later");
+		     } else if (status == "error") {
+			 alert("Error when I tried to edit the action");
+			 debugger;
 		     } else {
 			 div.dialog("open");
 		     }
