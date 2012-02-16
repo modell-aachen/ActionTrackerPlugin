@@ -716,7 +716,7 @@ sub _formatType_select {
 	    { name => $fld,
 	      size => $size,
 	      class => 'atp_update userval value_' .
-			    (defined $this->{$fld} ? $this->{$fld} : ''),
+		(defined $this->{$fld} ? $this->{$fld} : 'fw_field_not_defined'),
 	    },
 	    $fields ));
 }
