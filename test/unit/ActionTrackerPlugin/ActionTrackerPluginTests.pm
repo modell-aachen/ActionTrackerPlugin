@@ -136,10 +136,11 @@ Before
 After
 ";
     $Foswiki::Plugins::ActionTrackerPlugin::pluginInitialized = 1;
-    Foswiki::Plugins::ActionTrackerPlugin::commonTagsHandler(
-        $chosen, "Finagle", $this->{users_web} );
-    $chosen = Foswiki::Func::expandCommonVariables(
-        $chosen, "Finagle", $this->{users_web} );
+    Foswiki::Plugins::ActionTrackerPlugin::commonTagsHandler( $chosen,
+        "Finagle", $this->{users_web} );
+    $chosen =
+      Foswiki::Func::expandCommonVariables( $chosen, "Finagle",
+        $this->{users_web} );
     $this->assert_matches( qr/Test0:/,    $chosen );
     $this->assert_matches( qr/Test1:/,    $chosen );
     $this->assert_matches( qr/Main0:/,    $chosen );
@@ -188,8 +189,7 @@ sub edit {
     my $tag = shift;
     my $url =
 "%SCRIPTURLPATH%/edit%SCRIPTSUFFIX%/TheWeb/TheTopic?skin=action&action=$tag&t={*\\d+*}";
-    return
-      "<a href=\"$url\" class=\"atp_edit\">edit</a>";
+    return "<a href=\"$url\" class=\"atp_edit\">edit</a>";
 }
 
 sub action {
@@ -218,7 +218,8 @@ sub test_BeforeEditHandler {
     my $text =
 '%ACTION{uid="666" who=Fred,due="2 Jan 02",open}% Test1: Fred_open_ontime';
     Foswiki::Plugins::ActionTrackerPlugin::beforeEditHandler( $text, "Topic2",
-        $this->{users_web}, Foswiki::Meta->new($this->{session}, $this->{users_web}, "Topic2") );
+        $this->{users_web},
+        Foswiki::Meta->new( $this->{session}, $this->{users_web}, "Topic2" ) );
     $text = $this->assert_html_matches(
 "<input type=\"text\" name=\"who\" value=\"$this->{users_web}\.Fred\" size=\"35\"/>",
         $text
@@ -230,23 +231,26 @@ sub testAfterEditHandler {
     my $q    = new Unit::Request(
         {
             closeactioneditor => 1,
-	    uid               => '1',
-	    originalrev       => '0',
+            uid               => '1',
+            originalrev       => '0',
             who               => "AlexanderPope",
             due               => "3 may 2009",
             state             => "open",
-	    text => "Chickens and eggs"
+            text              => "Chickens and eggs"
         }
     );
-    Foswiki::Func::saveTopic($this->{test_web}, "EditTopic", undef, <<HERE);
+    Foswiki::Func::saveTopic( $this->{test_web}, "EditTopic", undef, <<HERE);
 %ACTION{uid="0" state="open"}% Sponge %ENDACTION%
 %ACTION{uid="1"}% Cake %ENDACTION%
 HERE
+
     # populate with edit fields
     $this->{session}->{request} = $q;
     my $text = '';
-    Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler( $text, "EditTopic", $this->{test_web} );
-    $this->assert( $text =~ m/(%ACTION.*%ENDACTION%)\s*(%ACTION.*%ENDACTION%)$/s );
+    Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler( $text, "EditTopic",
+        $this->{test_web} );
+    $this->assert(
+        $text =~ m/(%ACTION.*%ENDACTION%)\s*(%ACTION.*%ENDACTION%)$/s );
     my $first  = $1;
     my $second = $2;
     my $re     = qr/\s+state=\"open\"\s+/;

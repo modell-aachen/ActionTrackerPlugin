@@ -29,7 +29,7 @@ sub add {
 
 sub first {
     my $this = shift;
-    return undef unless scalar(@{$this->{ACTIONS}});
+    return undef unless scalar( @{ $this->{ACTIONS} } );
     return $this->{ACTIONS}->[0];
 }
 
@@ -47,6 +47,7 @@ sub load {
         if ( $block =~ /^%ACTION{(.*)}%$/ ) {
             my $attrs = $1;
             my $descr;
+
             # Sniff ahead to see if we have a matching ENDACTION
             if (   $i + 1 < scalar(@blocks)
                 && $blocks[ $i + 1 ] =~ /%ENDACTION%/ )
@@ -93,36 +94,43 @@ sub sort {
     my @ordered;
     if ( defined($order) ) {
         $order =~ s/[^\w,]//g;
-        @_sortfields = (split( /,\s*/, $order ));
+        @_sortfields = ( split( /,\s*/, $order ) );
 
-	# Determine sort type - numeric or string. Dates are held as numbers.
-	my %num_sort = map { $_ => 1 } @_sortfields;
-	foreach my $act (@{ $this->{ACTIONS} }) {
-	    my $all_string = 1;
-	    foreach my $sf (@_sortfields) {
-		next unless defined($act->{$sf}); # ignore undefs, they can't help us decide
-		if ($num_sort{$sf}) {
-		    if ($act->{$sf} =~ /^(\d+\.\d+|\d+\.|\.\d+|\d+)([eE][+-]?\d+)?\s*$/) {
-			$all_string = 0;
-		    } else {
-			$num_sort{$sf} = 0;
-		    }
-		}
-	    }
-	    last if $all_string;
-	}
-        @ordered = sort {
+        # Determine sort type - numeric or string. Dates are held as numbers.
+        my %num_sort = map { $_ => 1 } @_sortfields;
+        foreach my $act ( @{ $this->{ACTIONS} } ) {
+            my $all_string = 1;
             foreach my $sf (@_sortfields) {
+                next
+                  unless defined( $act->{$sf} )
+                ;    # ignore undefs, they can't help us decide
+                if ( $num_sort{$sf} ) {
+                    if ( $act->{$sf} =~
+                        /^(\d+\.\d+|\d+\.|\.\d+|\d+)([eE][+-]?\d+)?\s*$/ )
+                    {
+                        $all_string = 0;
+                    }
+                    else {
+                        $num_sort{$sf} = 0;
+                    }
+                }
+            }
+            last if $all_string;
+        }
+        @ordered = sort {
+            foreach my $sf (@_sortfields)
+            {
                 return -1 unless ref($a);
                 return 1  unless ref($b);
                 my ( $x, $y ) = ( $a->{$sf}, $b->{$sf} );
                 if ( defined($x) && defined($y) ) {
-		    my $c;
-                    if ($num_sort{$sf}) {
-			$c = ($x <=> $y);
-		    } else {
-			$c = ( $x cmp $y );
-		    }
+                    my $c;
+                    if ( $num_sort{$sf} ) {
+                        $c = ( $x <=> $y );
+                    }
+                    else {
+                        $c = ( $x cmp $y );
+                    }
                     return $c if ( $c != 0 );
 
                     # COVERAGE OFF should never be needed
@@ -204,8 +212,7 @@ sub stringify {
 # $newWindow=0 to get jump in same window.
 sub formatAsHTML {
     my ( $this, $format, $jump, $class ) = @_;
-    return $format->formatHTMLTable( \@{ $this->{ACTIONS} },
-        $jump, $class );
+    return $format->formatHTMLTable( \@{ $this->{ACTIONS} }, $jump, $class );
 }
 
 # PUBLIC format the action set as a plain string
@@ -317,26 +324,28 @@ sub allActionsInWeb {
         }
     );
 
-    if( ref( $grep ) ne 'HASH' ) { # New Func implementation
+    if ( ref($grep) ne 'HASH' ) {    # New Func implementation
         my %oldResultSet;
-        while( $grep->hasNext() ) {
+        while ( $grep->hasNext() ) {
             my $webtopic = $grep->next();
-            my ($foundWeb, $topic) = Foswiki::Func::normalizeWebTopicName($web, $webtopic);
+            my ( $foundWeb, $topic ) =
+              Foswiki::Func::normalizeWebTopicName( $web, $webtopic );
             $oldResultSet{$topic} = 1;
         }
         $grep = \%oldResultSet;
     }
 
     foreach my $topic ( keys %$grep ) {
+
         # SMELL: always read the text, because it's faster in the current
         # impl to find the perms embedded in it
         my $text =
           Foswiki::Func::readTopicText( $web, $topic, undef, $internal );
         next
           unless $internal
-          || Foswiki::Func::checkAccessPermission( 'VIEW',
-            Foswiki::Func::getWikiName(),
-            $text, $topic, $web );
+              || Foswiki::Func::checkAccessPermission( 'VIEW',
+                  Foswiki::Func::getWikiName(),
+                  $text, $topic, $web );
         my $tacts =
           Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
             $text );
@@ -385,12 +394,16 @@ sub splitOnAction {
         if ($found) {
             $post->add($action);
         }
-        elsif ( ref($action) && !defined( $action->{uid}) &&
-                  $action->{ACTION_NUMBER} eq $uid ) {
+        elsif (ref($action)
+            && !defined( $action->{uid} )
+            && $action->{ACTION_NUMBER} eq $uid )
+        {
             $found = $action;
         }
-        elsif ( ref($action) && defined( $action->{uid}) &&
-                  $action->{uid} eq $uid ) {
+        elsif (ref($action)
+            && defined( $action->{uid} )
+            && $action->{uid} eq $uid )
+        {
             $found = $action;
         }
         else {

@@ -145,11 +145,11 @@ sub test_SortAllWebs {
     my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "", "",
         '$who $state $text' );
     my $chosen = $actions->formatAsString($fmt);
-    $this->assert_matches(qr/Test_Topic2_A_open_late/, $chosen);
-    $this->assert_matches(qr/Main_Topic2_B_open_ontime/, $chosen);
-    $this->assert_matches(qr/Main_Topic2_E_open_ontime/, $chosen);
-    $this->assert_matches(qr/Main_Topic2_A_closed_ontime/, $chosen);
-    $this->assert_matches(qr/Test_Topic1_C_open_ontime/, $chosen);
+    $this->assert_matches( qr/Test_Topic2_A_open_late/,     $chosen );
+    $this->assert_matches( qr/Main_Topic2_B_open_ontime/,   $chosen );
+    $this->assert_matches( qr/Main_Topic2_E_open_ontime/,   $chosen );
+    $this->assert_matches( qr/Main_Topic2_A_closed_ontime/, $chosen );
+    $this->assert_matches( qr/Test_Topic1_C_open_ontime/,   $chosen );
 }
 
 sub test_AllInTestWebRE {
@@ -172,7 +172,7 @@ sub test_AllInTestWebRE {
 sub test_AllInMainWebRE {
     my $this = shift;
 
-    my $attrs = Foswiki::Attrs->new( 'web="' . $this->{users_web}.'"' );
+    my $attrs = Foswiki::Attrs->new( 'web="' . $this->{users_web} . '"' );
     my $actions =
       Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs(
         $this->{users_web}, $attrs, 0 );

@@ -6,12 +6,12 @@ package Foswiki::Plugins::ActionTrackerPlugin::ActionNotify;
 use strict;
 use integer;
 
-use locale; # required for international names
+use locale;    # required for international names
 use Assert;
 
-use Time::ParseDate ();
-use Foswiki::Net ();
-use Foswiki::Attrs ();
+use Time::ParseDate                       ();
+use Foswiki::Net                          ();
+use Foswiki::Attrs                        ();
 use Foswiki::Plugins::ActionTrackerPlugin ();
 
 my $wikiWordRE;
@@ -30,11 +30,12 @@ sub actionNotify {
     # Assign SESSION so that Func methods work
     $Foswiki::Plugins::SESSION = $session;
 
-    if ($expr =~ /\bweb="([^" ,*]+)"/) {
-        Foswiki::Func::pushTopicContext($1, 'WebHome');
+    if ( $expr =~ /\bweb="([^" ,*]+)"/ ) {
+        Foswiki::Func::pushTopicContext( $1, 'WebHome' );
     }
 
-    Foswiki::Plugins::ActionTrackerPlugin::lazyInit($session->{webName}, $session->{topicName});
+    Foswiki::Plugins::ActionTrackerPlugin::lazyInit( $session->{webName},
+        $session->{topicName} );
 
     if ( $expr =~ s/DEBUG//o ) {
         print doNotifications( $session->{webName}, $expr, 1 ), "\n";
@@ -349,7 +350,8 @@ ERROR: No actionnotify template installed - please inform %WIKIWEBMASTER%
 HERE
 
     $text =~ Foswiki::Func::expandCommonVariables($text);
-    $text =~ s/%ACTIONTRACKERPLUGIN_CSS%/$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}/;
+    $text =~
+s/%ACTIONTRACKERPLUGIN_CSS%/$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}/;
 
     my $subject = '';
     if ($actionsString) {
@@ -469,16 +471,19 @@ sub _findChangesInWeb {
         }
     );
 
-    if( ref( $grep ) eq 'HASH' ) {
+    if ( ref($grep) eq 'HASH' ) {
         foreach my $topic ( keys %$grep ) {
-            _findChangesInTopic( $web, $topic, $theDate, $format, $notifications );
+            _findChangesInTopic( $web, $topic, $theDate, $format,
+                $notifications );
         }
     }
     else {
-        while( $grep->hasNext() ) {
+        while ( $grep->hasNext() ) {
             my $webtopic = $grep->next();
-            my ($foundWeb, $topic) = Foswiki::Func::normalizeWebTopicName($web, $webtopic);
-            _findChangesInTopic( $web, $topic, $theDate, $format, $notifications );
+            my ( $foundWeb, $topic ) =
+              Foswiki::Func::normalizeWebTopicName( $web, $webtopic );
+            _findChangesInTopic( $web, $topic, $theDate, $format,
+                $notifications );
         }
     }
 
