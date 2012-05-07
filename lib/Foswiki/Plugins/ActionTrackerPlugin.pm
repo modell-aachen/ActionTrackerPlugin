@@ -5,13 +5,13 @@ use strict;
 use Assert;
 use Error qw( :try );
 
-use Foswiki::Func    ();
+use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
 our $RELEASE = '2.4.9';
 our $SHORTDESCRIPTION =
-'Adds support for action tags in topics, and automatic notification of action statuses';
+    'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
 
 my $doneHeader   = 0;
@@ -29,7 +29,7 @@ sub initPlugin {
     Foswiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
 
     Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
-        'context-free' );
+				       'context-free' );
     use Foswiki::Contrib::JSCalendarContrib;
     if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
         Foswiki::Func::writeWarning( 'JSCalendarContrib not found ' . $@ );
@@ -51,9 +51,8 @@ sub commonTagsHandler {
     # Format actions in the topic.
     # Done this way so we get tables built up by
     # collapsing successive actions.
-    my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
-        $otext, 1 );
+    my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+	$web, $topic, $otext, 1 );
     my $actionGroup;
     my $text = '';
 
@@ -61,21 +60,23 @@ sub commonTagsHandler {
         if ( ref($entry) ) {
             if ( !$actionGroup ) {
                 $actionGroup =
-                  new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
+		    new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
             }
             $actionGroup->add($entry);
         }
         elsif ( $entry =~ /(\S|\n\s*\n)/s ) {
             if ($actionGroup) {
-                $text .= $actionGroup->formatAsHTML( $defaultFormat, 'href',
-                    'atpDef' );
+                $text .=
+		    $actionGroup->formatAsHTML(
+			$defaultFormat, 'href', 'atpDef' );
                 $actionGroup = undef;
             }
             $text .= $entry;
         }
     }
     if ($actionGroup) {
-        $text .= $actionGroup->formatAsHTML( $defaultFormat, 'href', 'atpDef' );
+        $text .=
+	    $actionGroup->formatAsHTML( $defaultFormat, 'href', 'atpDef' );
     }
 
     $_[0] = $text;
@@ -83,7 +84,7 @@ sub commonTagsHandler {
     # COVERAGE OFF debug only
     if ( $options->{DEBUG} ) {
         $_[0] =~
-          s/%ACTIONNOTIFICATIONS{(.*?)}%/_handleActionNotify($web, $1)/geo;
+	    s/%ACTIONNOTIFICATIONS{(.*?)}%/_handleActionNotify($web, $1)/geo;
     }
 
     # COVERAGE ON
@@ -121,8 +122,8 @@ sub _beforeNormalEdit {
         return unless lazyInit( $_[2], $_[1] );
 
         my $as =
-          Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
-            $_[0], 1 );
+	    Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
+								    $_[0], 1 );
         $_[0] = $as->stringify();
     }
 }
@@ -138,22 +139,22 @@ sub _beforeActionEdit {
     my $query = Foswiki::Func::getCgiQuery();
 
     my $uid = $query->param('atp_action');
-    unless ( defined $uid ) {
-        $_[0] = "Bad URL parameters; atp_action is not set";
-        return;
+    unless (defined $uid) {
+	$_[0] = "Bad URL parameters; atp_action is not set";
+	return;
     }
 
     # actionform.tmpl is a sub-template inserted into the parent template
     # as %TEXT%. This is done so we can use the standard template mechanism
     # without screwing up the content of the subtemplate.
     my $tmpl =
-      Foswiki::Func::readTemplate( 'actionform', Foswiki::Func::getSkin() );
+	Foswiki::Func::readTemplate( 'actionform', Foswiki::Func::getSkin() );
 
     # Here we want to show the current time in same time format as the user
     # sees elsewhere in his browser on Foswiki.
     my $date =
-      Foswiki::Func::formatTime( time(), undef,
-        $Foswiki::cfg{DisplayTimeValues} );
+	Foswiki::Func::formatTime( time(), undef,
+				   $Foswiki::cfg{DisplayTimeValues} );
 
     die unless ($date);
 
@@ -172,28 +173,25 @@ sub _beforeActionEdit {
     # write in hidden fields
     if ($meta) {
         $meta->forEachSelectedValue( qr/FIELD/, undef, \&_hiddenMeta,
-            { text => \$fields } );
+				     { text => \$fields } );
     }
 
     # Find the action.
     my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
-        $text, 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
+								$text, 1 );
 
     my ( $action, $pre, $post ) = $as->splitOnAction($uid);
-
     # Make sure the action currently exists
-    unless ($action) {
-        $_[0] = "Action does not exist - cannot edit";
-        return;
-    }
+    unless( $action ) {
+	$_[0] = "Action does not exist - cannot edit";
+	return
+    };
 
     # Add revision info to support merging
     my $info = $meta->getRevisionInfo();
-    $fields .= CGI::hidden(
-        -name  => 'originalrev',
-        -value => "$info->{version}_$info->{date}"
-    );
+    $fields .= CGI::hidden( -name => 'originalrev',
+			    -value => "$info->{version}_$info->{date}" );
 
     $tmpl =~ s/%UID%/$uid/go;
 
@@ -216,7 +214,7 @@ sub _beforeActionEdit {
         $options->{EDITFORMAT},
         $options->{EDITORIENT},
         "", ""
-    );
+	);
     my $editable = $action->formatForEdit($fmt);
     $tmpl =~ s/%EDITFIELDS%/$editable/o;
 
@@ -260,74 +258,61 @@ sub afterEditHandler {
 
     return unless lazyInit( $web, $topic );
 
-    my ( $ancestorRev, $ancestorDate ) = ( 0, 0 );
+    my ( $ancestorRev, $ancestorDate ) = (0, 0);
     my $origin = $query->param('originalrev');
-    ASSERT( defined($origin) ) if DEBUG;
+    ASSERT(defined($origin)) if DEBUG;
 
-    if ( $origin =~ /^(\d+)_(\d+)$/ ) {
-        ( $ancestorRev, $ancestorDate ) = ( $1, $2 );
+    if ($origin =~ /^(\d+)_(\d+)$/) {
+	( $ancestorRev, $ancestorDate ) = ( $1, $2 );
     }
 
     # Get the most recently saved rev
-    ( my $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
+    (my $meta, $text) = Foswiki::Func::readTopic($web, $topic);
     my $info = $meta->getRevisionInfo();
-    my $mustMerge =
-      (      $ancestorRev ne $info->{version}
-          || $ancestorDate && $info->{date} && $ancestorDate ne $info->{date} );
+    my $mustMerge = ($ancestorRev ne $info->{version}
+		     || $ancestorDate && $info->{date}
+		     && $ancestorDate ne $info->{date});
 
-    my $latest_as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
-        $text, 1 );
+    my $latest_as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+	$web, $topic, $text, 1);
 
     my $uid = $query->param("uid");
-    ASSERT( defined($uid) ) if DEBUG;
+    ASSERT(defined($uid)) if DEBUG;
 
-    my $latest_act =
-      $latest_as->search( new Foswiki::Attrs( 'uid="' . $uid . '"' ) )->first;
+    my $latest_act = $latest_as->search(
+	new Foswiki::Attrs('uid="' . $uid . '"'))->first;
 
     my $new_act =
-      Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery( $_[2],
-        $_[1], $latest_act->{ACTION_NUMBER}, $query );
+	Foswiki::Plugins::ActionTrackerPlugin::Action::createFromQuery(
+	    $_[2], $_[1], $latest_act->{ACTION_NUMBER}, $query );
 
-    unless (
-        UNIVERSAL::isa(
-            $latest_act, 'Foswiki::Plugins::ActionTrackerPlugin::Action'
-        )
-      )
-    {
-
-# If the edited action was not found in the latest rev, then force it in (it may
-# have been removed in another parallel edit)
-        $latest_act = $new_act;
-        $latest_as->add($new_act);
+    unless (UNIVERSAL::isa($latest_act, 'Foswiki::Plugins::ActionTrackerPlugin::Action')) {
+	# If the edited action was not found in the latest rev, then force it in (it may
+	# have been removed in another parallel edit)
+	$latest_act = $new_act;
+	$latest_as->add($new_act);
     }
 
     # See if we can get a common ancestor for merging
     my $old_act;
     if ($mustMerge) {
 
-        # If we have to merge, we need the ancestor root of the action to
-        # do a three-way merge.
-        # If the previous revision was generated by a reprev,
-        # then the original is lost and we can't 3-way merge
-        unless ( $info->{reprev}
-            && $info->{version}
-            && $info->{reprev} == $info->{version} )
-        {
+	# If we have to merge, we need the ancestor root of the action to
+	# do a three-way merge.
+	# If the previous revision was generated by a reprev,
+	# then the original is lost and we can't 3-way merge
+	unless ($info->{reprev} && $info->{version}
+	    && $info->{reprev} == $info->{version} ) {
 
-            my ( $ances_meta, $ances_text ) =
-              Foswiki::Func::readTopic( $web, $topic, $ancestorRev );
-            my $ances =
-              Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web,
-                $topic, $ances_text, $ancestorRev );
-            $old_act =
-              $ances->search( new Foswiki::Attrs( 'uid="' . $uid . '"' ) )
-              ->first;
-        }
+	    my ($ances_meta, $ances_text) = Foswiki::Func::readTopic($web, $topic, $ancestorRev);
+	    my $ances = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load(
+		$web, $topic, $ances_text, $ancestorRev);
+	    $old_act = $ances->search(
+		new Foswiki::Attrs('uid="' . $uid . '"'))->first;
+	}
     }
 
-    $latest_act->updateFromCopy( $new_act, $mustMerge, $info->{version},
-        $ancestorRev, $old_act );
+    $latest_act->updateFromCopy($new_act, $mustMerge, $info->{version}, $ancestorRev, $old_act);
     $latest_act->populateMissingFields();
     $text = $latest_as->stringify();
 
@@ -350,8 +335,8 @@ sub beforeSaveHandler {
 
     if ( $query->param('closeactioneditor') ) {
 
-# this is a save from the action editor. Text will just be the text of the action - we
-# must recover the rest from the topic on disc.
+        # this is a save from the action editor. Text will just be the text of the action - we
+	# must recover the rest from the topic on disc.
 
         # Strip pre and post metadata from the text
         my $premeta  = "";
@@ -401,8 +386,8 @@ sub _addMissingAttributes {
     my %seenUID;
 
     my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
-        $_[0], 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $_[2], $_[1],
+								$_[0], 1 );
 
     foreach my $action ( @{ $as->{ACTIONS} } ) {
         next unless ref($action);
@@ -431,7 +416,7 @@ sub _handleActionSearch {
     # use default format unless overridden
     my $fmt;
     my $fmts    = $attrs->remove('format');
-    my $plain   = Foswiki::Func::isTrue( $attrs->remove('nohtml') );
+    my $plain   = Foswiki::Func::isTrue($attrs->remove('nohtml'));
     my $hdrs    = $attrs->remove('header');
     my $foot    = $attrs->remove('footer');
     my $sep     = $attrs->remove('separator');
@@ -442,23 +427,22 @@ sub _handleActionSearch {
         $fmts   = $defaultFormat->getFields()      unless ( defined($fmts) );
         $hdrs   = $defaultFormat->getHeaders()     unless ( defined($hdrs) );
         $orient = $defaultFormat->getOrientation() unless ( defined($orient) );
-        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts,
-            $orient, $fmts, '' );
+        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
+	    $hdrs, $fmts, $orient, $fmts, '' );
     }
     else {
         $fmt = $defaultFormat;
     }
 
     my $actions =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web,
-        $attrs, 0 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs(
+	    $web, $attrs, 0 );
     $actions->sort( $sort, $reverse );
     my $result;
     if ($plain) {
-        $result = $actions->formatAsString($fmt);
-    }
-    else {
-        $result = $actions->formatAsHTML( $fmt, 'href', 'atpSearch' );
+	$result = $actions->formatAsString( $fmt );
+    } else {
+	$result = $actions->formatAsHTML( $fmt, 'href', 'atpSearch' );
     }
     return $result;
 }
@@ -469,15 +453,12 @@ sub lazyInit {
 
     return 1 if $initialised;
 
-    Foswiki::Plugins::JQueryPlugin::registerPlugin( 'ActionTracker',
-        'Foswiki::Plugins::ActionTrackerPlugin::JQuery' );
-    unless (
-        Foswiki::Plugins::JQueryPlugin::createPlugin(
-            'ActionTracker', $Foswiki::Plugins::SESSION
-        )
-      )
-    {
-        die 'Failed to register JQuery plugin';
+    Foswiki::Plugins::JQueryPlugin::registerPlugin(
+	'ActionTracker',
+	'Foswiki::Plugins::ActionTrackerPlugin::JQuery');
+    unless( Foswiki::Plugins::JQueryPlugin::createPlugin(
+		'ActionTracker', $Foswiki::Plugins::SESSION )) {
+	die 'Failed to register JQuery plugin';
     }
 
     require Foswiki::Attrs;
@@ -490,8 +471,7 @@ sub lazyInit {
 
     # Add the ATP CSS (conditionally included from $options, which is why
     # it's not done in the JQuery plugin decl)
-    Foswiki::Func::addToZone( "head", "JQUERYPLUGIN::ActionTracker::CSS",
-        <<"HERE");
+    Foswiki::Func::addToZone("head", "JQUERYPLUGIN::ActionTracker::CSS", <<"HERE");
 <link rel='stylesheet' href='$Foswiki::Plugins::ActionTrackerPlugin::options->{CSS}' type='text/css' media='all' />
 HERE
 
@@ -499,7 +479,7 @@ HERE
         $options->{TABLEHEADER}, $options->{TABLEFORMAT},
         $options->{TABLEORIENT}, $options->{TEXTFORMAT},
         $options->{NOTIFYCHANGES}
-    );
+	);
 
     if ( $options->{EXTRAS} ) {
         my $e = Foswiki::Plugins::ActionTrackerPlugin::Action::extendTypes(
@@ -532,8 +512,8 @@ sub _handleActionNotify {
     }
 
     my $text =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications(
-        $web, $expr, 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionNotify::doNotifications(
+	    $web, $expr, 1 );
 
     $text =~ s/<html>/<\/pre>/gios;
     $text =~ s/<\/html>/<pre>/gios;
@@ -550,10 +530,10 @@ sub _updateRESTHandler {
         my $topic = $query->param('topic');
         my $web;
         ( $web, $topic ) =
-          Foswiki::Func::normalizeWebTopicName( undef, $topic );
+	    Foswiki::Func::normalizeWebTopicName( undef, $topic );
         lazyInit( $web, $topic );
         _updateSingleAction( $web, $topic, $query->param('uid'),
-            $query->param('field') => $query->param('value') );
+			     $query->param('field') => $query->param('value') );
         print CGI::header( 'text/plain', 200 );    # simple message
     }
     catch Error::Simple with {
@@ -582,8 +562,8 @@ sub _updateSingleAction {
     my %seenUID;
 
     my $as =
-      Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
-        $text, 1 );
+	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
+								$text, 1 );
 
     foreach my $action ( @{ $as->{ACTIONS} } ) {
         if ( ref($action) ) {
@@ -595,7 +575,7 @@ sub _updateSingleAction {
         }
     }
     Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
-        { comment => 'atp save' } );
+			      { comment => 'atp save' } );
 }
 
 1;

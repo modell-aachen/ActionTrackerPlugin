@@ -9,26 +9,25 @@ use Foswiki::Plugins::JQueryPlugin::Plugin;
 our @ISA = qw( Foswiki::Plugins::JQueryPlugin::Plugin );
 
 sub new {
-    my $class   = shift;
+    my $class = shift;
     my $session = shift || $Foswiki::Plugins::SESSION;
-    my $src     = (DEBUG) ? '_src' : '';
+    my $src = (DEBUG) ? '_src' : '';
 
-    my $this = $class->SUPER::new(
-        $session,
-        name     => 'ActionTracker',
-        version  => '1.0',
-        author   => 'Crawford Currie',
-        homepage => 'http://foswiki.org/Extensions/ActionTrackerPlugin',
-        puburl   => '%PUBURLPATH%/%SYSTEMWEB%/ActionTrackerPlugin',
+    my $this = $class->SUPER::new( 
+	$session,
+	name => 'ActionTracker',
+	version => '1.0',
+	author => 'Crawford Currie',
+	homepage => 'http://foswiki.org/Extensions/ActionTrackerPlugin',
+	puburl => '%PUBURLPATH%/%SYSTEMWEB%/ActionTrackerPlugin',
+	# CSS is added in ActionTracker.pm
+	css => [ ],
+	documentation => "$Foswiki::cfg{SystemWebName}.ActionTrackerPlugin",
+	javascript => ["atp${src}.js"],
+	dependencies => ['UI'],
+	);
 
-        # CSS is added in ActionTracker.pm
-        css           => [],
-        documentation => "$Foswiki::cfg{SystemWebName}.ActionTrackerPlugin",
-        javascript    => ["atp${src}.js"],
-        dependencies  => ['UI'],
-    );
-
-    return $this;
+  return $this;
 }
 
 1;

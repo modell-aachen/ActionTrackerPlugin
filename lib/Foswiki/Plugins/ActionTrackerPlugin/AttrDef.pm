@@ -6,11 +6,11 @@ use integer;
 package Foswiki::Plugins::ActionTrackerPlugin::AttrDef;
 
 sub new {
-    my ( $class, %options ) = @_;
-    my $this = {%options};
+    my ( $class, %options) = @_;
+    my $this = { %options };
 
-    $this->{size}  ||= 1;
-    $this->{match} ||= 1;
+    $this->{size}       ||= 1;
+    $this->{match}      ||= 1;
 
     return bless( $this, $class );
 }
