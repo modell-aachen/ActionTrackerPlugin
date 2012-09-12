@@ -9,6 +9,7 @@ my $src =  ((DEBUG) ? '' : '_src');
 # pragmatic.
 
 my %defaults = (
+    AUTODISPLAY         => '1',
     CSS   => "%PUBURL%/%SYSTEMWEB%/ActionTrackerPlugin/styles$src.css",
     DEBUG => '0',
     DEFAULTDUE    => 9999999999,                             # far in the future

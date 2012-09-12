@@ -48,6 +48,12 @@ sub commonTagsHandler {
 
     return unless lazyInit( $web, $topic );
 
+    if ($options->{AUTODISPLAY} ne '1') {
+        # Just get rid of the tags in the output
+        $_[0] =~ s/%ACTION.*?{.*?}%.*?%ENDACTION%//sg;
+        return;
+    }
+
     # Format actions in the topic.
     # Done this way so we get tables built up by
     # collapsing successive actions.

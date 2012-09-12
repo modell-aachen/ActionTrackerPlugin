@@ -384,6 +384,13 @@ You can override the defaults for these preferences in %USERSWEB%.<nop>SitePrefe
    *<nop> Set ACTIONTRACKERPLUGIN_EDITORIENT = rows
 </pre>
 
+---+++ Controlling whether actions are shown automatically
+
+By default, pages that contain actions will automatically have them displayed. This is not desirable for all circumstances (e.g. if you want to customise action rendering more comprehensively than the other settings below allow you to), so by setting =AUTODISPLAY= to something other than =1=, you can disable it.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_AUTODISPLAY= | 1 |
+
 ---+++ Formatting how actions are displayed
 
 The default format of an action output, unless overridden by =format=, =header= etc. The following fields can be output: =web=, =topic=, =text=, =who=, =due=, =notify=, =uid=, =creator=, =state=, =edit=, and any =ACTIONTRACKERPLUGIN_EXTRAS= you may have. =TABLEHEADER= defines the column headings, =TABLEFORMAT= defines the contents of the columns, and if =TABLEORIENT= is set to =rows=, action tables will be aligned as rows of values instead of the default columns of values.
