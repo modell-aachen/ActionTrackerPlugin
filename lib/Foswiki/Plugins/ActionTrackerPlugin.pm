@@ -38,6 +38,13 @@ sub initPlugin {
         Foswiki::Contrib::JSCalendarContrib::addHEAD('foswiki');
     }
 
+    # SMELL: this is not reliable as it depends on plugin order
+    # if (Foswiki::Func::getContext()->{SolrPluginEnabled}) {
+    if ($Foswiki::cfg{Plugins}{SolrPlugin}{Enabled}) {
+	require Foswiki::Plugins::SolrPlugin;
+	Foswiki::Plugins::SolrPlugin::registerIndexTopicHandler(\&_indexTopicHandler);
+    }
+
     return 1;
 }
 
@@ -528,6 +535,91 @@ sub _handleActionNotify {
 }
 
 # COVERAGE ON
+
+sub _indexTopicHandler {
+    my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
+    Foswiki::Func::pushTopicContext( $web, $topic );
+    my $initResult = lazyInit( $web, $topic );
+    Foswiki::Func::popTopicContext( $web, $topic );
+    return unless defined $initResult;
+
+    my $actionset = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load($web, $topic, $meta->text);
+
+    for my $action (@{ $actionset->{ACTIONS} }) {
+	my $createDate = Foswiki::Func::formatTime($action->{created}, 'iso', 'gmtime');
+	my $dueDate = $action->{due} ? Foswiki::Func::formatTime($action->{due}, 'iso', 'gmtime') : undef;
+	my $closedDate = $action->{closed} ? Foswiki::Func::formatTime($action->{closed}, 'iso', 'gmtime') : undef;
+	my $webtopic = "$web.$topic";
+	$webtopic =~ s/\//./g;
+	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$action->{uid});
+	my $id = $webtopic.':action'.$action->{uid};
+	my $title = $action->{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
+
+	my @notify = split(/[,\s]+/, $action->{notify} || '');
+
+	my $collection = $Foswiki::cfg{SolrPlugin}{DefaultCollection} || "wiki";
+	my $language = Foswiki::Func::getPreferencesValue('CONTENT_LANGUAGE') || "en"; # SMELL: standardize
+
+	# reindex this comment
+	my $aDoc = $indexer->newDocument();
+	$aDoc->add_fields(
+	  'id' => $id,
+	  'collection' => $collection,
+	  'language' => $language,
+	  'type' => 'action',
+	  'web' => $web,
+	  'topic' => $topic,
+	  'webtopic' => $webtopic,
+	  'url' => $url,
+	  'author' => $action->{creator},
+	  'contributor' => $action->{creator},
+	  'date' => $createDate,
+	  'createdate' => $createDate,
+	  'title' => $title,
+	  'text' => $action->{text},
+	  'state' => $action->{state},
+	  'container_id' => $web.'.'.$topic,
+	  'container_url' => Foswiki::Func::getViewUrl($web, $topic),
+#	  'container_title' => $indexer->getTopicTitle($web, $topic, $meta),
+	);
+	$doc->add_fields('catchall' => $title);
+	$doc->add_fields('catchall' => $action->{text});
+
+	$aDoc->add_fields('action_due_dt' => $dueDate) if defined $dueDate;
+	$aDoc->add_fields('action_closed_dt' => $closedDate) if defined $closedDate;
+	for my $n (@notify) {
+	    $aDoc->add_fields('action_notify_lst' => $n);
+	}
+	for my $w (split(/[\s,]+/, $action->{who} || '')) {
+	    $aDoc->add_fields('action_who_lst' => $w);
+	}
+	# auto-generate custom fields
+	for my $key (keys %$action) {
+	    next if $key eq 'ACTION_NUMBER';
+	    $aDoc->add_fields("action_${key}_s", $action->{$key});
+	}
+
+	# add the document to the index
+	try {
+	  $indexer->add($aDoc);
+	  $indexer->commit();
+	} catch Error::Simple with {
+	  my $e = shift;
+	  $indexer->log("ERROR: ".$e->{-text});
+	};
+    }
+}
+
+sub _unicodeSubstr {
+    my $str = $_[0];
+    require Encode;
+    # Character strings will be fine
+    return substr($_[0], $_[1], $_[2]) if Encode::is_utf8($str);
+    my $charset = $Foswiki::cfg{Site}{CharSet};
+    return substr($_[0], $_[1], $_[2]) if $charset =~ /^utf-?8$/i;
+    shift @_;
+    return Encode::encode($charset, substr(Encode::decode($charset, $str), @_));
+}
 
 sub _updateRESTHandler {
     my $session = shift;
