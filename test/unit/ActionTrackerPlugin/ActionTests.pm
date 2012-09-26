@@ -41,8 +41,8 @@ sub test_NewNoState {
 
     # no state -> first state
     my $action =
-      new Foswiki::Plugins::ActionTrackerPlugin::Action( "Test", "Topic", 0, "",
-        "" );
+      new Foswiki::Plugins::ActionTrackerPlugin::Action( "Test", "Topic", 0,
+        "", "" );
     $this->assert_str_equals( "open", $action->{state}, $action->stringify() );
 
     # closed defined -> closed state
@@ -303,8 +303,8 @@ sub test_StringFormattingOpen {
         "A new action"
     );
     my $fmt =
-      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Who|Due|", "|\$who|",
-        "", "Who: \$who \$who",
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Who|Due|",
+        "|\$who|", "", "Who: \$who \$who",
         "\$who,\$due" );
     my $s = $fmt->formatStringTable( [$action] );
     $this->assert_str_equals(
@@ -484,7 +484,7 @@ sub test_HTMLFormattingOpen {
     $this->assert_not_null($s);
     $this->assert( $s =~ m(<td>\s*<a (.*?)>edit</a>\s*</td>), $s );
     my $x = $1;
-    $this->assert_matches( qr/href="$url\d+"/, $x );
+    $this->assert_matches( qr/href="$url\d+"/,  $x );
     $this->assert_matches( qr/class="atp_edit/, $x );
 
     $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( "",
@@ -629,12 +629,11 @@ EOF";
     my ( $action, $pre, $post ) = $as->splitOnAction("AaAa");
     $this->assert_str_equals( $action->{text}, "AOne" );
     $this->assert_str_equals( "\n",            $pre->stringify() );
-    $this->assert_str_equals('
+    $this->assert_str_equals( '
 %ACTION{ due="2002-05-30" state="open" uid="BbBb" who="TemporaryActionTestsUsersWeb.Two" }% ATwo %ENDACTION%
 %ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
 %ACTION{ due="2002-05-30" state="open" uid="DdDd" who="TemporaryActionTestsUsersWeb.Four" }% AFour %ENDACTION%',
-        $post->stringify()
-    );
+        $post->stringify() );
 
     ( $action, $pre, $post ) = $as->splitOnAction("BbBb");
     $this->assert_str_equals( $action->{text}, "ATwo" );
@@ -642,11 +641,10 @@ EOF";
 %ACTION{ due="2002-05-30" state="open" uid="AaAa" who="TemporaryActionTestsUsersWeb.One" }% AOne %ENDACTION%
 ',
         $pre->stringify() );
-    $this->assert_str_equals('
+    $this->assert_str_equals( '
 %ACTION{ due="2002-05-30" state="open" uid="Flib" who="TemporaryActionTestsUsersWeb.Three" }% AThree %ENDACTION%
 %ACTION{ due="2002-05-30" state="open" uid="DdDd" who="TemporaryActionTestsUsersWeb.Four" }% AFour %ENDACTION%',
-        $post->stringify()
-    );
+        $post->stringify() );
     ( $action, $pre, $post ) = $as->splitOnAction("Flib");
 
     $this->assert_str_equals( 'AThree', $action->{text} );
@@ -709,8 +707,9 @@ qr/\|$this->{users_web}.JaneDoe\|0?2 Jun 2009\|closed\|$this->{users_web}.Thomas
     $this->assert_matches(
         qr/Attribute \"state\" changed, was \"open\", now \"closed\"/, $text );
     $this->assert_matches(
-        qr/Attribute \"due\" changed, was \"0?2 Jun 2002\", now \"0?2 Jun 2009\"/,
-        $text );
+qr/Attribute \"due\" changed, was \"0?2 Jun 2002\", now \"0?2 Jun 2009\"/,
+        $text
+    );
     $this->assert_matches(
 qr/Attribute \"text\" changed, was \"A new action\", now \"A new action<p>with more text\"/,
         $text
@@ -801,6 +800,7 @@ sub test_XtendTypes {
       new Foswiki::Plugins::ActionTrackerPlugin::Format( "", "|\$sentence|", "",
         "\$sentence" );
     $s = $fmt->formatStringTable( [$action] );
+
     #$this->assert_str_equals( "5 years\n", $s );
     $s = $fmt->formatHTMLTable( [$action], "href", 'atp' );
     $this->assert_matches( qr/>5 years</, $s );
@@ -879,10 +879,8 @@ sub test_CreateFromQuery {
 sub test_FormatForEditHidden {
     my $this = shift;
 
-    my $action = new Foswiki::Plugins::ActionTrackerPlugin::Action(
-        "Web",
-        "Topic",
-        9, <<EG, "Text");
+    my $action = new Foswiki::Plugins::ActionTrackerPlugin::Action( "Web",
+        "Topic", 9, <<EG, "Text" );
 state="open" creator="$this->{users_web}.Creator" notify="$this->{users_web}.Notifyee" closer="$this->{users_web}.Closer" due="4-May-2003" closed="2-May-2003" who="$this->{users_web}.Who" created="3-May-2003" uid="UID"
 EG
     my $fmt =
@@ -909,15 +907,15 @@ EG
     $this->assert_matches( qr/value="$this->{users_web}\.Closer"/, $glim );
     $s =~ s(<input (.*?name="due".*?)/>)();
     $glim = $1;
-    $this->assert_matches( qr/type="hidden"/,      $glim );
+    $this->assert_matches( qr/type="hidden"/,        $glim );
     $this->assert_matches( qr/value="0?4 May 2003"/, $glim );
     $s =~ s(<input (.*?name="closed".*?)/>)();
     $glim = $1;
-    $this->assert_matches( qr/type="hidden"/,      $glim );
+    $this->assert_matches( qr/type="hidden"/,        $glim );
     $this->assert_matches( qr/value="0?2 May 2003"/, $glim );
     $s =~ s(<input (.*?name="created".*?)/>)();
     $glim = $1;
-    $this->assert_matches( qr/type="hidden"/,      $glim );
+    $this->assert_matches( qr/type="hidden"/,        $glim );
     $this->assert_matches( qr/value="0?3 May 2003"/, $glim );
     $s =~ s(<input (.*?name="uid".*?)/>)();
     $glim = $1;
@@ -986,7 +984,7 @@ s(<td class="atpEdit"><input (.*?name="$n".*?)/><input (.*?)/></td>)(),
         }
     }
     $this->assert( $s =~ s/^\s*<table class="atpEdit atpOrientCols">//, $s );
-    $this->assert( $s =~ s/\s*<tr><\/tr>//,                 $s );
+    $this->assert( $s =~ s/\s*<tr><\/tr>//,                             $s );
     $this->assert( $s =~ s/\s*<tr>// );
     $this->assert( $s =~ s/\s*<td class="atpEdit">// );
     $this->assert( $s =~ s/\s*<select (.*?name="state".*?)>// );
@@ -1003,8 +1001,8 @@ s(<td class="atpEdit"><input (.*?name="$n".*?)/><input (.*?)/></td>)(),
         "state=\"open\" due=\"4-May-2001\"", "Test" );
     Foswiki::Plugins::ActionTrackerPlugin::Action::forceTime("31 May 2002");
     $fmt =
-      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Due|", "|\$due|", "",
-        "" );
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|Due|", "|\$due|",
+        "", "" );
     $s = $action->formatForEdit($fmt);
     $s =~ /value=\"(.*?)\"/;
     $this->assert_str_equals( $1, "04 May 2001" );
@@ -1020,8 +1018,8 @@ sub test_ExtendStates {
       new Foswiki::Plugins::ActionTrackerPlugin::Action( "Web", "Topic", 10,
         "state=\"5 years\"", "Text" );
     my $fmt =
-      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|State|", "|\$state|",
-        "", "" );
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( "|State|",
+        "|\$state|", "", "" );
     $s = $action->formatForEdit($fmt);
     $s =~ s((<option value="life">life</option>))();
     $this->assert($1);

@@ -29,14 +29,14 @@ use integer;
 
 use CGI ();
 use JSON;
-use Text::Soundex ();
+use Text::Soundex   ();
 use Time::ParseDate ();
 
-use Foswiki::Func ();
+use Foswiki::Func  ();
 use Foswiki::Attrs ();
 
 use Foswiki::Plugins::ActionTrackerPlugin::AttrDef ();
-use Foswiki::Plugins::ActionTrackerPlugin::Format ();
+use Foswiki::Plugins::ActionTrackerPlugin::Format  ();
 
 our $now = time();
 
@@ -46,7 +46,8 @@ our $now = time();
 # We want all dates the user enters to remain unconverted. The date you
 # enter must always be the date you see. By using GMT when both parsing
 # and formatting we ensure that no conversion happens.
-my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1, UK => 1 );
+my %pdopt =
+  ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1, UK => 1 );
 
 # Types of standard attributes. The 'noload' type tells us
 # not to load the hash from %ACTION attributes, and the 'nomatch' type
@@ -60,81 +61,93 @@ my %pdopt = ( NO_RELATIVE => 1, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1, UK => 
 my $dw        = 16;
 my $nw        = 35;
 my %basetypes = (
-    changedsince => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
+    changedsince =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
     closed => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'date', size => $dw, match => 1
+        type  => 'date',
+        size  => $dw,
+        match => 1
     ),
     closer => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'names', size => $nw, match => 1
+        type  => 'names',
+        size  => $nw,
+        match => 1
     ),
     created => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'date', size => $dw, match => 1
+        type  => 'date',
+        size  => $dw,
+        match => 1
     ),
     creator => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'names', size => $nw, match => 1
+        type  => 'names',
+        size  => $nw,
+        match => 1
     ),
-    dollar => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
+    dollar =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
     due => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'date', size => $dw, match => 1
+        type  => 'date',
+        size  => $dw,
+        match => 1
     ),
-    edit => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
-    format => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
-    header => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
-    late => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
-    n => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
-    nop => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
+    edit =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
+    format =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
+    header =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
+    late =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
+    n => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
+    nop =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
     notify => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'names', size => $nw, match => 1
+        type  => 'names',
+        size  => $nw,
+        match => 1
     ),
-    percnt => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
-    quot => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
-    sort => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
+    percnt =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
+    quot =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
+    sort =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
     state => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'select', size => 1, match => 1, defineable => 1, values => [ 'open', 'closed' ]
+        type       => 'select',
+        size       => 1,
+        match      => 1,
+        defineable => 1,
+        values     => [ 'open', 'closed' ]
     ),
     text => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload', match => 1, merge => 1
+        type  => 'noload',
+        match => 1,
+        merge => 1
     ),
     topic => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload', match => 1
+        type  => 'noload',
+        match => 1
     ),
     uid => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'text', size => $nw, match => 1
+        type  => 'text',
+        size  => $nw,
+        match => 1
     ),
     web => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload', match => 1
+        type  => 'noload',
+        match => 1
     ),
     who => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'names', size => $nw, match => 1
+        type  => 'names',
+        size  => $nw,
+        match => 1
     ),
     within => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload', match => 1
+        type  => 'noload',
+        match => 1
     ),
-    ACTION_NUMBER => new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-        type => 'noload'
-    ),
+    ACTION_NUMBER =>
+      new Foswiki::Plugins::ActionTrackerPlugin::AttrDef( type => 'noload' ),
 );
 
 my %types = %basetypes;
@@ -240,10 +253,13 @@ sub extendTypes {
                     $option =~ s/^"(.*)"$/$1/o;
                 }
             }
-            $types{$name} =
-              new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
-		  type => $type, size => $size,
-		  match => 1, defineable => 1, values => \@values );
+            $types{$name} = new Foswiki::Plugins::ActionTrackerPlugin::AttrDef(
+                type       => $type,
+                size       => $size,
+                match      => 1,
+                defineable => 1,
+                values     => \@values
+            );
         }
         else {
             return 'Bad EXTRAS definition \'' . $def . '\' in EXTRAS';
@@ -401,17 +417,17 @@ sub stringify {
 
 # Assemble a form for an update of the given field value
 sub _form {
-    my ($this, $fld, $value, $input) = @_;
-    return
-	CGI::start_form(
-	    -action => '%SCRIPTURLPATH{rest}%/ActionTrackerPlugin/update',
-	    -method => 'POST')
-	. CGI::hidden(-name => 'topic', -value => "$this->{web}.$this->{topic}")
-	. CGI::hidden(-name => 'uid', -value => $this->{uid})
-	. CGI::hidden(-name => 'field', -value => $fld)
-	. CGI::hidden(-name => 'value', -value => $value)
-	. $input
-	. CGI::end_form();
+    my ( $this, $fld, $value, $input ) = @_;
+    return CGI::start_form(
+        -action => '%SCRIPTURLPATH{rest}%/ActionTrackerPlugin/update',
+        -method => 'POST'
+      )
+      . CGI::hidden( -name => 'topic', -value => "$this->{web}.$this->{topic}" )
+      . CGI::hidden( -name => 'uid',   -value => $this->{uid} )
+      . CGI::hidden( -name => 'field', -value => $fld )
+      . CGI::hidden( -name => 'value', -value => $value )
+      . $input
+      . CGI::end_form();
 }
 
 # PRIVATE STATIC make a canonical name (including the web) for a user
@@ -425,10 +441,10 @@ sub _canonicalName {
         if ( $who eq 'me' ) {
             $who = Foswiki::Func::getWikiName();
         }
-	if ($who) {
-	    my ($w, $t) = Foswiki::Func::normalizeWebTopicName(undef, $who);
-	    $who = "$w.$t";
-	}
+        if ($who) {
+            my ( $w, $t ) = Foswiki::Func::normalizeWebTopicName( undef, $who );
+            $who = "$w.$t";
+        }
     }
     return $who;
 }
@@ -436,7 +452,7 @@ sub _canonicalName {
 # PUBLIC For testing only, force current time to a known value
 sub forceTime {
     my $tim = shift;
-    $now = Time::ParseDate::parsedate($tim, %pdopt);
+    $now = Time::ParseDate::parsedate( $tim, %pdopt );
 }
 
 # PRIVATE get the anchor of this action
@@ -470,15 +486,12 @@ sub formatTime {
         $stime = '';
     }
     elsif ( $format eq 'attr' ) {
-        $stime =
-          Foswiki::Func::formatTime( $time, '$year-$mo-$day', 'gmtime' );
+        $stime = Foswiki::Func::formatTime( $time, '$year-$mo-$day', 'gmtime' );
     }
     else {
-        $stime = Foswiki::Func::formatTime(
-            $time,
-            $Foswiki::cfg{DefaultDateFormat},
-            'gmtime'
-        );
+        $stime =
+          Foswiki::Func::formatTime( $time, $Foswiki::cfg{DefaultDateFormat},
+            'gmtime' );
     }
     return $stime;
 }
@@ -530,7 +543,7 @@ sub isLate {
 sub _matchType_names {
     my ( $this, $vbl, $val ) = @_;
 
-    return (!$this->{$vbl}) if (!$val);
+    return ( !$this->{$vbl} ) if ( !$val );
 
     return 0 unless ( defined( $this->{$vbl} ) );
 
@@ -558,8 +571,14 @@ sub _matchType_date {
     }
     return 0 unless defined( $this->{$vbl} );
     my $tim = Time::ParseDate::parsedate(
-        $val, DATE_REQUIRED => 1, WHOLE => 1, GMT => 1, UK => 1,
-	PREFER_PAST => 1, FUZZY => 1 );
+        $val,
+        DATE_REQUIRED => 1,
+        WHOLE         => 1,
+        GMT           => 1,
+        UK            => 1,
+        PREFER_PAST   => 1,
+        FUZZY         => 1
+    );
     return eval "$this->{$vbl} $cond $tim";
 }
 
@@ -644,6 +663,7 @@ sub matches {
         my $attrType = getBaseType($attrName);
         my $class    = ref($this);
         if ( defined( &{ $class . "::_matchField_$attrName" } ) ) {
+
             # function match
             my $fn = "_matchField_$attrName";
             if ( !$this->$fn($attrVal) ) {
@@ -685,40 +705,50 @@ sub _formatType_select {
     my ( $this, $fld, $args, $asHTML ) = @_;
 
     # If HTML isn't wanted, just throw back the value
-    unless ( $asHTML ) {
-	return (defined $this->{$fld}) ? $this->{$fld} : '';
+    unless ($asHTML) {
+        return ( defined $this->{$fld} ) ? $this->{$fld} : '';
     }
 
     # Turn the select into a fully populated drop down box
-    my $type = $this->getType( $fld );
-    my $size = $type->{size};
-    my $fields = '';
+    my $type         = $this->getType($fld);
+    my $size         = $type->{size};
+    my $fields       = '';
     my $any_selected = 0;
-    foreach my $option ( @{$type->{values}} ) {
-	my $attrs = { value => $option };
-	if ( defined( $this->{$fld} ) &&
-	     $this->{$fld} eq $option ) {
-	    $attrs->{selected} = "selected";
-	    $any_selected = 1;
-	}
-	$fields .= CGI::option( $attrs, $option );
+    foreach my $option ( @{ $type->{values} } ) {
+        my $attrs = { value => $option };
+        if ( defined( $this->{$fld} )
+            && $this->{$fld} eq $option )
+        {
+            $attrs->{selected} = "selected";
+            $any_selected = 1;
+        }
+        $fields .= CGI::option( $attrs, $option );
     }
 
     # If nothing was selected, add an empty selection at the top
     # That way, it can display a blank box, but can be changed.
-    if (!$any_selected) {
-	$fields = CGI::option({ value=>"NuLL", selected=>"selected" }, "") . $fields;
+    if ( !$any_selected ) {
+        $fields =
+          CGI::option( { value => "NuLL", selected => "selected" }, "" )
+          . $fields;
     }
 
     return $this->_form(
-	$fld, undef,
-	CGI::Select(
-	    { name => $fld,
-	      size => $size,
-	      class => 'atp_update userval value_' .
-		(defined $this->{$fld} ? $this->{$fld} : 'fw_field_not_defined'),
-	    },
-	    $fields ));
+        $fld, undef,
+        CGI::Select(
+            {
+                name  => $fld,
+                size  => $size,
+                class => 'atp_update userval value_'
+                  . (
+                    defined $this->{$fld}
+                    ? $this->{$fld}
+                    : 'fw_field_not_defined'
+                  ),
+            },
+            $fields
+        )
+    );
 }
 
 sub _formatField_formfield {
@@ -788,9 +818,9 @@ sub _formatField_state {
     require Foswiki::Plugins::ActionTrackerPlugin::Options;
     return $this->{state}
       unless
-        $Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT};
+      $Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT};
 
-    return $this->_formatType_select('state', $args, $asHTML);
+    return $this->_formatType_select( 'state', $args, $asHTML );
 }
 
 # Special 'close' button field for transition between any state and 'closed'
@@ -806,12 +836,15 @@ sub _formatField_statebutton {
     return '' if ( $this->{state} eq $tgtState );
 
     return $this->_form(
-	'state', 'closed',
-        CGI::input({
-            type  => 'button',
-            value => $buttonName,
-            class => "atp_update"
-        }));
+        'state', 'closed',
+        CGI::input(
+            {
+                type  => 'button',
+                value => $buttonName,
+                class => "atp_update"
+            }
+        )
+    );
 }
 
 # PRIVATE format text field
@@ -847,10 +880,11 @@ sub _formatField_link {
             )
           );
         $text .= $jump;
-    } else {
-	$text = Foswiki::Func::getViewUrl( $this->{web}, $this->{topic} )
-                  . '#'
-                  . $this->getAnchor();
+    }
+    else {
+        $text =
+          Foswiki::Func::getViewUrl( $this->{web}, $this->{topic} ) . '#'
+          . $this->getAnchor();
     }
     return $text;
 }
@@ -875,7 +909,11 @@ sub _formatField_edit {
         t          => time()
     );
     $url =~ s/%2c/,/g;
-    my $attrs = { href => $url, title => 'Edit', class => "atp_edit ui-icon ui-icon-pencil" };
+    my $attrs = {
+        href  => $url,
+        title => 'Edit',
+        class => "atp_edit ui-icon ui-icon-pencil"
+    };
 
     return CGI::a( $attrs, 'edit' );
 }
@@ -987,8 +1025,7 @@ sub findChanges {
 
     my $plain_text = $format->formatStringTable( [$this] );
     $plain_text .= "\n$changes\n";
-    my $html_text =
-      $format->formatHTMLTable( [$this], 'href', 'atpChanges' );
+    my $html_text = $format->formatHTMLTable( [$this], 'href', 'atpChanges' );
     $html_text .= $format->formatChangesAsHTML( $old, $this );
 
     # Add text to people interested in notification
@@ -1032,30 +1069,36 @@ sub createFromQuery {
 sub updateFromCopy {
     my ( $this, $copy, $mustMerge, $curRev, $origRev, $ancestoraction ) = @_;
     foreach my $attrname ( keys %types ) {
-        if ( defined $copy->{$attrname}
-	    && (!defined($this->{attrname}) || $copy->{attrname} ne $this->{$attrname})) {
-	    if ($mustMerge && $ancestoraction && $types{$attrname}->{merge}) {
-		# must attempt to merge
-		require Foswiki::Merge;
-		if ($ancestoraction) {
-		    $this->{$attrname} =
-			Foswiki::Merge::merge3(
-			    $origRev, $ancestoraction->{$attrname},
-			    $curRev, $this->{$attrname},
-			    'new', $copy->{$attrname},
-			    '.*?\n', $Foswiki::Plugins::SESSION );
-		} else {
-		    $this->{$attrname} =
-			Foswiki::Merge::merge2(
-			    $curRev, $this->{$attrname},
-			    'new', $copy->{$attrname},
-			    '.*?\n', $Foswiki::Plugins::SESSION );
-		}
-	    } else {
-		# Take the value from the action editor
-		$this->{$attrname} = $copy->{$attrname};
-	    }
-	}
+        if (
+            defined $copy->{$attrname}
+            && ( !defined( $this->{attrname} )
+                || $copy->{attrname} ne $this->{$attrname} )
+          )
+        {
+            if ( $mustMerge && $ancestoraction && $types{$attrname}->{merge} ) {
+
+                # must attempt to merge
+                require Foswiki::Merge;
+                if ($ancestoraction) {
+                    $this->{$attrname} = Foswiki::Merge::merge3(
+                        $origRev, $ancestoraction->{$attrname},
+                        $curRev,  $this->{$attrname},
+                        'new',    $copy->{$attrname},
+                        '.*?\n',  $Foswiki::Plugins::SESSION
+                    );
+                }
+                else {
+                    $this->{$attrname} =
+                      Foswiki::Merge::merge2( $curRev, $this->{$attrname},
+                        'new', $copy->{$attrname},
+                        '.*?\n', $Foswiki::Plugins::SESSION );
+                }
+            }
+            else {
+                # Take the value from the action editor
+                $this->{$attrname} = $copy->{$attrname};
+            }
+        }
     }
 }
 

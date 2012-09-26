@@ -79,7 +79,8 @@ sub set_up {
     $this->registerUser( "ActorFour", "Actor", "Four",
         'actorfour@yet-another-address.net' );
     $this->registerUser( "ActorFive", "Actor", "Five", 'actor5@example.com' );
-    $this->registerUser( "ActorSix", "Actor", "Six", 'actor6@correct-address.tv' );
+    $this->registerUser( "ActorSix", "Actor", "Six",
+        'actor6@correct-address.tv' );
 
     Foswiki::Func::saveTopic( $this->{users_web}, "TWikiFormGroup", undef,
         <<'HERE');
@@ -118,7 +119,7 @@ HERE
 %ACTION{who="ActorOne,ActorTwo,ActorThree,ActorFour,TWikiFormGroup,ActorFive,ActorSix,actor.7@seven.net,ActorEight,EMailGroup",due="6 Jan 99",open}% A6: late
 HERE
 
-    my $t1 = Time::ParseDate::parsedate("21 Jun 2001");
+    my $t1   = Time::ParseDate::parsedate("21 Jun 2001");
     my $body = <<HERE;
 %META:TOPICINFO{author="guest" date="$t1" format="1.0" version="1.1"}%
 %ACTION{uid="666" who=ActorFive,due="2001-06-22",notify=$this->{users_web}.ActorFive}% A7: Date change
@@ -126,12 +127,16 @@ HERE
 %ACTION{uid=1234 who=NonEntity notify=ActorFive}% A9: No change
 HERE
     Foswiki::Func::saveTopic(
-        $this->{test_web}, "ActionChanged",
+        $this->{test_web},
+        "ActionChanged",
         undef, $body,
-        { comment => 'Initial revision',
-          author => 'crawford',
-          forcenewrevision => 1,
-          forcedate => $t1});
+        {
+            comment          => 'Initial revision',
+            author           => 'crawford',
+            forcenewrevision => 1,
+            forcedate        => $t1
+        }
+    );
 
     my $t2 = Time::ParseDate::parsedate("21 Jun 2003");
     $body = <<HERE;
@@ -144,12 +149,16 @@ nge from original, late
 %ACTION{uid=1234 who=NonEntity notify=ActorFive}% A9: No change
 HERE
     Foswiki::Func::saveTopic(
-        $this->{test_web}, "ActionChanged",
+        $this->{test_web},
+        "ActionChanged",
         undef, $body,
-        { comment => '*** empty log message ***',
-          author => 'crawford',
-          forcenewrevision => 1,
-          forcedate => $t2});
+        {
+            comment          => '*** empty log message ***',
+            author           => 'crawford',
+            forcenewrevision => 1,
+            forcedate        => $t2
+        }
+    );
     @FoswikiFnTestCase::mails = ();
 }
 
@@ -234,7 +243,8 @@ sub test_B_NotifyLate {
 
     my $ok = "";
     while ( $html = shift(@FoswikiFnTestCase::mails) ) {
-	# Ensure all macros are expanded in the output
+
+        # Ensure all macros are expanded in the output
         $this->assert_does_not_match( qr/%\w+%/, $html, $html );
 
         $this->assert_does_not_match( qr/A[12]:/, $html, $html );

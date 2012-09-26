@@ -2,7 +2,7 @@
 package Foswiki::Plugins::ActionTrackerPlugin::Options;
 
 use Assert;
-my $src =  ((DEBUG) ? '' : '_src');
+my $src = ( (DEBUG) ? '' : '_src' );
 
 # Define a global so that submodules can access options without needing the
 # result of the load. Nasty, but this is refactored over existing code, so
@@ -30,21 +30,24 @@ my %defaults = (
 our %options = %defaults;
 
 sub load {
+
     # Set defaults, will be overwritten by user prefs
     %options = %defaults;
 
     require Foswiki::Func;
     foreach my $ky ( keys %options ) {
-        my $sk = 'ACTIONTRACKERPLUGIN_' . $ky;
+        my $sk  = 'ACTIONTRACKERPLUGIN_' . $ky;
         my $skv = Foswiki::Func::getPreferencesValue($sk);
-	next unless ( defined $skv || defined $options{$ky} );
+        next unless ( defined $skv || defined $options{$ky} );
         if ( !defined $skv ) {
-	    # Copy back into preferences so it gets expanded in templates
-	    $skv = $options{$ky};
-	    Foswiki::Func::setPreferencesValue( $sk, $skv );
-	}
-	# SMELL: this should be done when the template is used
-	$options{$ky} = Foswiki::Func::expandCommonVariables( $skv );
+
+            # Copy back into preferences so it gets expanded in templates
+            $skv = $options{$ky};
+            Foswiki::Func::setPreferencesValue( $sk, $skv );
+        }
+
+        # SMELL: this should be done when the template is used
+        $options{$ky} = Foswiki::Func::expandCommonVariables($skv);
     }
 
     return \%options;

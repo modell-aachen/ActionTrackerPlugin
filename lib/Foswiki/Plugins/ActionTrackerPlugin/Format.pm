@@ -163,11 +163,11 @@ sub _expandVar {
 
 # PUBLIC format a list of actions into a table
 sub formatHTMLTable {
-    my $this      = shift;
-    my $data      = shift;
-    my $jump      = shift; # 'name' for plain text, or 'href' for a link
-    my $class     = shift;
-    my $a         = {};
+    my $this  = shift;
+    my $data  = shift;
+    my $jump  = shift;    # 'name' for plain text, or 'href' for a link
+    my $class = shift;
+    my $a     = {};
     $a->{class} = $class if $class;
     my $i;
     my @rows;
@@ -202,14 +202,14 @@ sub formatHTMLTable {
 sub _generateHTMLTable {
     my ( $this, $rows, $class ) = @_;
     $class ||= 'atpSearch';
-    $class .= ' atpOrient'.ucfirst($this->{ORIENTATION});
+    $class .= ' atpOrient' . ucfirst( $this->{ORIENTATION} );
     my $text = CGI::start_table( { class => $class } );
     my $i;
 
     if ( $this->{ORIENTATION} eq 'rows' ) {
         for ( $i = 0 ; $i <= $#{ $this->{HEADINGS} } ; $i++ ) {
             my $head = ${ $this->{HEADINGS} }[$i];
-            my $row = CGI::th($head );
+            my $row  = CGI::th($head);
             foreach my $col (@$rows) {
                 my $datum = @$col[$i];
                 $row .= $datum;
@@ -400,9 +400,10 @@ sub _formatFieldForEdit {
             # make sure JSCalendar is there
             eval 'use Foswiki::Contrib::JSCalendarContrib';
             unless ($@) {
-                my $dateformat = Foswiki::Func::getPreferencesValue('JSCALENDARCONTRIB_FORMAT') ||
-                                 $Foswiki::cfg{JSCalendarContrib}{format} ||
-                                 '%e %B %Y';
+                my $dateformat =
+                  Foswiki::Func::getPreferencesValue('JSCALENDARCONTRIB_FORMAT')
+                  || $Foswiki::cfg{JSCalendarContrib}{format}
+                  || '%e %B %Y';
                 @extras = ( id => "date_$attrname" );
                 $content = CGI::image_button(
                     -name => 'calendar',
