@@ -611,14 +611,8 @@ sub _indexTopicHandler {
 }
 
 sub _unicodeSubstr {
-    my $str = $_[0];
     require Encode;
-    # Character strings will be fine
-    return substr($_[0], $_[1], $_[2]) if Encode::is_utf8($str);
-    my $charset = $Foswiki::cfg{Site}{CharSet};
-    return substr($_[0], $_[1], $_[2]) if $charset =~ /^utf-?8$/i;
-    shift @_;
-    return Encode::encode($charset, substr(Encode::decode($charset, $str), @_));
+    return Encode::encode($charset, substr(Encode::decode($charset, $_[0]), $_[1], $_[2]));
 }
 
 sub _updateRESTHandler {
