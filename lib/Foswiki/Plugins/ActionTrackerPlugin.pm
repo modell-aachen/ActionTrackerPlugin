@@ -9,7 +9,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '2.4.9.1';
+our $RELEASE = '2.4.9.2';
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -612,6 +612,7 @@ sub _indexTopicHandler {
 
 sub _unicodeSubstr {
     require Encode;
+    my $charset = $Foswiki::cfg{Site}{CharSet};
     return Encode::encode($charset, substr(Encode::decode($charset, $_[0]), $_[1], $_[2]));
 }
 
