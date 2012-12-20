@@ -375,16 +375,21 @@ sub _formatFieldForEdit {
     my $type = $object->getType($attrname);
     return $attrname unless ( defined($type) );
     my $size = $type->{size};
-    if ( $type->{type} eq 'select' ) {
+    if ( $type->{type} eq 'select' || $type->{type} eq 'select+values' ) {
+        my $mapped = ($type->{type} eq 'select+values');
         my $fields = '';
         foreach my $option ( @{ $type->{values} } ) {
             my @extras = ();
+            my $label = $option;
+            if ($mapped && $option =~ /^(.*[^\\])*=(.*)$/) {
+                ($label, $option) = ($1, $2);
+            }
             if ( defined( $object->{$attrname} )
                 && $object->{$attrname} eq $option )
             {
                 push( @extras, selected => "selected" );
             }
-            $fields .= CGI::option( { value => $option, @extras }, $option );
+            $fields .= CGI::option( { value => $option, @extras }, $label );
         }
         return CGI::Select( { name => $attrname, size => $size }, $fields );
     }
