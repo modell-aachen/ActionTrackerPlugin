@@ -421,6 +421,17 @@ sub _formatFieldForEdit {
                 );
             }
         }
+        if ( $type->{type} =~ /^textboxlist|names$/ ) {
+            my $autocomplete;
+            if ($type->{type} eq 'names') {
+                $autocomplete = Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_USERS_AUTOCOMPLETE') || '';
+            } else {
+                $autocomplete = Foswiki::Func::getPreferencesValue("ACTIONTRACKERPLUGIN_". uc($attrname) ."_AUTOCOMPLETE") || '';
+            }
+            my $session = $Foswiki::Plugins::SESSION;
+            my $topicObject = new Foswiki::Meta($session, $session->{webName}, $session->{topicName});
+            @extras = ( class => 'jqTextboxList', autocomplete => $topicObject->expandMacros($autocomplete) );
+        }
         return CGI::textfield(
             {
                 name  => $attrname,
