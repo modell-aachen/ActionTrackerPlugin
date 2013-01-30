@@ -39,22 +39,29 @@
 		 function(done, status) {
 		     var m = /<!-- ATP_CONFLICT ~(.*?)~(.*?)~(.*?)~(.*?)~ -->/.exec(done, "s");
 		     if (m) {
-			 var ohno = "<p style='color:red'>Could not access " + m[1] +
-			     ", the topic containing this action.</p>" +
-			     m[2];
-			 if (m[4] == "") {
-			     ohno += " may still be editing the topic, but their lease expired " +
-				 m[3] + " ago.";
-			 } else {
-			     ohno += " has been editing the topic for " + m[3] +
-				 " and their lease is still active for another " + m[4];
+			 // Messages are defined in oopsleaseconflict.action.tmpl
+			 var message= /<!-- ATP_CONFLICT_MESSAGE ~(.*?)~(.*?)~(.*?)~(.*?)~(.*?)~(.*?)~ -->/.exec(done, "s");
+			 if (message === null){
+			     message=[
+				  'Could not access ' + m[1] + ', the topic containing this action',
+				  m[2] + ' may still be editing the topic, but their lease expired ' + m[3] + ' ago.',
+				  m[2] + 'has been editing the topic for ' + m[3] + 'and their lease is still active for another ' + m[4],
+				  'To clear the lease, try editing ' + m[1] + ' with the standard text editor.',
+				  'Error when I tried to edit the action',
+				  'Sorry, validation failed, possibly because someone else is already editing the action. Pleas try again in a few minutes.'
+			     ];
 			 }
-			 ohno += "<p>To clear the lease, try editing " + m[1] +
-			     " with the standard text editor.</p>";
+			 var ohno = message[1]; //Could not access...containing the action.
+			 if (m[4] == "") {
+			     ohno += message[2]; //...may still be editing the topic....ago.
+			 } else {
+			     ohno += message[3]; //...has been editing the topic...
+			 }
+			 ohno += message[4]; //To clear the lease...
 			 div.html(ohno);
 			 div.dialog("open");
 		     } else if (status == "error") {
-			 alert("Error when I tried to edit the action");
+			 alert(message[5]); //Error when I tried...
 		     } else {
 			 div.dialog("open");
 		     }
@@ -82,7 +89,7 @@
 		},
 		error: function(r, t, e) {
 		    // IE fails validation of the login
-		    alert("Sorry, validation failed, possibly because someone else is already editing the action. Please try again in a few minutes.");
+		    alert(message[6]); // Sorry, validation failed...
 		}
 	    });
 	    return false;
