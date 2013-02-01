@@ -432,6 +432,18 @@ sub _formatFieldForEdit {
             my $topicObject = new Foswiki::Meta($session, $session->{webName}, $session->{topicName});
             @extras = ( class => 'jqTextboxList', autocomplete => $topicObject->expandMacros($autocomplete) );
         }
+        if ( $type->{type} eq 'textarea' ) {
+            my ($cols, $rows) = ($size =~ /^(\d+)x(\d+)$/);
+            $cols ||= 40; $rows ||= 5;
+            return CGI::textarea(
+                {
+                    name => $attrname,
+                    default => $val,
+                    columns => $cols,
+                    rows => $rows
+                }
+            ) . $content;
+        }
         return CGI::textfield(
             {
                 name  => $attrname,
