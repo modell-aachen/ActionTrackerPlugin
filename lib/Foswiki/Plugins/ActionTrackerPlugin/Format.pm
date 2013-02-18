@@ -430,7 +430,7 @@ sub _formatFieldForEdit {
             }
             my $session = $Foswiki::Plugins::SESSION;
             my $topicObject = new Foswiki::Meta($session, $session->{webName}, $session->{topicName});
-            @extras = ( class => 'jqTextboxList', autocomplete => $topicObject->expandMacros($autocomplete) );
+            @extras = ( class => 'jqTextboxList {useHidden: 1}', autocomplete => $topicObject->expandMacros($autocomplete) );
         }
         if ( $type->{type} eq 'textarea' ) {
             my ($cols, $rows) = ($size =~ /^(\d+)x(\d+)$/);
