@@ -4,13 +4,9 @@
 }%
 
 <form method="post" action="%SCRIPTURLPATH{"%SUBMITCOMMAND%"}%/%WEB%/%TOPIC%%SUBMITCMDOPT%" type="POST" enctype="application/x-www-form-urlencoded">
-  <h1>Action %UID% in %WEB%.%TOPIC%</h1>
   %EDITFIELDS%
   <textarea name="text" wrap="virtual" rows="%EBH%" cols="%EBW%" style="width:99%" class="foswikiTextarea foswikiEditboxStyleProportional">%TEXT%</textarea>
   %HIDDENFIELDS%
   <br />
-  <label for="sig" class="foswikiGrayText">Your signature to copy/paste:&nbsp;&nbsp;</label>
-  <input name="sig" type="text" readonly="readonly" title="Select, copy and paste your signature text to the bottom of your entry" id="sig" value="-- <nop>%WIKIUSERNAME% - %DATE%" />
-  <br />
-  <input type="submit" value=" &nbsp; %SUBMITCMDNAME% Changes &nbsp; " />
+  <input type="submit" value=" &nbsp; %MAKETEXT{"Save"}% &nbsp; " />
 </form>
