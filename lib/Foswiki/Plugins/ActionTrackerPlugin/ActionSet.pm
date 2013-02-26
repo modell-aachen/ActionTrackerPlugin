@@ -38,13 +38,13 @@ sub load {
     my ( $web, $topic, $text, $keepText ) = @_;
 
     $text =~ s/\r//g;
-    my @blocks       = split( /(%ACTION{.*?}%|%ENDACTION%)/, $text );
+    my @blocks       = split( /(%ACTION{.*?}%|%ENDACTION%)/s, $text );
     my $actionSet    = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
     my $i            = 0;
     my $actionNumber = 0;
     while ( $i < scalar(@blocks) ) {
         my $block = $blocks[ $i++ ];
-        if ( $block =~ /^%ACTION{(.*)}%$/ ) {
+        if ( $block =~ /^%ACTION{(.*)}%$/s ) {
             my $attrs = $1;
             my $descr;
             # Sniff ahead to see if we have a matching ENDACTION
