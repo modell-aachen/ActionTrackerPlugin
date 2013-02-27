@@ -247,8 +247,8 @@ HERE
     # populate with edit fields
     $this->{session}->{request} = $q;
     my $text = '';
-    Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler( $text,
-        "EditTopic", $this->{test_web} );
+    Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler( $text, "EditTopic",
+        $this->{test_web} );
     $this->assert(
         $text =~ m/(%ACTION.*%ENDACTION%)\s*(%ACTION.*%ENDACTION%)$/s );
     my $first  = $1;

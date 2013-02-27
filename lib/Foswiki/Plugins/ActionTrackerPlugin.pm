@@ -8,8 +8,8 @@ use Error qw( :try );
 use Foswiki::Func    ();
 use Foswiki::Plugins ();
 
-our $VERSION = '$Rev$';
-our $RELEASE = '2.4.9';
+our $VERSION = '2.4.10';
+our $RELEASE = '2013-02-27';
 our $SHORTDESCRIPTION =
 'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -67,16 +67,14 @@ sub commonTagsHandler {
         }
         elsif ( $entry =~ /(\S|\n\s*\n)/s ) {
             if ($actionGroup) {
-                $text .=
-                  $actionGroup->formatAsHTML( $defaultFormat, 'href',
-                    'atpDef' );
+                $text .= $actionGroup->formatAsHTML( $defaultFormat, 'atpDef' );
                 $actionGroup = undef;
             }
             $text .= $entry;
         }
     }
     if ($actionGroup) {
-        $text .= $actionGroup->formatAsHTML( $defaultFormat, 'href', 'atpDef' );
+        $text .= $actionGroup->formatAsHTML( $defaultFormat, 'atpDef' );
     }
 
     $_[0] = $text;
@@ -97,8 +95,7 @@ sub commonTagsHandler {
 # inserted in the edit.action.tmpl as the %UNENCODED_TEXT%.
 # We process the %META fields from the raw text of the topic and
 # insert them as hidden fields in the form, so the topic is
-# fully populated. This allows us to call either 'save' or 'preview'
-# to terminate the edit, as selected by the NOPREVIEW parameter.
+# fully populated.
 sub beforeEditHandler {
 
     #my( $text, $topic, $web, $meta ) = @_;
@@ -198,19 +195,22 @@ sub _beforeActionEdit {
 
     $tmpl =~ s/%UID%/$uid/go;
 
-    my $submitCmd     = "preview";
-    my $submitCmdName = "Preview";
-    my $submitCmdOpt  = "";
+    $fields .= CGI::hidden(
+        -name  => 'unlock',
+        -value => 'on'
+    );
 
-    if ( $options->{NOPREVIEW} ) {
-        $submitCmd     = "save";
-        $submitCmdName = "Save";
-        $submitCmdOpt  = "?unlock=on";
-    }
+    # If an origin - the name or URL of the topic the edit started in - is
+    # supplied in the query, then use it to redirect to.
+    $fields .= CGI::hidden(
+        -name  => 'redirectto',
+        -value => $query->param('origin')
+    ) if $query->param('origin');
 
-    $tmpl =~ s/%SUBMITCMDNAME%/$submitCmdName/go;
-    $tmpl =~ s/%SUBMITCMDOPT%/$submitCmdOpt/go;
-    $tmpl =~ s/%SUBMITCOMMAND%/$submitCmd/go;
+    # Legacy support for old templates
+    $tmpl =~ s/%SUBMITCMDNAME%/Save/g;
+    $tmpl =~ s/%SUBMITCOMMAND%/save/g;
+    $tmpl =~ s/%SUBMITCMDOPT%//g;
 
     my $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format(
         $options->{EDITHEADER},
@@ -296,6 +296,7 @@ sub afterEditHandler {
         )
       )
     {
+
 # If the edited action was not found in the latest rev, then force it in (it may
 # have been removed in another parallel edit)
         $latest_act = $new_act;
@@ -438,16 +439,13 @@ sub _handleActionSearch {
     my $orient  = $attrs->remove('orient');
     my $sort    = $attrs->remove('sort');
     my $reverse = $attrs->remove('reverse');
-    if ( defined($fmts) || defined($hdrs) || defined($orient) ) {
-        $fmts   = $defaultFormat->getFields()      unless ( defined($fmts) );
-        $hdrs   = $defaultFormat->getHeaders()     unless ( defined($hdrs) );
-        $orient = $defaultFormat->getOrientation() unless ( defined($orient) );
-        $fmt = new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts,
-            $orient, $fmts, '' );
-    }
-    else {
-        $fmt = $defaultFormat;
-    }
+
+    $fmts   = $defaultFormat->getFields()      unless ( defined($fmts) );
+    $hdrs   = $defaultFormat->getHeaders()     unless ( defined($hdrs) );
+    $orient = $defaultFormat->getOrientation() unless ( defined($orient) );
+    $fmt =
+      new Foswiki::Plugins::ActionTrackerPlugin::Format( $hdrs, $fmts, $orient,
+        $fmts, '', 1 );
 
     my $actions =
       Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs( $web,
@@ -458,7 +456,7 @@ sub _handleActionSearch {
         $result = $actions->formatAsString($fmt);
     }
     else {
-        $result = $actions->formatAsHTML( $fmt, 'href', 'atpSearch' );
+        $result = $actions->formatAsHTML( $fmt, 'atpSearch' );
     }
     return $result;
 }
@@ -496,9 +494,11 @@ sub lazyInit {
 HERE
 
     $defaultFormat = new Foswiki::Plugins::ActionTrackerPlugin::Format(
-        $options->{TABLEHEADER}, $options->{TABLEFORMAT},
-        $options->{TABLEORIENT}, $options->{TEXTFORMAT},
-        $options->{NOTIFYCHANGES}
+        $options->{TABLEHEADER},
+        $options->{TABLEFORMAT},
+        $options->{TABLEORIENT},
+        $options->{TEXTFORMAT},
+        $options->{NOTIFYCHANGES}, 0
     );
 
     if ( $options->{EXTRAS} ) {

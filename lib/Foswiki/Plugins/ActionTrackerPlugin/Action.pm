@@ -37,6 +37,7 @@ use Foswiki::Attrs ();
 
 use Foswiki::Plugins::ActionTrackerPlugin::AttrDef ();
 use Foswiki::Plugins::ActionTrackerPlugin::Format  ();
+use Foswiki::Plugins::ActionTrackerPlugin::Options ();
 
 our $now = time();
 
@@ -455,15 +456,22 @@ sub forceTime {
     $now = Time::ParseDate::parsedate( $tim, %pdopt );
 }
 
-# PRIVATE get the anchor of this action
+# get the anchor of this action
+# $remote - true if the anchor is to a *reference* to an action defined
+# in another topic e.g. returned by a SEARCH.
 sub getAnchor {
-    my $this = shift;
+    my ( $this, $remote ) = @_;
 
     my $anchor = $this->{uid};
     if ( !$anchor ) {
 
         # required for old actions without uids
         $anchor = 'AcTion' . $this->{ACTION_NUMBER};
+    }
+    if ($remote) {
+        my $w = $this->{web};
+        $w =~ s./.:.g;
+        $anchor = "$w:$this->{topic}:$anchor";
     }
 
     return $anchor;
@@ -507,8 +515,7 @@ sub secsToGo {
         return $this->{due} - $now;
     }
 
-    # No due date, use default
-    require Foswiki::Plugins::ActionTrackerPlugin::Options;
+    # No due date, use default due => 999999999 (far in the future)
     return $Foswiki::Plugins::ActionTrackerPlugin::Options::options{DEFAULTDUE};
 }
 
@@ -681,6 +688,7 @@ sub matches {
         elsif (defined($attrVal)
             && defined( $this->{$attrName} ) )
         {
+
             # re match
             my $r;
             eval { $r = ( $this->{$attrName} !~ m/$attrVal/ ); };
@@ -695,17 +703,37 @@ sub matches {
 
 # PRIVATE format the given time type
 sub _formatType_date {
-    my ( $this, $fld, $args, $asHTML ) = @_;
+    my ( $this, $fld, $args, $asHTML, $opts ) = @_;
     return formatTime( $this->{$fld}, 'string' );
 }
 
 # PRIVATE format the given select box type
 # Contributed by Kent Dozier
 sub _formatType_select {
-    my ( $this, $fld, $args, $asHTML ) = @_;
+    my ( $this, $fld, $args, $asHTML, $opts ) = @_;
 
-    # If HTML isn't wanted, just throw back the value
-    unless ($asHTML) {
+    unless ( $asHTML
+        && $Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT}
+      )
+    {
+
+        return ( defined $this->{$fld} ) ? $this->{$fld} : '';
+    }
+
+    # Check the current user is able to modify the topic
+    # containing the action
+    unless ( exists $this->{_can_modify} ) {
+        $this->{_can_modify} = (
+            Foswiki::Func::checkAccessPermission(
+                'CHANGE', Foswiki::Func::getWikiName(),
+                undef,    $this->{topic},
+                $this->{web}
+              )
+              || 0
+        );
+    }
+
+    unless ( $this->{_can_modify} ) {
         return ( defined $this->{$fld} ) ? $this->{$fld} : '';
     }
 
@@ -752,7 +780,7 @@ sub _formatType_select {
 }
 
 sub _formatField_formfield {
-    my ( $this, $args, $asHTML ) = @_;
+    my ( $this, $args, $asHTML, $opts ) = @_;
 
     my ( $meta, $text ) =
       Foswiki::Func::readTopic( $this->{web}, $this->{topic} );
@@ -778,7 +806,7 @@ sub _formatField_formfield {
 # PRIVATE format the given field (takes precedence over standard
 # date formatting)
 sub _formatField_due {
-    my ( $this, $args, $asHTML ) = @_;
+    my ( $this, $args, $asHTML, $opts ) = @_;
     my $text = formatTime( $this->{due}, 'string' );
 
     if ( !$this->{due} ) {
@@ -810,22 +838,22 @@ sub _formatField_due {
 }
 
 sub _formatField_state {
-    my ( $this, $args, $asHTML ) = @_;
+    my ( $this, $args, $asHTML, $opts ) = @_;
 
     return $this->{state} unless $this->{uid};
 
     # SMELL: assumes a prior call has loaded the options
     require Foswiki::Plugins::ActionTrackerPlugin::Options;
-    return $this->{state}
+    $asHTML = 0
       unless
       $Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT};
 
-    return $this->_formatType_select( 'state', $args, $asHTML );
+    return $this->_formatType_select( 'state', $args, $asHTML, $opts );
 }
 
 # Special 'close' button field for transition between any state and 'closed'
 sub _formatField_statebutton {
-    my ( $this, $args, $asHTML ) = @_;
+    my ( $this, $args, $asHTML, $opts ) = @_;
     return '' unless $asHTML;
     return '' unless $this->{uid};
 
@@ -834,6 +862,23 @@ sub _formatField_statebutton {
         ( $buttonName, $tgtState ) = ( $1, $2 );
     }
     return '' if ( $this->{state} eq $tgtState );
+
+    return ''
+      unless
+      $Foswiki::Plugins::ActionTrackerPlugin::Options::options{ENABLESTATESHORTCUT};
+
+    # Check the current user is able to modify the topic
+    # containing the action
+    $this->{_can_modify} = (
+        Foswiki::Func::checkAccessPermission(
+            'CHANGE', Foswiki::Func::getWikiName(),
+            undef,    $this->{topic},
+            $this->{web}
+          )
+          || 0
+    ) unless defined $this->{_can_modify};
+
+    return '' unless $this->{_can_modify};
 
     return $this->_form(
         'state', 'closed',
@@ -849,16 +894,16 @@ sub _formatField_statebutton {
 
 # PRIVATE format text field
 sub _formatField_text {
-    my ( $this, $args, $asHTML, $type ) = @_;
+    my ( $this, $args, $asHTML, $opts ) = @_;
     return $this->{text};
 }
 
 # PRIVATE format link field
 sub _formatField_link {
-    my ( $this, $args, $asHTML, $type ) = @_;
+    my ( $this, $args, $asHTML, $opts ) = @_;
     my $text = '';
 
-    if ( $asHTML && defined($type) && $type eq 'href' ) {
+    if ($asHTML) {
 
         # Generate a jump-to in wiki syntax
         $text =~ s/<br ?\/?>/\n/sgo;
@@ -870,7 +915,7 @@ sub _formatField_link {
                 href =>
                   Foswiki::Func::getViewUrl( $this->{web}, $this->{topic} )
                   . '#'
-                  . $this->getAnchor()
+                  . $this->getAnchor(0)
             },
             CGI::img(
                 {
@@ -882,16 +927,18 @@ sub _formatField_link {
         $text .= $jump;
     }
     else {
+
+        # Plain text
         $text =
           Foswiki::Func::getViewUrl( $this->{web}, $this->{topic} ) . '#'
-          . $this->getAnchor();
+          . $this->getAnchor(0);
     }
     return $text;
 }
 
 # PRIVATE format edit field
 sub _formatField_edit {
-    my ( $this, $args, $asHTML, $type ) = @_;
+    my ( $this, $args, $asHTML, $opts ) = @_;
 
     if ( !$asHTML ) {
 
@@ -901,13 +948,22 @@ sub _formatField_edit {
 
     my $skin = join( ',', ( 'action', Foswiki::Func::getSkin() ) );
 
-    my $url = Foswiki::Func::getScriptUrl(
-        $this->{web}, $this->{topic}, 'edit',
+    my %urlbits = (
         skin       => $skin,
-        atp_action => $this->getAnchor(),
-        nowysiwyg  => 1,                    # SMELL: could do better!
+        atp_action => $this->getAnchor(0),
+        nowysiwyg  => 1,                     # SMELL: could do better!
         t          => time()
     );
+
+    # After the edit, come back to the currently viewed topic
+    $urlbits{origin} =
+        $Foswiki::Plugins::SESSION->{webName} . '.'
+      . $Foswiki::Plugins::SESSION->{topicName} . '#'
+      . $this->getAnchor(1);
+
+    my $url =
+      Foswiki::Func::getScriptUrl( $this->{web}, $this->{topic}, 'edit',
+        %urlbits );
     $url =~ s/%2c/,/g;
     my $attrs = {
         href  => $url,
@@ -1025,7 +1081,7 @@ sub findChanges {
 
     my $plain_text = $format->formatStringTable( [$this] );
     $plain_text .= "\n$changes\n";
-    my $html_text = $format->formatHTMLTable( [$this], 'href', 'atpChanges' );
+    my $html_text = $format->formatHTMLTable( [$this], 'atpChanges' );
     $html_text .= $format->formatChangesAsHTML( $old, $this );
 
     # Add text to people interested in notification
@@ -1090,11 +1146,12 @@ sub updateFromCopy {
                 else {
                     $this->{$attrname} =
                       Foswiki::Merge::merge2( $curRev, $this->{$attrname},
-                        'new', $copy->{$attrname},
-                        '.*?\n', $Foswiki::Plugins::SESSION );
+                        'new', $copy->{$attrname}, '.*?\n',
+                        $Foswiki::Plugins::SESSION );
                 }
             }
             else {
+
                 # Take the value from the action editor
                 $this->{$attrname} = $copy->{$attrname};
             }

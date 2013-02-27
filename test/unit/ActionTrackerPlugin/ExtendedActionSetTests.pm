@@ -1,7 +1,7 @@
 # tests of actionset when action fields have been extended
 package ExtendedActionSetTests;
-use FoswikiTestCase;
-our @ISA = qw( FoswikiTestCase );
+use FoswikiFnTestCase;
+our @ISA = qw( FoswikiFnTestCase );
 
 use strict;
 

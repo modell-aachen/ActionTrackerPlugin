@@ -206,13 +206,9 @@ sub stringify {
 }
 
 # PUBLIC format the action set as an HTML table
-# Pass $type="name" to to get an anchor to a position
-# within the topic, "href" to get a jump. Defaults to "name".
-# Pass $newWindow=1 to get separate browser window,
-# $newWindow=0 to get jump in same window.
 sub formatAsHTML {
-    my ( $this, $format, $jump, $class ) = @_;
-    return $format->formatHTMLTable( \@{ $this->{ACTIONS} }, $jump, $class );
+    my ( $this, $format, $class ) = @_;
+    return $format->formatHTMLTable( \@{ $this->{ACTIONS} }, $class );
 }
 
 # PUBLIC format the action set as a plain string

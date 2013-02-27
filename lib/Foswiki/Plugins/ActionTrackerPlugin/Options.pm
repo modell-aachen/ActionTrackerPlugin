@@ -1,38 +1,18 @@
 # See bottom of file for license and copyright information
 package Foswiki::Plugins::ActionTrackerPlugin::Options;
 
-use Assert;
-my $src = ( (DEBUG) ? '' : '_src' );
+use strict;
 
 # Define a global so that submodules can access options without needing the
 # result of the load. Nasty, but this is refactored over existing code, so
 # pragmatic.
 
-my %defaults = (
-    CSS   => "%PUBURL%/%SYSTEMWEB%/ActionTrackerPlugin/styles$src.css",
-    DEBUG => '0',
-    DEFAULTDUE    => 9999999999,                             # far in the future
-    EDITBOXHEIGHT => '%EDITBOXHEIGHT%',
-    EDITBOXWIDTH  => '%EDITBOXWIDTH%',
-    EDITFORMAT    => '| $who | $due | $state | $notify |',
-    EDITHEADER          => '| Assigned to | Due date | State | Notify |',
-    EDITORIENT          => 'rows',
-    ENABLESTATESHORTCUT => '1',
-    EXTRAS              => '',
-    NOPREVIEW           => '1',
-    NOTIFYCHANGES       => '$who,$due,$state,$text',
-    TABLEFORMAT => '| $who | $due | $text $link | $state | $notify | $edit |',
-    TABLEHEADER => '| Assigned to | Due date | Description | State | Notify ||',
-    TABLEORIENT => 'cols',
-    TEXTFORMAT  => 'Action for $who, due $due, $state$n$text$n$link$n'
-);
-
-our %options = %defaults;
+our %options;
 
 sub load {
 
     # Set defaults, will be overwritten by user prefs
-    %options = %defaults;
+    %options = %{ $Foswiki::cfg{Plugins}{ActionTrackerPlugin}{Options} };
 
     require Foswiki::Func;
     foreach my $ky ( keys %options ) {

@@ -20,6 +20,10 @@ use integer;
 
 use Foswiki::Func ();
 
+# Bitmask of options. REMOTE says "this action is to be rendered as if it
+# isn't in the current topic - i.e. using a remote topic anchor"
+use constant REMOTE => 1;
+
 # PUBLIC Constructor
 # $header is the format of the HTML table header representation
 # $fields is the format of the HTML table body representation
@@ -29,9 +33,10 @@ use Foswiki::Func ();
 # $orient is the orientation of generated tables; "rows" gives
 # data in rows, anything else gives data in columns.
 sub new {
-    my ( $class, $header, $fields, $orient, $textform, $changeFields ) = @_;
+    my ( $class, $header, $fields, $orient, $textform, $changeFields, $opts ) =
+      @_;
 
-    my $this = {};
+    my $this = { opts => $opts || 0 };
     $header ||= '';
     $header =~ s/^\s*\|//so;
     $header =~ s/\|\s*$//so;
@@ -127,6 +132,7 @@ sub stringify() {
 # The function returns a tuple of ( text, colour ). The value 0 is
 # treated as the default colour.
 sub _expandVar {
+    my $this   = shift;
     my $object = shift;
     my $vbl    = shift;
     my $args   = shift;
@@ -135,7 +141,7 @@ sub _expandVar {
     if ( $object->can($fn) ) {
 
         # special format for this field
-        return $object->$fn( $args, $asHTML, @_ );
+        return $object->$fn( $args, $asHTML, $this->{opts} );
     }
     my $type = $object->getType($vbl);
     if ($type) {
@@ -144,7 +150,7 @@ sub _expandVar {
         if ( $object->can($fn) ) {
 
             # special format for this type
-            return $object->$fn( $vbl, $args, $asHTML, @_ );
+            return $object->$fn( $vbl, $args, $asHTML, $this->{opts} );
         }
     }
     if ( defined( $object->{$vbl} ) && !defined($args) ) {
@@ -162,28 +168,28 @@ sub _expandVar {
 }
 
 # PUBLIC format a list of actions into a table
+# $data - array of action objects
+# $class - CSS class
 sub formatHTMLTable {
-    my $this  = shift;
-    my $data  = shift;
-    my $jump  = shift;    # 'name' for plain text, or 'href' for a link
-    my $class = shift;
-    my $a     = {};
+    my ( $this, $data, $class ) = @_;
+    my $a = {};
     $a->{class} = $class if $class;
     my $i;
     my @rows;
 
     # make a 2D array of cells
     foreach my $object (@$data) {
-        my $anchored = ( $jump ne "name" );
+        my $anchored = 0;
         my @cols;
         foreach $i ( @{ $this->{FIELDS} } ) {
             my $c;
             my $entry = $i;
             $entry = Foswiki::Func::decodeFormatTokens($entry);
             $entry =~ s/\$(\w+)(?:\((.*?)\))?/
-              _expandVar( $object, $1, $2, 1, $jump )/ges;
+              $this->_expandVar( $object, $1, $2, 1 )/ges;
             if ( !$anchored ) {
-                $entry = CGI::a( { name => $object->getAnchor() } ) . $entry;
+                my $name = $object->getAnchor( $this->{opts} & REMOTE );
+                $entry = CGI::a( { name => $name } ) . $entry;
                 $anchored = 1;
             }
             $entry = CGI::td($entry);
@@ -241,7 +247,7 @@ sub formatStringTable {
         my $fmt = $this->{TEXTFORM} || '';
         $fmt = Foswiki::Func::decodeFormatTokens($fmt);
         $fmt =~ s/\$(\w+\b)(?:\((.*?)\))?/
-          _expandVar( $row, $1, $2, 0, @_ )/geos;
+          $this->_expandVar( $row, $1, $2, 0 )/geos;
         $text .= $fmt . "\n";
     }
     return $text;
@@ -256,8 +262,8 @@ sub formatChangesAsHTML {
     foreach my $field ( @{ $this->{CHANGEFIELDS} } ) {
         my $row = '';
         if ( defined( $old->{$field} ) && defined( $new->{$field} ) ) {
-            my $oldval = _expandVar( $old, $field, undef, 1 );
-            my $newval = _expandVar( $new, $field, undef, 1 );
+            my $oldval = $this->_expandVar( $old, $field, undef, 1 );
+            my $newval = $this->_expandVar( $new, $field, undef, 1 );
             if ( $oldval ne $newval ) {
                 $row =
                     CGI::td( $a, $field )
@@ -266,14 +272,14 @@ sub formatChangesAsHTML {
             }
         }
         elsif ( defined( $old->{$field} ) ) {
-            my $oldval = _expandVar( $old, $field, undef, 1 );
+            my $oldval = $this->_expandVar( $old, $field, undef, 1 );
             $row =
                 CGI::td( $a, $field )
               . CGI::td( $a, $oldval )
               . CGI::td( $a, ' *removed* ' );
         }
         elsif ( defined( $new->{$field} ) ) {
-            my $newval = _expandVar( $new, $field, undef, 1 );
+            my $newval = $this->_expandVar( $new, $field, undef, 1 );
             $row =
                 CGI::td( $a, $field )
               . CGI::td( $a, ' *missing* ' )
@@ -300,19 +306,19 @@ sub formatChangesAsString {
     my $tbl = "";
     foreach my $field ( @{ $this->{CHANGEFIELDS} } ) {
         if ( defined( $old->{$field} ) && defined( $new->{$field} ) ) {
-            my $oldval = _expandVar( $old, $field, undef, 0 );
-            my $newval = _expandVar( $new, $field, undef, 0 );
+            my $oldval = $this->_expandVar( $old, $field, undef, 0 );
+            my $newval = $this->_expandVar( $new, $field, undef, 0 );
             if ( $oldval ne $newval ) {
                 $tbl .=
 "\t- Attribute \"$field\" changed, was \"$oldval\", now \"$newval\"\n";
             }
         }
         elsif ( defined( $old->{$field} ) ) {
-            my $oldval = _expandVar( $old, $field, undef, 0 );
+            my $oldval = $this->_expandVar( $old, $field, undef, 0 );
             $tbl .= "\t- Attribute \"$field\" was \"$oldval\" now removed\n";
         }
         elsif ( defined( $new->{$field} ) ) {
-            my $newval = _expandVar( $new, $field, undef, 0 );
+            my $newval = $this->_expandVar( $new, $field, undef, 0 );
             $tbl .= "\t- Attribute \"$field\" added with value \"$newval\"\n";
         }
     }
@@ -389,7 +395,7 @@ sub _formatFieldForEdit {
         return CGI::Select( { name => $attrname, size => $size }, $fields );
     }
     elsif ( $type->{type} !~ m/noload/ ) {
-        my $val     = _expandVar( $object, $attrname, undef, 0 );
+        my $val     = $this->_expandVar( $object, $attrname, undef, 0 );
         my $content = '';
         my @extras  = ();
         if ( $type->{type} eq 'date' ) {
@@ -433,7 +439,7 @@ sub _formatFieldForEdit {
 sub formatHidden {
     my ( $this, $object, $attrname ) = @_;
 
-    my $v = _expandVar( $object, $attrname, undef, 0 );
+    my $v = $this->_expandVar( $object, $attrname, undef, 0 );
     if ( defined($v) ) {
         return CGI::hidden( { name => $attrname, value => $v } );
     }
