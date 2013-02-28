@@ -96,6 +96,7 @@
 
     $('#atp_editor input[type="submit"]').livequery(function() {
 	$(this).click(function() {
+	    canCloseDialog = true;
 	    $("#atp_editor").dialog("close");
 	    return true;
 	});
