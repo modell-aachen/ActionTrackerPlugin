@@ -875,7 +875,8 @@ sub _formatField_edit {
         t          => time()
     );
     $url =~ s/%2c/,/g;
-    my $attrs = { href => $url, title => 'Edit', class => "atp_edit ui-icon ui-icon-pencil" };
+    my $attrs = { href => $url, title => 'Edit', class => "atp_edit ui-icon ui-icon-pencil ".
+        "{web: '$this->{web}', topic: '$this->{topic}'}" };
 
     return CGI::a( $attrs, 'edit' );
 }

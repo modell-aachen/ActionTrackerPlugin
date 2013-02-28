@@ -3,6 +3,7 @@ package Foswiki::Plugins::ActionTrackerPlugin;
 
 use strict;
 use Assert;
+use Encode ();
 use Error qw( :try );
 
 use Foswiki::Func ();
@@ -616,9 +617,72 @@ sub _unicodeSubstr {
     return Encode::encode($charset, substr(Encode::decode($charset, $_[0]), $_[1], $_[2]));
 }
 
+# Text that is taken from a web page and added to the parameters of an XHR
+# by JavaScript is UTF-8 encoded. This is because UTF-8 is the default encoding
+# for XML, which XHR was designed to transport. For usefulness in Javascript
+# the response to an XHR should also be UTF-8 encoded.
+# This function generates such a response.
+sub returnRESTResult {
+    my ( $response, $status, $text ) = @_;
+    ASSERT( $text !~ /[^\x00-\xff]/,
+        "only octets expected in input to returnRESTResult" )
+      if DEBUG;
+
+    if ( $Foswiki::cfg{Site}{CharSet} !~ /^utf-?8$/i ) {
+        $text = Encode::decode( $Foswiki::cfg{Site}{CharSet}, $text, Encode::FB_HTMLCREF );
+        $text = Encode::encode_utf8($text);
+    }
+
+    # Foswiki 1.0 introduces the Foswiki::Response object, which handles all
+    # responses.
+    if ( UNIVERSAL::isa( $response, 'Foswiki::Response' ) ) {
+        $response->header(
+            -status  => $status,
+            -type    => 'text/plain',
+            -charset => 'UTF-8'
+        );
+        $response->print($text);
+    }
+    else {    # Pre-Foswiki-1.0.
+              # Turn off AUTOFLUSH
+              # See http://perl.apache.org/docs/2.0/user/coding/coding.html
+        local $| = 0;
+        my $query = Foswiki::Func::getCgiQuery();
+        if ( defined($query) ) {
+            my $len;
+            { use bytes; $len = length($text); };
+            print $query->header(
+                -status         => $status,
+                -type           => 'text/plain',
+                -charset        => 'UTF-8',
+                -Content_length => $len
+            );
+            print $text;
+        }
+    }
+    print STDERR $text if ( $status >= 400 );
+    return;
+}
+
+
 sub _updateRESTHandler {
-    my $session = shift;
+    my ($session, $plugin, $verb, $response) = @_;
     my $query   = Foswiki::Func::getCgiQuery();
+    if ($query->param('atpcancel')) {
+	my $topic = $query->param('topic');
+	my $web;
+	( $web, $topic ) =
+	    Foswiki::Func::normalizeWebTopicName( undef, $topic );
+	try {
+	    my $topicObject = Foswiki::Meta->new($session, $web, $topic);
+	    $topicObject->clearLease();
+	}
+	catch Error::Simple with {
+	    my $e = shift;
+	    return returnRESTResult( $response, 500, $e->{-text} );
+	};
+	return returnRESTResult( $response, 200, '' );
+    }
     try {
         my $topic = $query->param('topic');
         my $web;
@@ -627,17 +691,15 @@ sub _updateRESTHandler {
         lazyInit( $web, $topic );
         _updateSingleAction( $web, $topic, $query->param('uid'),
 			     $query->param('field') => $query->param('value') );
-        print CGI::header( 'text/plain', 200 );    # simple message
+	returnRESTResult( $response, 200, '' );
     }
     catch Error::Simple with {
         my $e = shift;
-        print CGI::header( 'text/plain', 500 );
-        print $e->{-text};
+	returnRESTResult( $response, 500, $e->{-text} );
     }
     catch Foswiki::AccessControlException with {
         my $e = shift;
-        print CGI::header( 'text/plain', 500 );
-        print $e->stringify();
+	returnRESTResult( $response, 500, $e->stringify() );
     };
     return undef;
 }

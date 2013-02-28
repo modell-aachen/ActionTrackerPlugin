@@ -28,13 +28,35 @@
     $("select.atp_update").livequery(function() { $(this).change(restUpdate); });
     $("input.atp_update").livequery(function() { $(this).click(restUpdate); });
 
+    var canCloseDialog = false;
     $('a.atp_edit').livequery(function() {
 	$(this).click(function(event) {
+	    var dlgHref = this.href;
+	    var meta = $(this).metadata();
+	    var pref = foswiki.getPreference;
 	    var div = $("#atp_editor");
 	    if (!div.length) {
 		div = $("<div id='atp_editor' title='Edit action'></div>");
 		$("body").append(div);
-		div.dialog({autoOpen: false, width: 600});
+		div.dialog({autoOpen: false, width: 600, beforeClose: function() {
+		    if (canCloseDialog) return true;
+		    $.blockUI();
+		    $.ajax({
+			type: 'POST',
+			url: pref('SCRIPTURLPATH')+'/rest'+pref('SCRIPTSUFFIX')+'/ActionTrackerPlugin/update',
+			data: {
+			    atpcancel: 1,
+			    topic: meta.web+'.'+meta.topic
+			},
+			success: function() { $.unblockUI(); div.dialog('close'); },
+			error: function() {
+			    alert('Failed clearing your lease for this action. Other users may not be able to edit the action\'s topic for some time. You can edit the topic and then cancel to fix this.');
+			    $.unblockUI(); div.dialog('close');
+			}
+		    });
+		    canCloseDialog = true;
+		    return true;
+		} });
 	    }
 	    div.load(this.href,
 		     function(done, status) {
@@ -65,6 +87,7 @@
 			     alert(message[5]); //Error when I tried...
 			 } else {
 			     div.dialog("open");
+			     canCloseDialog = false;
 			 }
 		     });
 	    return false;
