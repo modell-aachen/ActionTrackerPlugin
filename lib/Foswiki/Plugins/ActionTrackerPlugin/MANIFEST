@@ -21,4 +21,5 @@ lib/Foswiki/Plugins/ActionTrackerPlugin/ActionSet.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/AttrDef.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/Format.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/JQuery.pm 0440 Perl support module
+lib/Foswiki/Plugins/ActionTrackerPlugin/Config.spec 0440 Configuration data
 lib/Foswiki/Configure/Checkers/Plugins/ActionTrackerPlugin/Options.pm 0440 Configuration checker
