@@ -166,6 +166,8 @@ sub new {
     foreach my $key ( keys %$attr ) {
         my $type = getBaseType($key) || 'noload';
         my $val = $attr->{$key};
+        $val =~ s/\$quot/"/g;
+        $val =~ s/\$dollar/\$/g;
         if ( $type eq 'names' && defined($val) ) {
             my @names = split( /[,\s]+/, $val );
             foreach my $n (@names) {
@@ -188,7 +190,7 @@ sub new {
         elsif ( $type !~ 'noload' ) {
 
             # treat as plain string; text, select
-            $this->{$key} = $attr->{$key};
+            $this->{$key} = $val;
         }
     }
 
@@ -392,7 +394,10 @@ sub stringify {
             elsif ( $type->{type} !~ /noload/ ) {
 
                 # select or text; treat as plain text
-                $attrs .= ' ' . $key . '="' . $this->{$key} . '"';
+                my $val = $this->{$key};
+                $val =~ s/\$/\$dollar/g;
+                $val =~ s/"/\$quot/g;
+                $attrs .= ' ' . $key . '="' . $val . '"';
             }
         }
     }
@@ -1021,6 +1026,10 @@ sub createFromQuery {
         if ( $type->{type} !~ m/noload/o ) {
             my $val = $query->param($attrname);
             if ( defined($val) ) {
+                # Need to escape here, too, just to have it unescaped
+                # in the constructor
+                $val =~ s/\$/\$dollar/g;
+                $val =~ s/"/\$quot/g;
                 $attrs .= ' ' . $attrname . '="' . $val . '"';
             }
         }
