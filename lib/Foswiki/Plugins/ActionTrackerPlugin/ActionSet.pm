@@ -38,7 +38,7 @@ sub load {
     my ( $web, $topic, $text, $keepText ) = @_;
 
     $text =~ s/\r//g;
-    my @blocks       = split( /(%ACTION{.*?}%|%ENDACTION%)/s, $text );
+    my @blocks       = split( /(%ACTION{.*?}%|%ENDACTION%)/ms, $text );
     my $actionSet    = new Foswiki::Plugins::ActionTrackerPlugin::ActionSet();
     my $i            = 0;
     my $actionNumber = 0;
