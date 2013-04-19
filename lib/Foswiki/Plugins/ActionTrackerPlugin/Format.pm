@@ -430,7 +430,7 @@ sub _formatFieldForEdit {
             }
             my $session = $Foswiki::Plugins::SESSION;
             my $topicObject = new Foswiki::Meta($session, $session->{webName}, $session->{topicName});
-            my $limit = ($attrname eq 'who') ? ', limit: 1' : '';
+            my $limit = ($attrname eq 'who' && !Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_MULTI_WHO')) ? ', limit: 1' : '';
             @extras = ( class => "jqTextboxList {useHidden: 1$limit}", autocomplete => $topicObject->expandMacros($autocomplete) );
         }
         if ( $type->{type} eq 'textarea' ) {
