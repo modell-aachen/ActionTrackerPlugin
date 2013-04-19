@@ -600,6 +600,9 @@ sub _indexTopicHandler {
 	    $aDoc->add_fields("action_${key}_s", $action->{$key});
 	}
 
+	# ACL
+	$aDoc->add_fields($indexer->getAclFields($web, $topic, $meta, $text));
+
 	# add the document to the index
 	try {
 	  $indexer->add($aDoc);
