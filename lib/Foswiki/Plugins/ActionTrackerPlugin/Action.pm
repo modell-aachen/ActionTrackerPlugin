@@ -432,7 +432,8 @@ sub _canonicalName {
         }
 	if ($who) {
 	    my ($w, $t) = Foswiki::Func::normalizeWebTopicName(undef, $who);
-	    $who = "$w.$t";
+	    # Modac: Main.FooBar doesn't look nice; get rid of it; we don't need it anyway
+	    $who = "$t";
 	}
     }
     return $who;
