@@ -276,6 +276,17 @@ __Notes:__
    1 Unlike all other search terms, =changedsince= works as an OR term rather than an AND term. If you use a compound expression like <code>late,changedsince=yesterday</code>, this will *not* give you all late actions that changed since yesterday. Instead, it will give you all late actions *and* all actions that changed since yesterday.
    1 If you give the parameter DEBUG to the actionnotify script, it will print out the mails that would have been sent to STDOUT. This is useful for debugging, and may be useful if you have some other processing in mind (such as piping to an alternative mail program).
    1 =changedsince= requires RCS, and will not work with Rcs<nop>Lite.
+---++ Notification on create/close
+ActionTrackerPlugin can notify the addressee when a new action has been created or inform the creator of an action when it has been closed. Any other state-changes can be notified as well.
+
+The user performing the action (creating/closing/changing it) will never be notified.
+
+To enable a notification, copy one of the following templates into your skin path:
+   ExampleSkinATPcreateMailTemplate: To send a mail when a new action has been created.
+   ExampleSkinATPcloseMailTemplate: To send a mail when an action has been closed.
+   ExampleSkinATPopenMailTemplate: To send a mail when an action has been reopened.
+For example copy =ExampleSkinATPopenMailTemplate= to =CustomSkinATPopenMailTemplate= if your =SKIN= setting includes =custom= and you want to be notified about reopened actions. If you want to be notified about any other state, just copy =ExampleSkinATPopenMailTemplate= to =CustomSkinATPstatenameMailTemplate= and modify the appropriate definitions.
+If you want to access the action's fields, you can use =%<nop>ACTION_field%= (eg. =%<nop>ACTION_text%=), however if you need to use them in in other macros (eg. =%<nop>CALC{"%<nop>ACTION_created%...=) you will need to declare them in =RequiredFields= as comma-separated list. (eg. =%<nop>TMPL:DEF{"RequiredFields"}%<nop>createdate, closed%<nop>TMPL:END%= if you need =%<nop>ACTION_createdate%= and =%<nop>ACTION_closed%=).
 #CustomIsation
 ---++ Customisation
 

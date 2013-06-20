@@ -1,5 +1,9 @@
 data/System/ActionTrackerPlugin.txt 0660 Plugin topic
 data/System/ActionTrackerPluginQBE.txt 0660 Query-by-example action search
+data/System/ExampleSkinATPclosedMailTemplate.txt 0660
+data/System/ExampleSkinATPcreateMailTemplate.txt 0660
+data/System/ExampleSkinATPopenMailTemplate.txt 0660
+data/System/ExampleSkinATPwhoreassignmentMailTemplate.txt 0660
 pub/System/ActionTrackerPlugin/styles_src.css 0660 Style sheet source
 pub/System/ActionTrackerPlugin/styles.css 0660 Style sheet
 pub/System/ActionTrackerPlugin/atp_src.js 0660 Javascript source
@@ -13,6 +17,7 @@ templates/edit.action.tmpl 0440 Action editor page template
 templates/oopsleaseconflict.action.tmpl 0440 Action editor message template
 templates/login.action.tmpl 0440 Action login page template
 templates/actionform.tmpl 0440 Action editor page subtemplate
+templates/atpmail.tmpl 0440
 lib/Foswiki/Plugins/ActionTrackerPlugin.pm 0440 Plugin Perl module
 lib/Foswiki/Plugins/ActionTrackerPlugin/Action.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/Options.pm 0440 Perl support module

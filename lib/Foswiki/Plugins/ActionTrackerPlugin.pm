@@ -326,12 +326,24 @@ sub afterEditHandler {
 	}
     }
 
+    my $old_state = $latest_act->{state} || ''; # ignoring $old_act, that mail was send already
+    my $old_owner = $latest_act->{who} || '';
+
     $latest_act->updateFromCopy($new_act, $mustMerge, $info->{version}, $ancestorRev, $old_act);
     $latest_act->populateMissingFields();
     $text = $latest_as->stringify();
 
     # take the opportunity to fill in the missing fields in actions
     _addMissingAttributes( $text, $_[1], $_[2] );
+
+    # send notification
+    # note: notification for creation of new actions is handled in
+    # Foswiki::Plugins::ActionTrackerPlugin::Action::populateMissingFields()
+    if ( $latest_act->{state} ne $old_state ) {
+        $latest_act->notify( $latest_act->{state} );
+    } elsif ( $latest_act->{who} ne $old_owner ) {
+        $latest_act->notify( 'whoreassignment' );
+    }
 
     $_[0] = $text;
 }
