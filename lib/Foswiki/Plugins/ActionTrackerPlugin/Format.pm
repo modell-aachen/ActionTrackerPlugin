@@ -222,10 +222,12 @@ sub _generateHTMLTable {
         foreach $i ( @{ $this->{HEADINGS} } ) {
             $row .= CGI::th($i);
         }
-        $text .= CGI::Tr($row);
+        $text .= CGI::thead(CGI::Tr($row));
+        $text .= '<tbody>';
         foreach my $r (@$rows) {
             $text .= CGI::Tr( join( '', @$r ) );
         }
+        $text .= '</tbody>';
     }
     $text .= CGI::end_table();
 
