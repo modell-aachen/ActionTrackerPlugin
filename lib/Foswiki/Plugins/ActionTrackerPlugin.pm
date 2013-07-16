@@ -10,7 +10,7 @@ use Foswiki::Func ();
 use Foswiki::Plugins ();
 
 our $VERSION = '$Rev$';
-our $RELEASE = '2.4.9.12';
+our $RELEASE = '2.4.9.13';
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
@@ -436,6 +436,16 @@ sub _handleActionSearch {
     my $sep     = $attrs->remove('separator');
     my $orient  = $attrs->remove('orient');
     my $sort    = $attrs->remove('sort');
+
+    # meyer@modell-aachen.de:
+    # Kompatibilität zu JQTableSorterPlugin
+    my $jqse = $Foswiki::cfg{Plugins}{JQTableSorterPlugin}{Enabled};
+    my $jqsortable = $attrs->remove('jqsortable');
+    my $jqsortopts = undef;
+    if ( $jqse eq 1 && $jqsortable eq 1 ) {
+        $jqsortopts = $attrs->remove('jqsortopts');
+    }
+
     my $reverse = $attrs->remove('reverse');
     if ( defined($fmts) || defined($hdrs) || defined($orient) ) {
         $fmts   = $defaultFormat->getFields()      unless ( defined($fmts) );
@@ -451,12 +461,21 @@ sub _handleActionSearch {
     my $actions =
 	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::allActionsInWebs(
 	    $web, $attrs, 0 );
-    $actions->sort( $sort, $reverse );
+
+    # meyer@modell-aachen.de:
+    # Kompatibilität zu JQTableSorterPlugin
+    # $actions->sort( $sort, $reverse );
+    $actions->sort( $sort, $reverse ) unless $jqsortable;
     my $result;
     if ($plain) {
-	$result = $actions->formatAsString( $fmt );
+	   $result = $actions->formatAsString( $fmt );
     } else {
-	$result = $actions->formatAsHTML( $fmt, 'href', 'atpSearch' );
+
+    # meyer@modell-aachen.de:
+    # Kompatibilität zu JQTableSorterPlugin
+        my $cssClasses = 'atpSearch' . ($jqsortable eq 1 ? ' tablesorter' : '');
+        $cssClasses .= " {$jqsortopts}" if $jqsortopts;
+	    $result = $actions->formatAsHTML( $fmt, 'href', $cssClasses );
     }
     return $result;
 }
@@ -750,6 +769,6 @@ of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details, published at 
+GNU General Public License for more details, published at
 http://www.gnu.org/copyleft/gpl.html
 
