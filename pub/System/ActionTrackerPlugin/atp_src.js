@@ -102,6 +102,13 @@
 	});
     });
 
+    $('#atp_editor #atpCancel').livequery(function() {
+	$(this).click(function() {
+	    $('#atp_editor').dialog('close');
+	    return true;
+	});
+    });
+
     $("#atp_editor form[name='loginform']").livequery(function() {
 	$(this).submit(function() {
 	    var form = $(this);
