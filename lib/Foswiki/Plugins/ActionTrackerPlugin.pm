@@ -307,6 +307,12 @@ sub afterEditHandler {
 	$latest_as->add($new_act);
     }
 
+    # MODAC: delete closer info when reopening
+    if ($latest_act->{state} eq 'closed' && $new_act->{state} ne 'closed') {
+	$new_act->{closer} = '';
+	$new_act->{closed} = '';
+    }
+
     # See if we can get a common ancestor for merging
     my $old_act;
     if ($mustMerge) {
