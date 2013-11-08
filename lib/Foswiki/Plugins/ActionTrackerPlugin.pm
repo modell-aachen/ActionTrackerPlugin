@@ -621,7 +621,7 @@ sub _indexTopicHandler {
 	  'state' => $action->{state},
 	  'container_id' => $web.'.'.$topic,
 	  'container_url' => Foswiki::Func::getViewUrl($web, $topic),
-#	  'container_title' => $indexer->getTopicTitle($web, $topic, $meta),
+	  'container_title' => $indexer->getTopicTitle($web, $topic, $meta),
 	);
 	$doc->add_fields('catchall' => $title);
 	$doc->add_fields('catchall' => $action->{text});
