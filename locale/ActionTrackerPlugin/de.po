@@ -1,0 +1,39 @@
+# German translations for ActionTrackerPlugin 
+# Translators: van Hung Dao
+msgid ""
+msgstr ""
+"Project-Id-Version: ActionTrackerPlugin\n"
+"Report-Msgid-Bugs-To: support@modell-aachen.de\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2013-01-30 12:02+0200\n"
+"Last-Translator: van Hung Dao <dao@modell-aachen.de>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#:core/pub/System/ActionTrackerPlugin:49
+msgid "Could not access %1, the topic containing this action."
+msgstr "Kein Zugriff auf das Topic %1, das die Aufgabe enthält."
+
+#:core/pub/System/ActionTrackerPlugin:51
+msgid "%1 may still be editing the topic, but their lease expired %2 ago."
+msgstr "%1 könnte das Topic immer noch bearbeiten, wobei die Ausleihe seit %2 abgelaufen ist."
+
+#:core/pub/System/ActionTrackerPlugin:53
+msgid "%1 has been editing the topic for %2 and the lease is still active for another %3."
+msgstr "%1 bearbeitet das Topic seit %2 und die Ausleihung ist noch aktiv für weitere %3."
+
+#:core/pub/System/ActionTrackerPlugin:55
+msgid "To clear the lease, try editing %1 with the standard text editor."
+msgstr "Um die Ausleihung aufzuheben, versuchen Sie das Topic %1 mit dem Standard-Editor zu bearbeiten."
+
+#:core/pub/System/ActionTrackerPlugin:59
+msgid "Error when I tried to edit the action"
+msgstr "Fehler beim Versuch, die Aufgabe zu bearbeiten"
+
+#:core/pub/System/ActionTrackerPlugin:87
+msgid "Sorry, validation failed, possibly because someone else is already editing the action. Please try again in a few minutes."
+msgstr "Entschuldigung, die Gültigkeitsprüfung schlug fehl, weil möglicherweise jemand anderes bereits die Aufgabe bearbeitet. Bitte versuchen Sie es in paar Minuten nochmal."
+

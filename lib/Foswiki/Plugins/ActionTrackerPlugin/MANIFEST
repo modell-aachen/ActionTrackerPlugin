@@ -1,0 +1,24 @@
+data/System/ActionTrackerPlugin.txt 0660 Plugin topic
+data/System/ActionTrackerPluginQBE.txt 0660 Query-by-example action search
+pub/System/ActionTrackerPlugin/styles_src.css 0660 Style sheet source
+pub/System/ActionTrackerPlugin/styles.css 0660 Style sheet
+pub/System/ActionTrackerPlugin/atp_src.js 0660 Javascript source
+pub/System/ActionTrackerPlugin/atp.js 0660 Javascript
+pub/System/ActionTrackerPlugin/logo.png 0660 Image
+pub/System/ActionTrackerPlugin/Screenshot.png 0660 Image
+pub/System/ActionTrackerPlugin/wikiringlogo20x20.png 0660
+tools/actionnotify 0555 Mailer script
+templates/actionnotify.tmpl 0440 Page template for notify message
+templates/edit.action.tmpl 0440 Action editor page template
+templates/oopsleaseconflict.action.tmpl 0440 Action editor message template
+templates/login.action.tmpl 0440 Action login page template
+templates/actionform.tmpl 0440 Action editor page subtemplate
+lib/Foswiki/Plugins/ActionTrackerPlugin.pm 0440 Plugin Perl module
+lib/Foswiki/Plugins/ActionTrackerPlugin/Action.pm 0440 Perl support module
+lib/Foswiki/Plugins/ActionTrackerPlugin/Options.pm 0440 Perl support module
+lib/Foswiki/Plugins/ActionTrackerPlugin/ActionNotify.pm 0440 Perl support module
+lib/Foswiki/Plugins/ActionTrackerPlugin/ActionSet.pm 0440 Perl support module
+lib/Foswiki/Plugins/ActionTrackerPlugin/AttrDef.pm 0440 Perl support module
+lib/Foswiki/Plugins/ActionTrackerPlugin/Format.pm 0440 Perl support module
+lib/Foswiki/Plugins/ActionTrackerPlugin/JQuery.pm 0440 Perl support module
+locale/ActionTrackerPlugin/de.po 0666 German translations

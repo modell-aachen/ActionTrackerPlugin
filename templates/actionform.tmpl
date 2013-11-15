@@ -1,0 +1,13 @@
+%{
+   ActionTrackerPlugin template that defines the contents of the
+   edit pane.
+}%
+
+<form method="post" action="%SCRIPTURLPATH{"%SUBMITCOMMAND%"}%/%WEB%/%TOPIC%%SUBMITCMDOPT%" type="POST" enctype="application/x-www-form-urlencoded">
+  %EDITFIELDS%
+  <textarea name="text" wrap="virtual" rows="%EBH%" cols="%EBW%" style="width:99%" class="foswikiTextarea foswikiEditboxStyleProportional">%TEXT%</textarea>
+  %HIDDENFIELDS%
+  <br />
+  <input type="submit" class="foswikiSubmit" value=" &nbsp; %MAKETEXT{"Save"}% &nbsp; " />
+  <input type="button" id="atpCancel" class="foswikiButton foswikiButtonCancel" value=" &nbsp; %MAKETEXT{"Cancel"}% &nbsp; " />
+</form>
