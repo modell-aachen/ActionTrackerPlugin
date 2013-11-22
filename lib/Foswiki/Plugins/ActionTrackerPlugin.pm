@@ -595,6 +595,15 @@ sub _indexTopicHandler {
 	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$action->{uid});
 	my $id = $webtopic.':action'.$action->{uid};
 	my $title = $action->{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
+	my $text = $action->{text};
+
+	# escaping potential html tags
+	$text =~ s#<br />#\n#g;
+	$text =~ s#<p></p>#\n\n#g;
+	$text =~ s#<#&lt;#g;
+	$text =~ s#>#&gt;#g;
+	$title =~ s#<#&lt;#g;
+	$title =~ s#>#&gt;#g;
 
 	my @notify = split(/[,\s]+/, $action->{notify} || '');
 
@@ -617,7 +626,7 @@ sub _indexTopicHandler {
 	  'date' => $createDate,
 	  'createdate' => $createDate,
 	  'title' => $title,
-	  'text' => $action->{text},
+	  'text' => $text,
 	  'state' => $action->{state},
 	  'container_id' => $web.'.'.$topic,
 	  'container_url' => Foswiki::Func::getViewUrl($web, $topic),
