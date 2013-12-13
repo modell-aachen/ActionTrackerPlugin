@@ -29,11 +29,11 @@
     $("input.atp_update").livequery(function() { $(this).click(restUpdate); });
 
     var canCloseDialog = false;
+    var pref = foswiki.getPreference;
     $('a.atp_edit').livequery(function() {
 	$(this).click(function(event) {
 	    var dlgHref = this.href;
 	    var meta = $(this).metadata();
-	    var pref = foswiki.getPreference;
 	    var div = $("#atp_editor");
 	    if (!div.length) {
 		div = $("<div id='atp_editor' title='Edit action'></div>");
@@ -95,7 +95,34 @@
     });
 
     $('#atp_editor input[type="submit"]').livequery(function() {
-	$(this).click(function() {
+	var e = $(this);
+	var f = e.closest('form');
+	f.submit(function(ev) {
+	    if (f.data('submit-pronto')) return true; // Allow bypassing
+
+	    ev.preventDefault();
+	    var data = f.serializeArray();
+	    data.push({name: 'atpmultifield', value: '1'});
+	    data.push({name: 'topic', value: pref('WEB')+'.'+pref('TOPIC')});
+	    $.blockUI();
+	    $.ajax({
+		type: 'POST',
+		url: pref('SCRIPTURLPATH')+'/rest'+pref('SCRIPTSUFFIX')+'/ActionTrackerPlugin/update',
+		data: $.param(data),
+		success: function() {
+		    canCloseDialog = true;
+		    $('#atp_editor').dialog('close');
+		    $.unblockUI();
+		    // TODO update GUI
+		},
+		error: function() {
+		    // Do a normal submit so we don't have to figure out the error message ourselves
+		    f.data('submit-pronto', 1);
+		    f.submit();
+		}
+	    });
+	});
+	e.click(function() {
 	    canCloseDialog = true;
 	    $("#atp_editor").dialog("close");
 	    return true;

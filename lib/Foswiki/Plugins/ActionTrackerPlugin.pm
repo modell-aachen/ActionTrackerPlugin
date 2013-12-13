@@ -5,6 +5,7 @@ use strict;
 use Assert;
 use Encode ();
 use Error qw( :try );
+use JSON;
 
 use Foswiki::Func ();
 use Foswiki::Plugins ();
@@ -717,9 +718,18 @@ sub _updateRESTHandler {
         ( $web, $topic ) =
 	    Foswiki::Func::normalizeWebTopicName( undef, $topic );
         lazyInit( $web, $topic );
+	my %params;
+	if ($query->param('atpmultifield')) {
+		for my $p ($query->param) {
+			next if $p =~ /^(atpmultifield|closeactioneditor)$/;
+			$params{$p} = $query->param($p);
+		}
+	} else {
+		$params{$query->param('field')} = $query->param('value');
+	}
         _updateSingleAction( $web, $topic, $query->param('uid'),
-			     $query->param('field') => $query->param('value') );
-	returnRESTResult( $response, 200, '' );
+			     %params );
+	returnRESTResult( $response, 200, encode_json({ data => \%params }) );
     }
     catch Error::Simple with {
         my $e = shift;
@@ -748,15 +758,20 @@ sub _updateSingleAction {
 	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
 								$text, 1 );
 
+    my $theaction;
     foreach my $action ( @{ $as->{ACTIONS} } ) {
         if ( ref($action) ) {
             if ( $action->{uid} == $uid ) {
                 foreach my $key ( keys %changes ) {
                     $action->{$key} = $changes{$key};
                 }
+		$theaction = $action;
+		last;
             }
         }
     }
+print STDERR $as->stringify;
+    return unless defined $theaction;
     Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
 			      { comment => 'atp save' } );
 }
