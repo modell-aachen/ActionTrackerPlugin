@@ -10,7 +10,7 @@ use JSON;
 use Foswiki::Func ();
 use Foswiki::Plugins ();
 
-our $VERSION = '$Rev$';
+our $VERSION = '2.4.9';
 our $RELEASE = "2.4.9";
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
