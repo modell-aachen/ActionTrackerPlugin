@@ -101,6 +101,7 @@
 	    if (f.data('submit-pronto')) return true; // Allow bypassing
 
 	    ev.preventDefault();
+	    if (f.data('wys-submit-hook')) window.wysSubmitHook();
 	    var data = f.serializeArray();
 	    data.push({name: 'atpmultifield', value: '1'});
 	    data.push({name: 'topic', value: pref('WEB')+'.'+pref('TOPIC')});
