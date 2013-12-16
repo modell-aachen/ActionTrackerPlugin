@@ -204,8 +204,10 @@ sub new {
     $descr =~ s/\r+//o;
 
     # Translate newlines in the description to XHTML tags
-    $descr =~ s/\n\n/<p \/>/gos;
-    $descr =~ s/\n/<br \/>/gos;
+    unless (Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_WYSIWYG')) {
+        $descr =~ s/\n\n/<p \/>/gos;
+        $descr =~ s/\n/<br \/>/gos;
+    }
     $descr =~ s/%(ACTION\w*)\{/%<nop>$1\{/gso;
 
     $this->{text} = $descr;

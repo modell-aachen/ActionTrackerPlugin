@@ -241,8 +241,10 @@ sub _beforeActionEdit {
     # Process the text so it's nice to edit. This gets undone in Action.pm
     # when the action is saved.
     $text =~ s/^\t/   /gos;
-    $text =~ s/<br( \/)?>/\n/gios;
-    $text =~ s/<p( \/)?>/\n\n/gios;
+    unless (Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_WYSIWYG')) {
+        $text =~ s/<br( \/)?>/\n/gios;
+        $text =~ s/<p( \/)?>/\n\n/gios;
+    }
 
     $tmpl =~ s/%TEXT%/$text/go;
     $tmpl =~ s/%HIDDENFIELDS%/$fields/go;
