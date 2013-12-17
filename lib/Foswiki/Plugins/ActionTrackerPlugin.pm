@@ -772,7 +772,6 @@ sub _updateSingleAction {
             }
         }
     }
-print STDERR $as->stringify;
     return unless defined $theaction;
     Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
 			      { comment => 'atp save' } );
