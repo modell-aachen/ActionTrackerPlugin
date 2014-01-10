@@ -1018,8 +1018,10 @@ sub findChanges {
 sub createFromQuery {
     my ( $web, $topic, $an, $query ) = @_;
     my $desc = $query->param('text') || 'No description';
-    $desc =~ s/\r?\n\r?\n/ <p \/>/sgo;
-    $desc =~ s/\r?\n/ <br \/>/sgo;
+    unless (Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_WYSIWYG')) {
+        $desc =~ s/\r?\n\r?\n/ <p \/>/sgo;
+        $desc =~ s/\r?\n/ <br \/>/sgo;
+    }
 
     # for each of the legal attribute types, see if the query
     # contains a value for that attribute. If it does, fill it
