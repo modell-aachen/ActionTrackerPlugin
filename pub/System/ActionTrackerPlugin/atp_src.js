@@ -83,6 +83,7 @@
 			     ohno += message[4]; //To clear the lease...
 			     div.html(ohno);
 			     div.dialog("open");
+			     canCloseDialog = true;
 			 } else if (status == "error") {
 			     alert(message[5]); //Error when I tried...
 			 } else {
