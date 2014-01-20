@@ -28,6 +28,7 @@ sub initPlugin {
     $doneHeader  = 0;
 
     Foswiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
+    Foswiki::Func::registerRESTHandler( 'get', \&_getRESTHandler );
 
     Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
 				       'context-free' );
@@ -761,6 +762,35 @@ sub _updateSingleAction {
     }
     Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
 			      { comment => 'atp save' } );
+}
+
+sub _getRESTHandler {
+    my ($session, $plugin, $verb, $response) = @_;
+    my $query = Foswiki::Func::getCgiQuery();
+    my $topic = $query->param('topic');
+    $query->delete('topic');
+    my $web;
+    ($web, $topic) = Foswiki::Func::normalizeWebTopicName(undef, $topic);
+    try {
+	lazyInit($web, $topic);
+	my ($meta, $text) = Foswiki::Func::readTopic($web, $topic);
+	my $as = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load($web, $topic, $text);
+	my $query = { map { ($_, $query->param($_)) } $query->param };
+	my $action = $as->search($query)->first;
+	if (!defined $action) {
+		return returnRESTResult($response, 404, 'action not found');
+	}
+	returnRESTResult($response, 200, encode_json({ %$action }));
+    }
+    catch Error::Simple with {
+        my $e = shift;
+	returnRESTResult( $response, 500, $e->{-text} );
+    }
+    catch Foswiki::AccessControlException with {
+        my $e = shift;
+	returnRESTResult( $response, 500, $e->stringify() );
+    };
+    return undef;
 }
 
 1;
