@@ -161,6 +161,8 @@ sub new {
         }
     }
 
+    $this->{unloaded_fields} = {};
+
     # conditionally load field values, interpreting them
     # according to their type.
     foreach my $key ( keys %$attr ) {
@@ -191,6 +193,9 @@ sub new {
 
             # treat as plain string; text, select
             $this->{$key} = $val;
+        }
+        else {
+            $this->{unloaded_fields}{$key} = $val;
         }
     }
 

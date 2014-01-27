@@ -624,8 +624,12 @@ sub _indexTopicHandler {
 	}
 	# auto-generate custom fields
 	for my $key (keys %$action) {
-	    next if $key eq 'ACTION_NUMBER';
+	    next if ref($action->{$key}) || $key eq 'ACTION_NUMBER';
 	    $aDoc->add_fields("action_${key}_s", $action->{$key});
+	}
+	# auto-generate custom fields
+	for my $key (keys %{$action->{unloaded_fields}}) {
+	    $aDoc->add_fields("action_${key}_s", $action->{unloaded_fields}{$key});
 	}
 
 	# ACL
