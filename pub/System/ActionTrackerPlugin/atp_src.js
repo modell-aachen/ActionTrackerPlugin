@@ -88,6 +88,7 @@
 			     alert(message[5]); //Error when I tried...
 			 } else {
 			     div.dialog("open");
+			     div.find('form').data('action-web', meta.web).data('action-topic', meta.topic);
 			     canCloseDialog = false;
 			 }
 		     });
@@ -105,7 +106,7 @@
 	    if (f.data('wys-submit-hook')) window.wysSubmitHook();
 	    var data = f.serializeArray();
 	    data.push({name: 'atpmultifield', value: '1'});
-	    data.push({name: 'topic', value: pref('WEB')+'.'+pref('TOPIC')});
+	    data.push({name: 'topic', value: f.data('action-web')+'.'+f.data('action-topic')});
 	    $.blockUI();
 	    $.ajax({
 		type: 'POST',
