@@ -29,10 +29,17 @@
     $("input.atp_update").livequery(function() { $(this).click(restUpdate); });
 
     var canCloseDialog = false;
+    var forceEdit = false;
     var pref = foswiki.getPreference;
     $('a.atp_edit').livequery(function() {
 	$(this).click(function(event) {
-	    var dlgHref = this.href;
+	    var dlgHref = this.href,
+	        origHref = this.href;
+	    if (forceEdit) {
+		dlgHref += ';breaklock=on';
+		forceEdit = false;
+	    }
+	    dlgHref += ';_t_='+ (new Date()).getTime();
 	    var meta = $(this).metadata();
 	    var div = $("#atp_editor");
 	    if (!div.length) {
@@ -58,8 +65,11 @@
 		    return true;
 		} });
 	    }
-	    div.load(this.href,
+	    $.blockUI();
+	    div.load(dlgHref,
 		     function(done, status) {
+			 $.unblockUI();
+			 div.find('form').data('action-web', meta.web).data('action-topic', meta.topic);
 			 var m = /<!-- ATP_CONFLICT ~(.*?)~(.*?)~(.*?)~(.*?)~ -->/.exec(done, "s");
 			 if (m) {
 			     // Messages are defined in oopsleaseconflict.action.tmpl
@@ -82,6 +92,7 @@
 			     }
 			     ohno += message[4]; //To clear the lease...
 			     div.html(ohno);
+			     div.find('#atpForce').data('href', origHref);
 			     div.dialog("open");
 			     canCloseDialog = true;
 			 } else if (status == "error") {
@@ -135,6 +146,16 @@
     $('#atp_editor #atpCancel').livequery(function() {
 	$(this).click(function() {
 	    $('#atp_editor').dialog('close');
+	    return true;
+	});
+    });
+
+    $('#atp_editor #atpForce').livequery(function() {
+	var e = $(this);
+	e.click(function() {
+	    $('#atp_editor').dialog('close');
+	    forceEdit = true;
+	    $('a.atp_edit[href="'+e.data('href')+'"]').click();
 	    return true;
 	});
     });
