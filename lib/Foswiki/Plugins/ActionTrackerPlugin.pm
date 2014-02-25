@@ -794,7 +794,7 @@ sub _getRESTHandler {
 	if (!defined $action) {
 		return returnRESTResult($response, 404, 'action not found');
 	}
-	returnRESTResult($response, 200, encode_json({ %$action }));
+	returnRESTResult($response, 200, to_json({ %$action }));
     }
     catch Error::Simple with {
         my $e = shift;
