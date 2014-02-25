@@ -199,7 +199,7 @@
 	    } else {
 		if (div.text() == '') {
 		    div.html('<span class="jqAjaxLoader" />');
-		    $.get(foswiki.getPreference('SCRIPTURL')+'/rest'+foswiki.getPreference('SCRIPTSUFFIX')+'/ActionTrackerPlugin/get?topic='+foswiki.getPreference('WEB')+'.'+foswiki.getPreference('TOPIC')+';uid='+e.data('atp-uid'), function(data, textStatus, xhr) {
+		    $.get(foswiki.getPreference('SCRIPTURL')+'/rest'+foswiki.getPreference('SCRIPTSUFFIX')+'/ActionTrackerPlugin/get?topic='+e.data('atp-webtopic')+';uid='+e.data('atp-uid'), function(data, textStatus, xhr) {
 			div.html(data[e.data('atp-loadfield')]);
 		    }, 'json');
 		}
