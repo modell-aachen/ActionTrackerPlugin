@@ -187,4 +187,26 @@
 	    return showCalendar(cal.prev().attr('id'), '%d %b %Y');
 	});
     });
+
+    $('.atpTwisty').livequery(function() {
+	var e = $(this);
+	var btn = $('<img src="'+foswiki.getPreference('PUBURLPATH')+'/'+foswiki.getPreference('SYSTEMWEB')+'/DocumentGraphics/arrow-right.png" alt="" />');
+	var div = $('<div></div>').hide();
+	e.prepend(btn).after(div).css('cursor', 'pointer').css('border', 'none').css('background', 'transparent').click(function() {
+	    if (div.is(':visible')) {
+		div.hide();
+		btn.attr('src', btn.attr('src').replace('-down', '-right'));
+	    } else {
+		if (div.text() == '') {
+		    div.html('<span class="jqAjaxLoader" />');
+		    $.get(foswiki.getPreference('SCRIPTURL')+'/rest'+foswiki.getPreference('SCRIPTSUFFIX')+'/ActionTrackerPlugin/get?topic='+foswiki.getPreference('WEB')+'.'+foswiki.getPreference('TOPIC')+';uid='+e.data('atp-uid'), function(data, textStatus, xhr) {
+			div.html(data[e.data('atp-loadfield')]);
+		    }, 'json');
+		}
+		div.show();
+		btn.attr('src', btn.attr('src').replace('-right', '-down'));
+	    }
+	    return false;
+	});
+    });
 })(jQuery); 
