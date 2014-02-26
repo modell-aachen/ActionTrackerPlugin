@@ -804,7 +804,7 @@ sub _formatType_select {
     my ( $this, $fld, $args, $asHTML ) = @_;
 
     # If HTML isn't wanted, just throw back the value
-    unless ( $asHTML && !$Foswiki::Plugins::ActionTrackerPlugin::Options::options{VIEWWITHDROPDOWN}) {
+    unless ( $asHTML && $Foswiki::Plugins::ActionTrackerPlugin::Options::options{VIEWWITHDROPDOWN}) {
 	return (defined $this->{$fld}) ? $this->{$fld} : '';
     }
 
