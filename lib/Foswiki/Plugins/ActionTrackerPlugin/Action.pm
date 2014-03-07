@@ -161,6 +161,8 @@ sub new {
         }
     }
 
+    $this->{unloaded_fields} = {};
+
     # conditionally load field values, interpreting them
     # according to their type.
     foreach my $key ( keys %$attr ) {
@@ -191,6 +193,9 @@ sub new {
 
             # treat as plain string; text, select
             $this->{$key} = $val;
+        }
+        else {
+            $this->{unloaded_fields}{$key} = $val;
         }
     }
 
@@ -339,6 +344,105 @@ sub getNewUID {
     $this->{uid} = sprintf( '%06d', $uid );
 }
 
+# Send a notification about a newly created or closed action and on reassigning.
+# $action should be close, create, reassignmentwho, or a state.
+# LANGUAGE will be set to CONTENT_LANGUAGE.
+# No mail will be send to current user.
+sub notify {
+    my ( $this, $action ) = @_;
+
+    Foswiki::Func::loadTemplate("ATP${action}Mail");
+
+    # Set Language
+    my $language = Foswiki::Func::getPreferencesValue( 'CONTENT_LANGUAGE' );
+    if($language) {
+        Foswiki::Func::setPreferencesValue( 'LANGUAGE', $language );
+    }
+
+    # Set requested fields
+    { # scope
+        my $fields = Foswiki::Func::expandTemplate( 'RequiredFields' );
+        $fields = Foswiki::Func::expandCommonVariables( $fields );
+        $fields =~ s#\s##g;
+        foreach my $field ( split(',', $fields) ) {
+            if ( $field eq 'text_raw' ) {
+                # de-xhtml the text field
+                # The <nop> tags are being removed after rendering the template.
+                # this is a bit ugly
+                next unless $this->{text};
+                $this->{text_raw} = $this->{text};
+                $this->{text_raw} =~ s#\s*<br />#\n#g;
+                $this->{text_raw} =~ s#\s*<p />#\n\n#g;
+            }
+            next unless $this->{$field};
+            Foswiki::Func::setPreferencesValue( "ACTION_$field", $this->{$field} );
+        }
+    }
+
+    # get people
+    my @persons = ();
+    my $notify = Foswiki::Func::expandTemplate( 'To' );
+    $notify = Foswiki::Func::expandCommonVariables( $notify );
+    foreach my $entry ( split(',', $notify ) ) {
+        $entry =~ s#^\s*##;
+        $entry =~ s#\s*$##;
+        if ( Foswiki::Func::isGroup($entry)) {
+            my $it = Foswiki::Func::eachGroupMember($entry);
+            while ($it->hasNext()) {
+                my $user = $it->next();
+                push( @persons, $user);
+            }
+        }
+        else {
+            push( @persons, $entry );
+        }
+    }
+
+    # get mails
+    my @emails;
+    my $currentUser = Foswiki::Func::getWikiName();
+    foreach my $who (@persons) {
+        $who =~ s/^.*\.//;    # web name?
+        $who = Foswiki::Func::getWikiName( $who ); # normalize for comparison
+        next if $who eq $currentUser;
+        my @list = Foswiki::Func::wikinameToEmails($who);
+        if ( scalar(@list) ) {
+            push( @emails, @list );
+        }
+    }
+    @emails = del_double(@emails);
+    return unless scalar @emails;
+
+    # send mails
+    if ( scalar(@emails) ) {
+        Foswiki::Func::setPreferencesValue( 'to_expanded', join( ',', @emails ) );
+
+        my $text = Foswiki::Func::expandTemplate( "ATPMail" );
+        $text = Foswiki::Func::expandCommonVariables( $text );
+        $text =~ s#%ACTION_([a-z]+)%#$this->{$1}||''#eg;
+        $text =~ s#<nop>##g;
+        unless ($text) {
+            Foswiki::Func::writeWarning( "Could not initialize mail." );
+            return;
+        }
+        my $errors = Foswiki::Func::sendEmail( $text, 5 );
+        if ($errors) {
+            Foswiki::Func::writeWarning(
+                'Failed to send action mails: ' . $errors
+            );
+        }
+    }
+}
+
+# copy/paste KVPPlugin
+# Alex: Alle doppelten Werte aus einem Array lschen
+sub del_double{
+    my %all=();
+    @all{@_}=1;
+    delete $all{''};
+    return (keys %all);
+}
+
 # PUBLIC when a topic containing an action is about to be saved,
 # populate these fields for the action.
 # Note: This will put a wrong date on closed actions if they were
@@ -346,8 +450,10 @@ sub getNewUID {
 sub populateMissingFields {
     my $this = shift;
     my $me   = _canonicalName('me');
+    my $newlycreated = 0;
 
     if ( !defined( $this->{uid} ) || $this->{uid} eq "" ) {
+        $newlycreated = 1;
         $this->getNewUID();
     }
 
@@ -375,6 +481,10 @@ sub populateMissingFields {
             $this->{closed} = $now;
         }
     }
+
+    # note: notification of state changes are handled in
+    # Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler()
+    $this->notify( 'create' ) if $newlycreated;
 }
 
 # PUBLIC format as an action
@@ -694,7 +804,7 @@ sub _formatType_select {
     my ( $this, $fld, $args, $asHTML ) = @_;
 
     # If HTML isn't wanted, just throw back the value
-    unless ( $asHTML && !$Foswiki::Plugins::ActionTrackerPlugin::Options::options{VIEWWITHDROPDOWN}) {
+    unless ( $asHTML && $Foswiki::Plugins::ActionTrackerPlugin::Options::options{VIEWWITHDROPDOWN}) {
 	return (defined $this->{$fld}) ? $this->{$fld} : '';
     }
 

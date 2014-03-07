@@ -37,3 +37,44 @@ msgstr "Fehler beim Versuch, die Aufgabe zu bearbeiten"
 msgid "Sorry, validation failed, possibly because someone else is already editing the action. Please try again in a few minutes."
 msgstr "Entschuldigung, die Gültigkeitsprüfung schlug fehl, weil möglicherweise jemand anderes bereits die Aufgabe bearbeitet. Bitte versuchen Sie es in paar Minuten nochmal."
 
+msgid "Your task has been reopened."
+msgstr "Ihre Aufgabe wurde wieder geöffnet."
+
+msgid "You have a new task."
+msgstr "Sie haben eine neue Aufgabe."
+
+msgid "A task you created has been closed."
+msgstr "Eine von Ihnen gestellte Aufgabe wurde geschlossen."
+
+msgid "A task has been reassigned to you."
+msgstr "Eine Aufgabe wurde an Sie übertragen."
+
+msgid "Creator: %1"
+msgstr "Ersteller: %1"
+
+msgid "State: %1"
+msgstr "Status: %1"
+
+msgid "Assigned to: %1"
+msgstr "Aufgabe an: %1"
+
+msgid "Context: %1"
+msgstr "Kontext: %1"
+
+msgid "Due: %1"
+msgstr "Termin: %1"
+
+msgid "Task: "
+msgstr "Aufgabe: "
+
+msgid "Details: %1"
+msgstr "Details: %1"
+
+msgid "You received this mail, because you are registered in %1. If you think you shouldn't have got this message, please contact %2."
+msgstr "Sie haben diese Nachricht erhalten, da Sie als Nutzer im %1 registriert sind. Sollten Sie der Meinung sein diese Nachricht fälschlicherweise erhalten zu haben, kontaktieren Sie bitte %2."
+
+msgid "no description"
+msgstr "keine Angabe"
+
+msgid "not defined"
+msgstr "nicht Angegeben"
