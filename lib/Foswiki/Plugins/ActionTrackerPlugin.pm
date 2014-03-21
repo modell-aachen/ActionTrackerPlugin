@@ -594,7 +594,7 @@ sub _indexTopicHandler {
 	$webtopic =~ s/\//./g;
 	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$action->{uid});
 	my $id = $webtopic.':action'.$action->{uid};
-	my $title = $action->{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
+	my $title = $action->{task} || $action->{unloaded_fields}{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
 	my $text = $action->{text};
 
 	# escaping potential html tags
