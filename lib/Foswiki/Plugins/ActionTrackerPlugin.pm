@@ -315,6 +315,15 @@ sub afterEditHandler {
 	$new_act->{closer} = '';
 	$new_act->{closed} = '';
     }
+    # MODAC Mahr custom: set to 'open' on any change by user other than $who (or when $who changed)
+    # ... but only if the state wasn't changed by the user
+    my $curUser = Foswiki::Func::getWikiName();
+    if ($latest_act->{state} eq $new_act->{state} &&
+	($latest_act->{who} ne $new_act->{who} ||
+	$curUser ne $latest_act->{who}))
+    {
+	$new_act->{state} = 'open';
+    }
 
     # See if we can get a common ancestor for merging
     my $old_act;
