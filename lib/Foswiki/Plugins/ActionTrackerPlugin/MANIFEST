@@ -27,3 +27,4 @@ lib/Foswiki/Plugins/ActionTrackerPlugin/AttrDef.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/Format.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/JQuery.pm 0440 Perl support module
 locale/ActionTrackerPlugin/de.po 0666 German translations
+locale/ActionTrackerPlugin/fr.po 0666
