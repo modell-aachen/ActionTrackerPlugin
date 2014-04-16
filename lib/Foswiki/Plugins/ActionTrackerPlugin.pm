@@ -801,6 +801,7 @@ sub _updateSingleAction {
     return unless defined $theaction;
     Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
 			      { comment => 'atp save' } );
+    $meta->clearLease();
 }
 
 sub _getRESTHandler {
