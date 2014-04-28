@@ -29,11 +29,18 @@
     $("input.atp_update").livequery(function() { $(this).click(restUpdate); });
 
     var canCloseDialog = false;
+    var forceEdit = false;
+    var pref = foswiki.getPreference;
     $('a.atp_edit').livequery(function() {
 	$(this).click(function(event) {
-	    var dlgHref = this.href;
+	    var dlgHref = this.href,
+	        origHref = this.href;
+	    if (forceEdit) {
+		dlgHref += ';breaklock=on';
+		forceEdit = false;
+	    }
+	    dlgHref += ';_t_='+ (new Date()).getTime();
 	    var meta = $(this).metadata();
-	    var pref = foswiki.getPreference;
 	    var div = $("#atp_editor");
 	    if (!div.length) {
 		div = $("<div id='atp_editor' title='Edit action'></div>");
@@ -58,8 +65,11 @@
 		    return true;
 		} });
 	    }
-	    div.load(this.href,
+	    $.blockUI();
+	    div.load(dlgHref,
 		     function(done, status) {
+			 $.unblockUI();
+			 div.find('form').data('action-web', meta.web).data('action-topic', meta.topic);
 			 var m = /<!-- ATP_CONFLICT ~(.*?)~(.*?)~(.*?)~(.*?)~ -->/.exec(done, "s");
 			 if (m) {
 			     // Messages are defined in oopsleaseconflict.action.tmpl
@@ -82,12 +92,14 @@
 			     }
 			     ohno += message[4]; //To clear the lease...
 			     div.html(ohno);
+			     div.find('#atpForce').data('href', origHref);
 			     div.dialog("open");
 			     canCloseDialog = true;
 			 } else if (status == "error") {
 			     alert(message[5]); //Error when I tried...
 			 } else {
 			     div.dialog("open");
+			     div.find('form').data('action-web', meta.web).data('action-topic', meta.topic);
 			     canCloseDialog = false;
 			 }
 		     });
@@ -96,7 +108,35 @@
     });
 
     $('#atp_editor input[type="submit"]').livequery(function() {
-	$(this).click(function() {
+	var e = $(this);
+	var f = e.closest('form');
+	f.submit(function(ev) {
+	    if (f.data('submit-pronto')) return true; // Allow bypassing
+
+	    ev.preventDefault();
+	    if (f.data('wys-submit-hook')) window.wysSubmitHook();
+	    var data = f.serializeArray();
+	    data.push({name: 'atpmultifield', value: '1'});
+	    data.push({name: 'topic', value: f.data('action-web')+'.'+f.data('action-topic')});
+	    $.blockUI();
+	    $.ajax({
+		type: 'POST',
+		url: pref('SCRIPTURLPATH')+'/rest'+pref('SCRIPTSUFFIX')+'/ActionTrackerPlugin/update',
+		data: $.param(data),
+		success: function() {
+		    canCloseDialog = true;
+		    $('#atp_editor').dialog('close');
+		    $.unblockUI();
+		    // TODO update GUI
+		},
+		error: function() {
+		    // Do a normal submit so we don't have to figure out the error message ourselves
+		    f.data('submit-pronto', 1);
+		    f.submit();
+		}
+	    });
+	});
+	e.click(function() {
 	    canCloseDialog = true;
 	    $("#atp_editor").dialog("close");
 	    return true;
@@ -106,6 +146,16 @@
     $('#atp_editor #atpCancel').livequery(function() {
 	$(this).click(function() {
 	    $('#atp_editor').dialog('close');
+	    return true;
+	});
+    });
+
+    $('#atp_editor #atpForce').livequery(function() {
+	var e = $(this);
+	e.click(function() {
+	    $('#atp_editor').dialog('close');
+	    forceEdit = true;
+	    $('a.atp_edit[href="'+e.data('href')+'"]').click();
 	    return true;
 	});
     });
@@ -135,6 +185,28 @@
 	var cal = $(this);
 	$(this).click(function() {
 	    return showCalendar(cal.prev().attr('id'), '%d %b %Y');
+	});
+    });
+
+    $('.atpTwisty').livequery(function() {
+	var e = $(this);
+	var btn = $('<img src="'+foswiki.getPreference('PUBURLPATH')+'/'+foswiki.getPreference('SYSTEMWEB')+'/DocumentGraphics/arrow-right.png" alt="" />');
+	var div = $('<div></div>').hide();
+	e.prepend(btn).after(div).css('cursor', 'pointer').css('border', 'none').css('background', 'transparent').click(function() {
+	    if (div.is(':visible')) {
+		div.hide();
+		btn.attr('src', btn.attr('src').replace('-down', '-right'));
+	    } else {
+		if (div.text() == '') {
+		    div.html('<span class="jqAjaxLoader" />');
+		    $.get(foswiki.getPreference('SCRIPTURL')+'/rest'+foswiki.getPreference('SCRIPTSUFFIX')+'/ActionTrackerPlugin/get?topic='+e.data('atp-webtopic')+';uid='+e.data('atp-uid'), function(data, textStatus, xhr) {
+			div.html(data[e.data('atp-loadfield')]);
+		    }, 'json');
+		}
+		div.show();
+		btn.attr('src', btn.attr('src').replace('-right', '-down'));
+	    }
+	    return false;
 	});
     });
 })(jQuery); 

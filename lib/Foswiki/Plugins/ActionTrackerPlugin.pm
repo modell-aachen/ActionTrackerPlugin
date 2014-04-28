@@ -5,6 +5,7 @@ use strict;
 use Assert;
 use Encode ();
 use Error qw( :try );
+use JSON;
 
 use Foswiki::Func ();
 use Foswiki::Plugins ();
@@ -315,6 +316,12 @@ sub afterEditHandler {
 	$new_act->{closer} = '';
 	$new_act->{closed} = '';
     }
+    # MODAC Mahr custom: set to 'open' on any change by user other than $who
+    my $curUser = Foswiki::Func::getWikiName();
+    if ($curUser ne $new_act->{who})
+    {
+	$new_act->{state} = 'open';
+    }
 
     # See if we can get a common ancestor for merging
     my $old_act;
@@ -594,7 +601,7 @@ sub _indexTopicHandler {
 	$webtopic =~ s/\//./g;
 	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$action->{uid});
 	my $id = $webtopic.':action'.$action->{uid};
-	my $title = $action->{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
+	my $title = $action->{task} || $action->{unloaded_fields}{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
 
 	my @notify = split(/[,\s]+/, $action->{notify} || '');
 
@@ -736,9 +743,18 @@ sub _updateRESTHandler {
         ( $web, $topic ) =
 	    Foswiki::Func::normalizeWebTopicName( undef, $topic );
         lazyInit( $web, $topic );
+	my %params;
+	if ($query->param('atpmultifield')) {
+		for my $p ($query->param) {
+			next if $p =~ /^(atpmultifield|closeactioneditor)$/;
+			$params{$p} = $query->param($p);
+		}
+	} else {
+		$params{$query->param('field')} = $query->param('value');
+	}
         _updateSingleAction( $web, $topic, $query->param('uid'),
-			     $query->param('field') => $query->param('value') );
-	returnRESTResult( $response, 200, '' );
+			     %params );
+	returnRESTResult( $response, 200, encode_json({ data => \%params }) );
     }
     catch Error::Simple with {
         my $e = shift;
@@ -767,15 +783,26 @@ sub _updateSingleAction {
 	Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load( $web, $topic,
 								$text, 1 );
 
+    my $theaction;
     foreach my $action ( @{ $as->{ACTIONS} } ) {
         if ( ref($action) ) {
             if ( $action->{uid} == $uid ) {
+		# MODAC Mahr custom: set to 'open' on any change by user other than $who
+		my $curUser = Foswiki::Func::getWikiName();
+		if ($curUser ne $action->{who})
+		{
+		    $action->{state} = 'open';
+		    delete $changes{state};
+		}
                 foreach my $key ( keys %changes ) {
                     $action->{$key} = $changes{$key};
                 }
+		$theaction = $action;
+		last;
             }
         }
     }
+    return unless defined $theaction;
     Foswiki::Func::saveTopic( $web, $topic, $meta, $as->stringify(),
 			      { comment => 'atp save' } );
     $meta->clearLease();
@@ -797,7 +824,7 @@ sub _getRESTHandler {
 	if (!defined $action) {
 		return returnRESTResult($response, 404, 'action not found');
 	}
-	returnRESTResult($response, 200, encode_json({ %$action }));
+	returnRESTResult($response, 200, to_json({ %$action }));
     }
     catch Error::Simple with {
         my $e = shift;
