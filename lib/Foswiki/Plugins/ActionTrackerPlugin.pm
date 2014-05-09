@@ -311,16 +311,27 @@ sub afterEditHandler {
 	$latest_as->add($new_act);
     }
 
+    # MODAC Mahr custom: set to 'open' on most changes by users other than $who
+    my $curUser = Foswiki::Func::getWikiName();
+    if ($curUser ne $new_act->{who})
+    {
+	# check which fields were changed;
+	# if any field but state/remark was changed, bump it back to 'new'
+	my %changedFields;
+	foreach my $f (keys %$new_act) {
+	    next if ref($new_act->{$f});
+	    $changedFields{$f} = 1 if $new_act->{$f} ne $latest_act->{$f};
+	}
+	delete @changedFields{'state', 'text'};
+	if (keys %changedFields) {
+	    $new_act->{state} = 'open';
+	}
+    }
+
     # MODAC: delete closer info when reopening
     if ($latest_act->{state} eq 'closed' && $new_act->{state} ne 'closed') {
 	$new_act->{closer} = '';
 	$new_act->{closed} = '';
-    }
-    # MODAC Mahr custom: set to 'open' on any change by user other than $who
-    my $curUser = Foswiki::Func::getWikiName();
-    if ($curUser ne $new_act->{who})
-    {
-	$new_act->{state} = 'open';
     }
 
     # See if we can get a common ancestor for merging
@@ -745,10 +756,16 @@ sub _updateRESTHandler {
         lazyInit( $web, $topic );
 	my %params;
 	if ($query->param('atpmultifield')) {
-		for my $p ($query->param) {
-			next if $p =~ /^(atpmultifield|closeactioneditor)$/;
-			$params{$p} = $query->param($p);
-		}
+		$query->delete('atpmultifield');
+		my $result = '';
+		# TODO: this is rather inefficient and doesn't send back the updated data
+		# as a response. Maybe rewrite later.
+		afterEditHandler($result, $topic, $web);
+		my ($meta) = Foswiki::Func::readTopic( $web, $topic );
+		Foswiki::Func::saveTopic( $web, $topic, $meta, $result );
+		$meta->clearLease();
+		returnRESTResult( $response, 200, encode_json({ data => {} }) );
+		return;
 	} else {
 		$params{$query->param('field')} = $query->param('value');
 	}
@@ -787,13 +804,6 @@ sub _updateSingleAction {
     foreach my $action ( @{ $as->{ACTIONS} } ) {
         if ( ref($action) ) {
             if ( $action->{uid} == $uid ) {
-		# MODAC Mahr custom: set to 'open' on any change by user other than $who
-		my $curUser = Foswiki::Func::getWikiName();
-		if ($curUser ne $action->{who})
-		{
-		    $action->{state} = 'open';
-		    delete $changes{state};
-		}
                 foreach my $key ( keys %changes ) {
                     $action->{$key} = $changes{$key};
                 }
