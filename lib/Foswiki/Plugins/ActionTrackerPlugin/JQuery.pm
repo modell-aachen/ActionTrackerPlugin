@@ -16,7 +16,7 @@ sub new {
     my $this = $class->SUPER::new( 
 	$session,
 	name => 'ActionTracker',
-	version => '1.0',
+	version => '1.0.1',
 	author => 'Crawford Currie',
 	homepage => 'http://foswiki.org/Extensions/ActionTrackerPlugin',
 	puburl => '%PUBURLPATH%/%SYSTEMWEB%/ActionTrackerPlugin',
