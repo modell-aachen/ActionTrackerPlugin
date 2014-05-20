@@ -99,6 +99,7 @@
 			     alert(message[5]); //Error when I tried...
 			 } else {
 			     div.dialog("open");
+			     if (!meta.web && !meta.topic) div.find('form').data('submit-pronto', 1);
 			     div.find('form').data('action-web', meta.web).data('action-topic', meta.topic);
 			     canCloseDialog = false;
 			 }

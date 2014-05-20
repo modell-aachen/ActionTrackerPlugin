@@ -33,6 +33,7 @@ sub initPlugin {
 
     Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
 				       'context-free' );
+    Foswiki::Func::registerTagHandler( 'ACTIONEDIT', \&_handleActionEdit );
     use Foswiki::Contrib::JSCalendarContrib;
     if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
         Foswiki::Func::writeWarning( 'JSCalendarContrib not found ' . $@ );
@@ -500,6 +501,42 @@ sub _handleActionSearch {
 	    $result = $actions->formatAsHTML( $fmt, 'href', $cssClasses );
     }
     return $result;
+}
+
+# ==========================
+# Generate edit link for an action
+sub _handleActionEdit {
+    my ($session, $attrs, $topic, $web) = @_;
+    my $uid;
+    if (ref $attrs) {
+        $uid = $attrs->{uid};
+        $web = $attrs->{web} if $attrs->{web};
+        $topic = $attrs->{topic} if $attrs->{topic};
+    } else {
+        # Alternative form of calling this:
+        # _handleActionEdit($session, $uid, $topic, $web)
+        $uid = $attrs;
+    }
+    ($web, $topic) = Foswiki::Func::normalizeWebTopicName( $web, $topic );
+    return unless lazyInit( $web, $topic );
+
+    my $skin = join( ',', ( 'action', Foswiki::Func::getSkin() ) );
+
+    my $url = Foswiki::Func::getScriptUrl(
+        $web, $topic, 'edit',
+        skin       => $skin,
+        atp_action => $uid,
+        nowysiwyg  => 1,                    # SMELL: could do better!
+        t          => time(),
+    );
+    $url =~ s/%2c/,/g;
+    my $label = $session->i18n->maketext('Edit');
+    $attrs = { href => $url, title => $label, class => "atp_edit ui-icon ui-icon-pencil" };
+    if ($options->{UPDATEAJAX}) {
+        $attrs->{class} .= " {web: '$web', topic: '$topic'}";
+    }
+
+    return CGI::a( $attrs, $label );
 }
 
 # Lazy initialize of plugin 'cause of performance

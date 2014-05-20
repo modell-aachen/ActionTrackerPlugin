@@ -983,21 +983,7 @@ sub _formatField_edit {
         # Can't edit from plain text
         return '';
     }
-
-    my $skin = join( ',', ( 'action', Foswiki::Func::getSkin() ) );
-
-    my $url = Foswiki::Func::getScriptUrl(
-        $this->{web}, $this->{topic}, 'edit',
-        skin       => $skin,
-        atp_action => $this->getAnchor(),
-        nowysiwyg  => 1,                    # SMELL: could do better!
-        t          => time()
-    );
-    $url =~ s/%2c/,/g;
-    my $attrs = { href => $url, title => 'Edit', class => "atp_edit ui-icon ui-icon-pencil ".
-        "{web: '$this->{web}', topic: '$this->{topic}'}" };
-
-    return CGI::a( $attrs, 'edit' );
+    return Foswiki::Plugins::ActionTrackerPlugin::_handleActionEdit( $Foswiki::Plugins::SESSION, $this->getAnchor(), $this->{topic}, $this->{web} );
 }
 
 # PUBLIC see if this other action matches according to fuzzy
