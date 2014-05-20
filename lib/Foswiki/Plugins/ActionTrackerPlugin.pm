@@ -532,7 +532,7 @@ sub _handleActionEdit {
     $url =~ s/%2c/,/g;
     my $label = $session->i18n->maketext('Edit');
     $attrs = { href => $url, title => $label, class => "atp_edit ui-icon ui-icon-pencil" };
-    if ($options->{UPDATEAJAX}) {
+    if ($options->{UPDATEAJAX} =~ /^\s*(on|1|yes)\s*$/) {
         $attrs->{class} .= " {web: '$web', topic: '$topic'}";
     }
 

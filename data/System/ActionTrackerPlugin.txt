@@ -473,6 +473,13 @@ ActionTrackerPlugin will use the extension [[Foswiki:Extensions/JSCalendarContri
 
 Refer to the System.JSCalendarContrib documentation to learn [[System.JSCalendarContrib#CustomizingTheAppearance][how to customize]] these settings system-wide, for a web or topic using the available date [[System.JSCalendarContrib#FormatSpecifiers][format specifiers]] for this extension.
 
+---+++ Enabling asynchronous updates of actions
+
+By default, when saving changes to an action, a traditional form submit is performed, potentially taking a long time to reload the page. Alternatively, you can enable an asynchronous mode that saves changes in the background; the downside being that the changes won't be displayed until the next time you reload the page. To enable it, simply set =UPDATEAJAX= to =1=.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_UPDATEAJAX | =0= |
+
 ---+++ Known Limitations and Debugging
 
 ---++++ Limitations
