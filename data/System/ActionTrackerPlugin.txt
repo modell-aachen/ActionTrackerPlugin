@@ -190,6 +190,17 @@ __Note__ in general you should *not* use these mechanisms for assigning actions,
 _For administrators only_:
 Each action is assigned a Unique Identifier (UID) when it is created. This UID is a six-digit number, and is generated when the action is first saved by incrementing a number in a special file (<code>pub/_work_areas/ActionTrackerPlugin/UIDRegister</code> under the installation). If this file is accidentally deleted, or is not writable, then you will have problems and you may get duplicate UIDs. Normally this won't matter a hoot, as UIDs only _have_ to be unique within a single topic, but if the file is persistantly inaccessible it could be a bit of a nuisance.
 
+---+++ Generating edit buttons for actions
+
+If you display actions by any mechanism other than =ACTIONSEARCH=, the =ACTIONEDIT= macro can help you generate an edit button that will respect all of the important preferences.
+
+The following parameters are defined:
+
+   | *Name* | *Description* |
+   | =web= | Web containing the action (defaults to current web) |
+   | =topic= | Topic containing the action (defaults to current topic) |
+   | =uid= | Numeric ID for the action (e.g. 000000) |
+
 #NotiFication
 ---++ Notification
 
@@ -478,7 +489,7 @@ Refer to the System.JSCalendarContrib documentation to learn [[System.JSCalendar
 By default, when saving changes to an action, a traditional form submit is performed, potentially taking a long time to reload the page. Alternatively, you can enable an asynchronous mode that saves changes in the background; the downside being that the changes won't be displayed until the next time you reload the page. To enable it, simply set =UPDATEAJAX= to =1=.
 
 | *Preference* | *Default* |
-| =ACTIONTRACKERPLUGIN_UPDATEAJAX | =0= |
+| =ACTIONTRACKERPLUGIN_UPDATEAJAX= | =0= |
 
 ---+++ Known Limitations and Debugging
 
