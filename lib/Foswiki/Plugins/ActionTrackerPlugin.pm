@@ -9,12 +9,15 @@ use JSON;
 
 use Foswiki::Func ();
 use Foswiki::Plugins ();
+use Foswiki::Contrib::MailTemplatesContrib;
 
 our $VERSION = '2.4.9';
 our $RELEASE = "2.4.9";
 our $SHORTDESCRIPTION =
     'Adds support for action tags in topics, and automatic notification of action statuses';
 our $initialised = 0;
+
+our $actionEdit;
 
 my $doneHeader   = 0;
 my $actionNumber = 0;
@@ -27,6 +30,8 @@ sub initPlugin {
 
     $initialised = 0;
     $doneHeader  = 0;
+
+    $actionEdit = 0;
 
     Foswiki::Func::registerRESTHandler( 'update', \&_updateRESTHandler );
     Foswiki::Func::registerRESTHandler( 'get', \&_getRESTHandler );
@@ -275,6 +280,8 @@ sub afterEditHandler {
     my $query = Foswiki::Func::getCgiQuery();
     return unless ( $query->param('closeactioneditor') );
 
+    $actionEdit = 1;
+
     return unless lazyInit( $web, $topic );
 
     my ( $ancestorRev, $ancestorDate ) = (0, 0);
@@ -359,6 +366,16 @@ sub afterEditHandler {
     $_[0] = $text;
 }
 
+sub afterSaveHandler {
+    my ( $text, $topic, $web, $error, $meta ) = @_;
+
+    if($topic =~ m/^Minutes\d+$/ && not $actionEdit) {
+        Foswiki::Func::pushTopicContext( $web, $meta->topic() );
+        Foswiki::Contrib::MailTemplatesContrib::sendMail('CreationMail', {IncludeCurrentUser => 1} );
+        Foswiki::Func::popTopicContext();
+    }
+}
+
 # Process the actions and add UIDs and other missing attributes
 sub beforeSaveHandler {
     my ( $text, $topic, $web ) = @_;
@@ -371,6 +388,7 @@ sub beforeSaveHandler {
     return unless ($query);
 
     if ( $query->param('closeactioneditor') ) {
+        $actionEdit = 1;
 
         # this is a save from the action editor. Text will just be the text of the action - we
 	# must recover the rest from the topic on disc.

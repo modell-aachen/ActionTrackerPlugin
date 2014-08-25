@@ -485,6 +485,7 @@ sub populateMissingFields {
     # note: notification of state changes are handled in
     # Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler()
     $this->notify( 'create' ) if $newlycreated;
+    $Foswiki::Plugins::ActionTrackerPlugin::actionEdit = 1 if $newlycreated;
 }
 
 # PUBLIC format as an action
