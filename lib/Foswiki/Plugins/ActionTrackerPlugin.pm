@@ -19,6 +19,7 @@ our $initialised = 0;
 my $doneHeader   = 0;
 my $actionNumber = 0;
 my $defaultFormat;
+my $mailsSent;
 
 # Map default options
 our $options;
@@ -48,7 +49,12 @@ sub initPlugin {
 	Foswiki::Plugins::SolrPlugin::registerIndexTopicHandler(\&_indexTopicHandler);
     }
 
+    $mailsSent = 0;
     return 1;
+}
+
+sub finishPlugin {
+    $mailsSent = 0;
 }
 
 sub commonTagsHandler {
@@ -366,10 +372,12 @@ sub afterEditHandler {
     # send notification
     # note: notification for creation of new actions is handled in
     # Foswiki::Plugins::ActionTrackerPlugin::Action::populateMissingFields()
-    if ( $latest_act->{state} ne $old_state ) {
+    if ( $latest_act->{state} ne $old_state && !$mailsSent ) {
         $latest_act->notify( $latest_act->{state} );
-    } elsif ( $latest_act->{who} ne $old_owner ) {
+        $mailsSent = 1;
+    } elsif ( $latest_act->{who} ne $old_owner && !$mailsSent ) {
         $latest_act->notify( 'reassignmentwho' );
+        $mailsSent = 1;
     }
 
     $_[0] = $text;
