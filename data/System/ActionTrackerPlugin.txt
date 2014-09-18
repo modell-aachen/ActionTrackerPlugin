@@ -484,6 +484,25 @@ ActionTrackerPlugin will use the extension [[Foswiki:Extensions/JSCalendarContri
 
 Refer to the System.JSCalendarContrib documentation to learn [[System.JSCalendarContrib#CustomizingTheAppearance][how to customize]] these settings system-wide, for a web or topic using the available date [[System.JSCalendarContrib#FormatSpecifiers][format specifiers]] for this extension.
 
+---+++ Customizing textboxlist fields
+
+These allow customizing specific textboxlist fields configured as extra fields. For a field with name 'myfieldname':
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_MYFIELDNAME_AUTOCOMPLETE= | |
+
+This specifies an endpoint used for fetching autocomplete information; see the documentation of textboxlist for details.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_MYFIELDNAME_MUSTMATCH= | |
+
+No value, or an empty value, disables mustMatch (mustMatch means values can only be selected from autocomplete results). Anything else enables it.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_MYFIELDNAME_LIMIT= | |
+
+If set to a numeric value, specifies the maximum number of entries that a user may add to a textboxlist field (existing values that exceed the limit are kept).
+
 ---+++ Enabling asynchronous updates of actions
 
 By default, when saving changes to an action, a traditional form submit is performed, potentially taking a long time to reload the page. Alternatively, you can enable an asynchronous mode that saves changes in the background; the downside being that the changes won't be displayed until the next time you reload the page. To enable it, simply set =UPDATEAJAX= to =1=.
