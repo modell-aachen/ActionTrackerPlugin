@@ -335,8 +335,10 @@ sub afterEditHandler {
 	}
     }
 
-    my $old_state = $latest_act->{state} || ''; # ignoring $old_act, that mail was send already
-    my $old_owner = $latest_act->{who} || '';
+    my $old_fields = {}; # copy old fields, so we can compare them later
+    foreach my $field ( $latest_act->getKeys() ) {
+        $old_fields->{$field} = $latest_act->{$field};
+    };
 
     $latest_act->updateFromCopy($new_act, $mustMerge, $info->{version}, $ancestorRev, $old_act);
     $latest_act->populateMissingFields();
@@ -348,13 +350,57 @@ sub afterEditHandler {
     # send notification
     # note: notification for creation of new actions is handled in
     # Foswiki::Plugins::ActionTrackerPlugin::Action::populateMissingFields()
-    if ( $latest_act->{state} ne $old_state ) {
+    if ( $latest_act->{state} ne $old_fields->{state} ) {
         $latest_act->notify( $latest_act->{state} );
-    } elsif ( $latest_act->{who} ne $old_owner ) {
+    } elsif ( $latest_act->{who} ne $old_fields->{who} ) {
         $latest_act->notify( 'reassignmentwho' );
+    } else {
+        # check all other fields
+        my @changed;
+
+        # special case: text
+        # sometimes the whitespaces change around the <br /> and <p />
+        my $text_old_raw = _deHtml((defined $old_fields->{text})?$old_fields->{text}:'%MAKETEXT{"(not set)"}%');
+        my $text_new_raw = _deHtml((defined $latest_act->{text})?$latest_act->{text}:'%MAKETEXT{"(not set)"}%');
+        unless($text_old_raw eq $text_new_raw) {
+            Foswiki::Func::setPreferencesValue( "ACTION_new_text_raw", $text_new_raw );
+            Foswiki::Func::setPreferencesValue( "ACTION_old_text_raw", $text_old_raw );
+            push(@changed, 'text');
+        }
+
+        # all other fields
+        foreach my $key ( $latest_act->getKeys() ) {
+            next if $key eq 'unloaded_fields' || $key eq 'text';
+            next if ( (not defined $latest_act->{$key}) && (not defined $old_fields->{$key}) );
+            if ( (not defined $old_fields->{$key}) || (not defined $latest_act->{$key}) || $latest_act->{$key} ne $old_fields->{$key}) {
+                push(@changed, $key);
+            }
+        }
+        foreach my $key ( keys $old_fields ) {
+            next if $key eq 'unloaded_fields';
+            if(not defined $latest_act->{$key}) { # when it exists, we already checked for equality above
+                push(@changed, $key);
+            }
+        }
+
+        if ( scalar @changed ) {
+            foreach my $field ( @changed ) {
+                Foswiki::Func::setPreferencesValue( "ACTION_new_$field", (defined $latest_act->{$field})?$latest_act->{$field}:'%MAKETEXT{"(not set)"}%' );
+                Foswiki::Func::setPreferencesValue( "ACTION_old_$field", (defined $old_fields->{$field})?$old_fields->{$field}:'%MAKETEXT{"(not set)"}%' );
+            }
+            Foswiki::Func::setPreferencesValue('ACTION_changed', join(',', @changed));
+            $latest_act->notify( 'changed' );
+        }
     }
 
     $_[0] = $text;
+}
+
+sub _deHtml {
+    my ( $raw ) = @_;
+    $raw =~ s#\s*<br />#\n#g;
+    $raw =~ s#\s*<p />#\n\n#g;
+    return $raw;
 }
 
 # Process the actions and add UIDs and other missing attributes

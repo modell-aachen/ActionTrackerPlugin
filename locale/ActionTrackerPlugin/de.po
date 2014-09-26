@@ -78,3 +78,15 @@ msgstr "keine Angabe"
 
 msgid "not defined"
 msgstr "nicht Angegeben"
+
+msgid "These fields have changed:\n\n"
+msgstr "Diese Felder haben sich verändert:\n\n"
+
+msgid "%1 has changed"
+msgstr "%1 wurde geändert"
+
+msgid "from: "
+msgstr "von: "
+
+msgid "to: "
+msgstr "zu: "
