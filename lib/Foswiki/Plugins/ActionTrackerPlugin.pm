@@ -336,7 +336,8 @@ sub afterEditHandler {
     }
 
     my $old_fields = {}; # copy old fields, so we can compare them later
-    foreach my $field ( $latest_act->getKeys() ) {
+    my @fields = $latest_act->getKeys();
+    foreach my $field ( @fields ) {
         $old_fields->{$field} = $latest_act->{$field};
     };
 
@@ -369,14 +370,15 @@ sub afterEditHandler {
         }
 
         # all other fields
-        foreach my $key ( $latest_act->getKeys() ) {
+        my @fields = $latest_act->getKeys();
+        foreach my $key ( @fields ) {
             next if $key eq 'unloaded_fields' || $key eq 'text';
             next if ( (not defined $latest_act->{$key}) && (not defined $old_fields->{$key}) );
             if ( (not defined $old_fields->{$key}) || (not defined $latest_act->{$key}) || $latest_act->{$key} ne $old_fields->{$key}) {
                 push(@changed, $key);
             }
         }
-        foreach my $key ( keys $old_fields ) {
+        foreach my $key ( keys %$old_fields ) {
             next if $key eq 'unloaded_fields';
             if(not defined $latest_act->{$key}) { # when it exists, we already checked for equality above
                 push(@changed, $key);
@@ -507,7 +509,7 @@ sub _handleActionSearch {
     # meyer@modell-aachen.de:
     # Kompatibilität zu JQTableSorterPlugin
     my $jqse = $Foswiki::cfg{Plugins}{JQTableSorterPlugin}{Enabled};
-    my $jqsortable = $attrs->remove('jqsortable');
+    my $jqsortable = $attrs->remove('jqsortable') || '';
     my $jqsortopts = undef;
     if ( $jqse eq 1 && $jqsortable eq 1 ) {
         $jqsortopts = $attrs->remove('jqsortopts');
