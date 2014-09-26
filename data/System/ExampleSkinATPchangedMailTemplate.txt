@@ -1,0 +1,35 @@
+%TMPL:INCLUDE{"atpmail"}%
+
+%{"Fields required as preferences:"}%
+%TMPL:DEF{"RequiredFields"}%who,task,text_raw,due%TMPL:END%
+
+%{"Set the recipient:"}%
+%TMPL:DEF{"To"}%%ACTION_who%%TMPL:END%
+
+%{"Set the sender:"}%
+%TMPL:DEF{"From"}%%WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>%TMPL:END%
+
+%{"Set subject:"}%
+%TMPL:DEF{"Subject"}%%MAKETEXT{"Your task has been modified."}%%TMPL:END%
+
+%{"Body of the mail:"}%
+%TMPL:DEF{"mailContents"}%
+%MAKETEXT{"Creator: [_1]" args="%ACTION_creator%"}%
+%MAKETEXT{"State: [_1]" args="%ACTION_state%"}%
+%MAKETEXT{"Assigned to: [_1]" args="%ACTION_who%"}%
+%MAKETEXT{"Context: [_1]" args="%SCRIPTURL{"view"}%/%WEB%/%TOPIC%"}%
+%MAKETEXT{"Due: [_1]" args="%IF{"defined ACTION_due" then="%CALC{"$FORMATTIME(%ACTION_due%, $day $mon $year)"}%" else="%MAKETEXT{"not defined"}%"}%"}%
+%MAKETEXT{"Task: "}%%ACTION_task{default="%MAKETEXT{"no description"}%"}%
+
+%FORMATLIST{"%ACTION_changed%" header="%MAKETEXT{"These fields have changed:
+
+"}%" format="%MAKETEXT{"[_1] has changed" args="$percentMAKETEXT{$1}$percent"}%
+%MAKETEXT{"from: "}%$percentTMPL:P{\"formatFields\" field=\"$1\" version=\"old\"}$percent$n$n%MAKETEXT{"to: "}%$percentTMPL:P{\"formatFields\" field=\"$1\" version=\"new\"}$percent" separator="
+
+"}%
+
+----
+%MAKETEXT{"You received this mail, because you are registered in [_1]. If you think you shouldn't have got this message, please contact [_2]." args="%WIKITOOLNAME%,%WIKIWEBMASTER%"}%
+%TMPL:END%
+
+%TMPL:DEF{"formatFields"}%%SWITCHTEXT{"%field%" text="$percentACTION_%version%_text_raw$percent" default="$percentACTION_%version%_%field%$percent" due="$percentCALC{\"$FORMATTIME($percentACTION_%version%_due$percent, %QUERY{"{DefaultDateFormat}"}%)\"}$percent"}%%TMPL:END%
