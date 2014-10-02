@@ -24,7 +24,7 @@
 %FORMATLIST{"%ACTION_changed%" header="%MAKETEXT{"These fields have changed:
 
 "}%" format="%MAKETEXT{"[_1] has changed" args="$percentMAKETEXT{$1}$percent"}%
-%MAKETEXT{"from: "}%$percentIF{\"'$1'='text'\" then=\"$dollarpercentACTION_old_text_raw$dollarpercent\" else=\"$dollarpercentACTION_old_$1$dollarpercent\"}$percent$n$n%MAKETEXT{"to: "}%$percentIF{\"'$1'='text'\" then=\"$dollarpercentACTION_new_text_raw$dollarpercent\" else=\"$dollarpercentACTION_new_$1$dollarpercent\"}$percent" separator="
+%MAKETEXT{"from: "}%$percentTMPL:P{\"formatFields\" field=\"$1\" version=\"old\"}$percent$n$n%MAKETEXT{"to: "}%$percentTMPL:P{\"formatFields\" field=\"$1\" version=\"new\"}$percent" separator="
 
 "}%
 
@@ -32,3 +32,4 @@
 %MAKETEXT{"You received this mail, because you are registered in [_1]. If you think you shouldn't have got this message, please contact [_2]." args="%WIKITOOLNAME%,%WIKIWEBMASTER%"}%
 %TMPL:END%
 
+%TMPL:DEF{"formatFields"}%%SWITCHTEXT{"%field%" text="$percentACTION_%version%_text_raw$percent" default="$percentACTION_%version%_%field%$percent" due="$percentCALC{\"$FORMATTIME($percentACTION_%version%_due$percent, %QUERY{"{DefaultDateFormat}"}%)\"}$percent"}%%TMPL:END%
