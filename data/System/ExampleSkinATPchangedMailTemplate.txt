@@ -23,7 +23,7 @@
 
 %FORMATLIST{"%ACTION_changed%" header="%MAKETEXT{"These fields have changed:
 
-"}%" format="%MAKETEXT{"[_1] has changed" args="$1"}%
+"}%" format="%MAKETEXT{"[_1] has changed" args="$percentMAKETEXT{$1}$percent"}%
 %MAKETEXT{"from: "}%$percentIF{\"'$1'='text'\" then=\"$dollarpercentACTION_old_text_raw$dollarpercent\" else=\"$dollarpercentACTION_old_$1$dollarpercent\"}$percent$n$n%MAKETEXT{"to: "}%$percentIF{\"'$1'='text'\" then=\"$dollarpercentACTION_new_text_raw$dollarpercent\" else=\"$dollarpercentACTION_new_$1$dollarpercent\"}$percent" separator="
 
 "}%
