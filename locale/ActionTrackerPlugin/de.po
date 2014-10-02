@@ -90,3 +90,6 @@ msgstr "von: "
 
 msgid "to: "
 msgstr "zu: "
+
+msgid "Your task has been modified."
+msgstr "Ihre Aufgabe wurde abgeändert."
