@@ -370,9 +370,7 @@ sub notify {
                 # The <nop> tags are being removed after rendering the template.
                 # this is a bit ugly
                 next unless $this->{text};
-                $this->{text_raw} = $this->{text};
-                $this->{text_raw} =~ s#\s*<br />#\n#g;
-                $this->{text_raw} =~ s#\s*<p />#\n\n#g;
+                $this->{text_raw} = Foswiki::Plugins::ActionTrackerPlugin::_deHtml($this->{text});
             }
             next unless $this->{$field};
             Foswiki::Func::setPreferencesValue( "ACTION_$field", $this->{$field} );
@@ -485,6 +483,11 @@ sub populateMissingFields {
     # note: notification of state changes are handled in
     # Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler()
     $this->notify( 'create' ) if $newlycreated;
+}
+
+sub getKeys {
+    my ( $this ) = @_;
+    return keys %$this;
 }
 
 # PUBLIC format as an action
