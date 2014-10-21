@@ -95,4 +95,4 @@ msgid "Your task has been modified."
 msgstr "Ihre Aufgabe wurde abgeändert."
 
 msgid "Please note that any recently changes by %1 could be discarded!"
-msgstr "Bitte beachten Sie, dass kürzliche Änderungen durch 1% verworfen werden könnten!"
+msgstr "Bitte beachten Sie, dass kürzliche Änderungen durch %1 verworfen werden könnten!"
