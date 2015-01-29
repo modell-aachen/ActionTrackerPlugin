@@ -1116,7 +1116,7 @@ sub findChanges {
 # from a CGI query as used in the action edit.
 sub createFromQuery {
     my ( $web, $topic, $an, $query ) = @_;
-    my $desc = $query->param('text') || 'No description';
+    my $desc = $query->param('text') || '';
     unless (Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_WYSIWYG')) {
         $desc =~ s/\r?\n\r?\n/ <p \/>/sgo;
         $desc =~ s/\r?\n/ <br \/>/sgo;
