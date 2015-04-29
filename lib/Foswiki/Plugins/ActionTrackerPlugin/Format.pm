@@ -377,7 +377,14 @@ sub _formatFieldForEdit {
     my $type = $object->getType($attrname);
     return $attrname unless ( defined($type) );
     my $size = $type->{size};
-    if ( $type->{type} eq 'select' || $type->{type} eq 'select+values' ) {
+   
+    # MODAC patch to disply uid as a label
+    if ( $attrname eq 'uid' ) {
+    	my $val = _expandVar( $object, $attrname, undef, 0 );
+    	my @extras  = ();
+    	return $val;
+    }
+    elsif ( $type->{type} eq 'select' || $type->{type} eq 'select+values' ) {
         my $mapped = ($type->{type} eq 'select+values');
         my $fields = '';
         foreach my $option ( @{ $type->{values} } ) {
