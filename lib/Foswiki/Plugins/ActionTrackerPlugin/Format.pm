@@ -349,7 +349,7 @@ sub _expandEditField {
 
     # record the fact that we expanded this field, so it doesn't get
     # generated as a hidden
-    $expanded->{$var} = 1;
+    $expanded->{$var} = 1 unless $var eq 'uid';
 
     if ( $var eq "dollar" ) {
         return "\$";
@@ -380,9 +380,7 @@ sub _formatFieldForEdit {
    
     # MODAC patch to disply uid as a label
     if ( $attrname eq 'uid' ) {
-    	my $val = _expandVar( $object, $attrname, undef, 0 );
-    	my @extras  = ();
-    	return $val;
+        return $object->{$attrname};
     }
     elsif ( $type->{type} eq 'select' || $type->{type} eq 'select+values' ) {
         my $mapped = ($type->{type} eq 'select+values');
