@@ -466,6 +466,11 @@ Non-standard attributes - see [[#NonStandardAttributes][Non-standard attributes]
 | *Preference* | *Default* |
 | =ACTIONTRACKERPLUGIN_EXTRAS= | _none_ |
 
+If set to 1, in view mode, render select fields as plain text rather than a dropdown field.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_VIEWWITHDROPDOWN= | =1= |
+
 If set to 1, the action tracker will show action states using a drop-down menu, to allow viewers to quickly and easily change action states. You can disable this feature by setting this to 0.
 
 | *Preference* | *Default* |
