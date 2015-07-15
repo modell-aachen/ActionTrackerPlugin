@@ -23,8 +23,8 @@ msgstr "%1 modifie la page depuis %2, et son verrou est encore valide pour "
 
 #: templates/oopsleaseconflict.action.tmpl:5
 msgid "%1 may still be editing the topic, but their lease expired %2 ago."
-msgstr "% 1 peut encore être en train de modifier le sujet, mais leur bail a "
-       "expiré il ya 2%"
+msgstr "%1 peut encore être en train de modifier le sujet, mais leur bail a "
+       "expiré il ya %2"
 
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:13
 msgid "A task has been reassigned to you."
@@ -39,7 +39,7 @@ msgstr "Une tâche que vous avez créé a été fermée"
 #: data/System/ExampleSkinATPopenMailTemplate.txt:19
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:19
 msgid "Assigned to: %1"
-msgstr "Affecté à:% 1"
+msgstr "Affecté à: %1"
 
 #: templates/oopsleaseconflict.action.tmpl:3
 msgid "Attention"
@@ -54,18 +54,18 @@ msgstr "Annuler"
 #: data/System/ExampleSkinATPopenMailTemplate.txt:20
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:20
 msgid "Context: %1"
-msgstr "Contexte:% 1"
+msgstr "Contexte: %1"
 
 #: templates/oopsleaseconflict.action.tmpl:5
 msgid "Could not access %1, the topic containing this action."
-msgstr "Impossible d'accéder à% 1, la rubrique contenant cette action."
+msgstr "Impossible d'accéder à %1, la rubrique contenant cette action."
 
 #: data/System/ExampleSkinATPclosedMailTemplate.txt:17
 #: data/System/ExampleSkinATPcreateMailTemplate.txt:17
 #: data/System/ExampleSkinATPopenMailTemplate.txt:17
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:17
 msgid "Creator: %1"
-msgstr "Créateur:% 1"
+msgstr "Créateur: %1"
 
 #: data/System/ExampleSkinATPclosedMailTemplate.txt:24
 #: data/System/ExampleSkinATPcreateMailTemplate.txt:25
@@ -78,7 +78,7 @@ msgstr "Détails: "
 #: data/System/ExampleSkinATPopenMailTemplate.txt:21
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:21
 msgid "Due: %1"
-msgstr "En raison:% 1"
+msgstr "En raison: %1"
 
 #: templates/oopsleaseconflict.action.tmpl:5
 msgid "Error when I tried to edit the action"
@@ -100,18 +100,18 @@ msgstr "Désolé, la validation a échoué, probablement parce que quelqu'un "
 #: data/System/ExampleSkinATPopenMailTemplate.txt:18
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:18
 msgid "State: %1"
-msgstr "État:% 1"
+msgstr "État: %1"
 
 #: data/System/ExampleSkinATPclosedMailTemplate.txt:22
 #: data/System/ExampleSkinATPcreateMailTemplate.txt:23
 #: data/System/ExampleSkinATPopenMailTemplate.txt:23
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:23
 msgid "Task: "
-msgstr "Tâche"
+msgstr "Tâche: "
 
 #: templates/oopsleaseconflict.action.tmpl:5
 msgid "To clear the lease, try editing %1 with the standard text editor."
-msgstr "Pour effacer le bail, essayez de la modifier% 1 avec l'éditeur de "
+msgstr "Pour effacer le bail, essayez de la modifier %1 avec l'éditeur de "
        "texte standard."
 
 #: data/System/ExampleSkinATPcreateMailTemplate.txt:13
@@ -124,9 +124,9 @@ msgstr "Vous avez une nouvelle tâche."
 #: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:29
 msgid "You received this mail, because you are registered in %1. If you "
        "think you shouldn't have got this message, please contact %2."
-msgstr "Vous avez reçu ce mail parce que vous êtes inscrit % 1. Si vous "
+msgstr "Vous avez reçu ce mail parce que vous êtes inscrit %1. Si vous "
        "pensez que vous ne devriez pas avoir obtenu ce message, contacter "
-       "s'il vous plaît% 2"
+       "s'il vous plaît %2"
 
 #: data/System/ExampleSkinATPopenMailTemplate.txt:13
 msgid "Your task has been reopened."
