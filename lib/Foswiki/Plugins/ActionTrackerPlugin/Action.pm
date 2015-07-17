@@ -1063,14 +1063,6 @@ sub _partialMatch {
                 $matches++;
                 last;
             }
-            else {
-                my $so = Text::Soundex::soundex($s)          || '';
-                my $sn = Text::Soundex::soundex( $anew[$t] ) || '';
-                if ( $so eq $sn ) {
-                    $anew[$t] = '';
-                    $matches += 0.75;
-                }
-            }
         }
     }
     return $matches / ( $#aold + 1 );
