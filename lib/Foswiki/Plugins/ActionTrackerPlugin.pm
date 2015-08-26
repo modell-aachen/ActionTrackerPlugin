@@ -680,7 +680,7 @@ sub _indexTopicHandler {
 	$webtopic =~ s/\//./g;
 	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$action->{uid});
 	my $id = $webtopic.':action'.$action->{uid};
-	my $title = $action->{task} || $action->{unloaded_fields}{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
+	my $title = $action->{task} || $action->{unloaded_fields}{task} || substr($action->{text}, 0, 20) ."...";
 	my $text = $action->{text};
 
 	# escaping potential html tags
@@ -753,12 +753,6 @@ sub _indexTopicHandler {
     }
 }
 
-sub _unicodeSubstr {
-    require Encode;
-    my $charset = $Foswiki::cfg{Site}{CharSet};
-    return Encode::encode($charset, substr(Encode::decode($charset, $_[0]), $_[1], $_[2]));
-}
-
 # Text that is taken from a web page and added to the parameters of an XHR
 # by JavaScript is UTF-8 encoded. This is because UTF-8 is the default encoding
 # for XML, which XHR was designed to transport. For usefulness in Javascript
@@ -766,14 +760,6 @@ sub _unicodeSubstr {
 # This function generates such a response.
 sub returnRESTResult {
     my ( $response, $status, $text ) = @_;
-    ASSERT( $text !~ /[^\x00-\xff]/,
-        "only octets expected in input to returnRESTResult" )
-      if DEBUG;
-
-    if ( $Foswiki::cfg{Site}{CharSet} !~ /^utf-?8$/i ) {
-        $text = Encode::decode( $Foswiki::cfg{Site}{CharSet}, $text, Encode::FB_HTMLCREF );
-        $text = Encode::encode_utf8($text);
-    }
 
     # Foswiki 1.0 introduces the Foswiki::Response object, which handles all
     # responses.
@@ -791,15 +777,15 @@ sub returnRESTResult {
         local $| = 0;
         my $query = Foswiki::Func::getCgiQuery();
         if ( defined($query) ) {
-            my $len;
-            { use bytes; $len = length($text); };
+            my $utf = Foswiki::encode_utf8($text);
+            my $len = length($utf);
             print $query->header(
                 -status         => $status,
                 -type           => 'text/plain',
                 -charset        => 'UTF-8',
                 -Content_length => $len
             );
-            print $text;
+            print $utf;
         }
     }
     print STDERR $text if ( $status >= 400 );
@@ -842,7 +828,7 @@ sub _updateRESTHandler {
 	}
         _updateSingleAction( $web, $topic, $query->param('uid'),
 			     %params );
-	returnRESTResult( $response, 200, encode_json({ data => \%params }) );
+	returnRESTResult( $response, 200, to_json({ data => \%params }) );
     }
     catch Error::Simple with {
         my $e = shift;
