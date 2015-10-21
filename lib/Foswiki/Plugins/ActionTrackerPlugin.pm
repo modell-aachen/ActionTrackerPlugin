@@ -34,6 +34,7 @@ sub initPlugin {
 
     Foswiki::Func::registerTagHandler( 'ACTIONSEARCH', \&_handleActionSearch,
 				       'context-free' );
+    Foswiki::Func::registerTagHandler( 'ACTIONEDIT', \&_handleActionEdit );
     use Foswiki::Contrib::JSCalendarContrib;
     if ( $@ || !$Foswiki::Contrib::JSCalendarContrib::VERSION ) {
         Foswiki::Func::writeWarning( 'JSCalendarContrib not found ' . $@ );
@@ -359,8 +360,11 @@ sub afterEditHandler {
 	}
     }
 
-    my $old_state = $latest_act->{state} || ''; # ignoring $old_act, that mail was send already
-    my $old_owner = $latest_act->{who} || '';
+    my $old_fields = {}; # copy old fields, so we can compare them later
+    my @fields = $latest_act->getKeys();
+    foreach my $field ( @fields ) {
+        $old_fields->{$field} = $latest_act->{$field};
+    };
 
     $latest_act->updateFromCopy($new_act, $mustMerge, $info->{version}, $ancestorRev, $old_act);
     $latest_act->populateMissingFields();
@@ -372,15 +376,58 @@ sub afterEditHandler {
     # send notification
     # note: notification for creation of new actions is handled in
     # Foswiki::Plugins::ActionTrackerPlugin::Action::populateMissingFields()
-    if ( $latest_act->{state} ne $old_state && !$mailsSent ) {
+    if ( $latest_act->{state} ne $old_fields->{state} ) {
         $latest_act->notify( $latest_act->{state} );
-        $mailsSent = 1;
-    } elsif ( $latest_act->{who} ne $old_owner && !$mailsSent ) {
+    } elsif ( $latest_act->{who} ne $old_fields->{who} ) {
         $latest_act->notify( 'reassignmentwho' );
-        $mailsSent = 1;
+    } else {
+        # check all other fields
+        my @changed;
+
+        # special case: text
+        # sometimes the whitespaces change around the <br /> and <p />
+        my $text_old_raw = _deHtml((defined $old_fields->{text})?$old_fields->{text}:'%MAKETEXT{"(not set)"}%');
+        my $text_new_raw = _deHtml((defined $latest_act->{text})?$latest_act->{text}:'%MAKETEXT{"(not set)"}%');
+        unless($text_old_raw eq $text_new_raw) {
+            Foswiki::Func::setPreferencesValue( "ACTION_new_text_raw", $text_new_raw );
+            Foswiki::Func::setPreferencesValue( "ACTION_old_text_raw", $text_old_raw );
+            push(@changed, 'text');
+        }
+
+        # all other fields
+        my @fields = $latest_act->getKeys();
+        foreach my $key ( @fields ) {
+            next if $key eq 'unloaded_fields' || $key eq 'text';
+            next if ( (not defined $latest_act->{$key}) && (not defined $old_fields->{$key}) );
+            if ( (not defined $old_fields->{$key}) || (not defined $latest_act->{$key}) || $latest_act->{$key} ne $old_fields->{$key}) {
+                push(@changed, $key);
+            }
+        }
+        foreach my $key ( keys %$old_fields ) {
+            next if $key eq 'unloaded_fields';
+            if(not defined $latest_act->{$key}) { # when it exists, we already checked for equality above
+                push(@changed, $key);
+            }
+        }
+
+        if ( scalar @changed ) {
+            foreach my $field ( @changed ) {
+                Foswiki::Func::setPreferencesValue( "ACTION_new_$field", (defined $latest_act->{$field})?$latest_act->{$field}:'%MAKETEXT{"(not set)"}%' );
+                Foswiki::Func::setPreferencesValue( "ACTION_old_$field", (defined $old_fields->{$field})?$old_fields->{$field}:'%MAKETEXT{"(not set)"}%' );
+            }
+            Foswiki::Func::setPreferencesValue('ACTION_changed', join(',', @changed));
+            $latest_act->notify( 'changed' );
+        }
     }
 
     $_[0] = $text;
+}
+
+sub _deHtml {
+    my ( $raw ) = @_;
+    $raw =~ s#\s*<br />#\n#g;
+    $raw =~ s#\s*<p />#\n\n#g;
+    return $raw;
 }
 
 # Process the actions and add UIDs and other missing attributes
@@ -487,7 +534,7 @@ sub _handleActionSearch {
     # meyer@modell-aachen.de:
     # Kompatibilität zu JQTableSorterPlugin
     my $jqse = $Foswiki::cfg{Plugins}{JQTableSorterPlugin}{Enabled};
-    my $jqsortable = $attrs->remove('jqsortable');
+    my $jqsortable = $attrs->remove('jqsortable') || '';
     my $jqsortopts = undef;
     if ( $jqse eq 1 && $jqsortable eq 1 ) {
         $jqsortopts = $attrs->remove('jqsortopts');
@@ -525,6 +572,42 @@ sub _handleActionSearch {
 	    $result = $actions->formatAsHTML( $fmt, 'href', $cssClasses );
     }
     return $result;
+}
+
+# ==========================
+# Generate edit link for an action
+sub _handleActionEdit {
+    my ($session, $attrs, $topic, $web) = @_;
+    my $uid;
+    if (ref $attrs) {
+        $uid = $attrs->{uid};
+        $web = $attrs->{web} if $attrs->{web};
+        $topic = $attrs->{topic} if $attrs->{topic};
+    } else {
+        # Alternative form of calling this:
+        # _handleActionEdit($session, $uid, $topic, $web)
+        $uid = $attrs;
+    }
+    ($web, $topic) = Foswiki::Func::normalizeWebTopicName( $web, $topic );
+    return unless lazyInit( $web, $topic );
+
+    my $skin = join( ',', ( 'action', Foswiki::Func::getSkin() ) );
+
+    my $url = Foswiki::Func::getScriptUrl(
+        $web, $topic, 'edit',
+        skin       => $skin,
+        atp_action => $uid,
+        nowysiwyg  => 1,                    # SMELL: could do better!
+        t          => time(),
+    );
+    $url =~ s/%2c/,/g;
+    my $label = $session->i18n->maketext('Edit');
+    $attrs = { href => $url, title => $label, class => "atp_edit ui-icon ui-icon-pencil" };
+    if ($options->{UPDATEAJAX} =~ /^\s*(on|1|yes)\s*$/) {
+        $attrs->{class} .= " {web: '$web', topic: '$topic'}";
+    }
+
+    return CGI::a( $attrs, $label );
 }
 
 # Lazy initialize of plugin 'cause of performance
@@ -621,6 +704,15 @@ sub _indexTopicHandler {
 	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$action->{uid});
 	my $id = $webtopic.':action'.$action->{uid};
 	my $title = $action->{task} || $action->{unloaded_fields}{task} || _unicodeSubstr($action->{text}, 0, 20) ."...";
+	my $text = $action->{text};
+
+	# escaping potential html tags
+	$text =~ s#<br />#\n#g;
+	$text =~ s#<p></p>#\n\n#g;
+	$text =~ s#<#&lt;#g;
+	$text =~ s#>#&gt;#g;
+	$title =~ s#<#&lt;#g;
+	$title =~ s#>#&gt;#g;
 
 	my @notify = split(/[,\s]+/, $action->{notify} || '');
 
@@ -643,11 +735,11 @@ sub _indexTopicHandler {
 	  'date' => $createDate,
 	  'createdate' => $createDate,
 	  'title' => $title,
-	  'text' => $action->{text},
+	  'text' => $text,
 	  'state' => $action->{state},
 	  'container_id' => $web.'.'.$topic,
 	  'container_url' => Foswiki::Func::getViewUrl($web, $topic),
-#	  'container_title' => $indexer->getTopicTitle($web, $topic, $meta),
+	  'container_title' => $indexer->getTopicTitle($web, $topic, $meta),
 	);
 	$doc->add_fields('catchall' => $title);
 	$doc->add_fields('catchall' => $action->{text});

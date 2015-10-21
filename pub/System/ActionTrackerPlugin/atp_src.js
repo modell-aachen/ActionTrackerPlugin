@@ -99,6 +99,7 @@
 			     alert(message[5]); //Error when I tried...
 			 } else {
 			     div.dialog("open");
+			     if (!meta.web && !meta.topic) div.find('form').data('submit-pronto', 1);
 			     div.find('form').data('action-web', meta.web).data('action-topic', meta.topic);
 			     canCloseDialog = false;
 			 }
@@ -108,6 +109,9 @@
     });
 
     $('#atp_editor input[type="submit"]').livequery(function() {
+	if ($('#atp_editor form[name="loginform"]').length) {
+	    return false;
+	}
 	var e = $(this);
 	var f = e.closest('form');
 	f.submit(function(ev) {
@@ -164,6 +168,7 @@
 	$(this).submit(function() {
 	    var form = $(this);
 	    $.ajax({
+		type: 'POST',
 		url: form.attr("action"),
 		data: form.serialize(),
 		success: function(d, t, r) {

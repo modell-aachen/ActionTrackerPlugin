@@ -1,0 +1,150 @@
+# Foswiki translation for French (français)
+# Translators:
+#   Islem Haddar 2014.
+msgid ""
+msgstr "Project-Id-Version: fr\n"
+        "Report-Msgid-Bugs-To: \n"
+        "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+        "PO-Revision-Date: 2014-04-08 11:19+0200\n"
+        "Last-Translator: Islem Haddar <haddar@modell-aachen.de>\n"
+        "Language-Team: <support@modell-aachen.de>\n"
+        "Language: fr\n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+        "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+        "X-Generator: Pootle 2.1.6\n"
+
+#: templates/oopsleaseconflict.action.tmpl:5
+msgid "%1 has been editing the topic for %2 and the lease is still active "
+       "for another %3."
+msgstr "%1 modifie la page depuis %2, et son verrou est encore valide pour "
+       "%3."
+
+#: templates/oopsleaseconflict.action.tmpl:5
+msgid "%1 may still be editing the topic, but their lease expired %2 ago."
+msgstr "%1 peut encore être en train de modifier le sujet, mais leur bail a "
+       "expiré il ya %2"
+
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:13
+msgid "A task has been reassigned to you."
+msgstr "Une tâche vous a été réaffecté. "
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:13
+msgid "A task you created has been closed."
+msgstr "Une tâche que vous avez créé a été fermée"
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:19
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:19
+#: data/System/ExampleSkinATPopenMailTemplate.txt:19
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:19
+msgid "Assigned to: %1"
+msgstr "Affecté à: %1"
+
+#: templates/oopsleaseconflict.action.tmpl:3
+msgid "Attention"
+msgstr "Attention"
+
+#: templates/actionform.tmpl:12
+msgid "Cancel"
+msgstr "Annuler"
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:20
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:20
+#: data/System/ExampleSkinATPopenMailTemplate.txt:20
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:20
+msgid "Context: %1"
+msgstr "Contexte: %1"
+
+#: templates/oopsleaseconflict.action.tmpl:5
+msgid "Could not access %1, the topic containing this action."
+msgstr "Impossible d'accéder à %1, la rubrique contenant cette action."
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:17
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:17
+#: data/System/ExampleSkinATPopenMailTemplate.txt:17
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:17
+msgid "Creator: %1"
+msgstr "Créateur: %1"
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:24
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:25
+#: data/System/ExampleSkinATPopenMailTemplate.txt:25
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:25
+msgid "Details: "
+msgstr "Détails: "
+
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:21
+#: data/System/ExampleSkinATPopenMailTemplate.txt:21
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:21
+msgid "Due: %1"
+msgstr "En raison: %1"
+
+#: templates/oopsleaseconflict.action.tmpl:5
+msgid "Error when I tried to edit the action"
+msgstr "Erreur quand j'ai essayé de modifier l'action"
+
+#: templates/actionform.tmpl:11
+msgid "Save"
+msgstr ""
+
+#: templates/oopsleaseconflict.action.tmpl:5
+msgid "Sorry, validation failed, possibly because someone else is already "
+       "editing the action. Please try again in a few minutes."
+msgstr "Désolé, la validation a échoué, probablement parce que quelqu'un "
+       "d'autre est déjà en train de modifier l'action. S'il vous plaît "
+       "essayer de nouveau dans quelques minutes."
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:18
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:18
+#: data/System/ExampleSkinATPopenMailTemplate.txt:18
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:18
+msgid "State: %1"
+msgstr "État: %1"
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:22
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:23
+#: data/System/ExampleSkinATPopenMailTemplate.txt:23
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:23
+msgid "Task: "
+msgstr "Tâche: "
+
+#: templates/oopsleaseconflict.action.tmpl:5
+msgid "To clear the lease, try editing %1 with the standard text editor."
+msgstr "Pour effacer le bail, essayez de la modifier %1 avec l'éditeur de "
+       "texte standard."
+
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:13
+msgid "You have a new task."
+msgstr "Vous avez une nouvelle tâche."
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:28
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:29
+#: data/System/ExampleSkinATPopenMailTemplate.txt:29
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:29
+msgid "You received this mail, because you are registered in %1. If you "
+       "think you shouldn't have got this message, please contact %2."
+msgstr "Vous avez reçu ce mail parce que vous êtes inscrit %1. Si vous "
+       "pensez que vous ne devriez pas avoir obtenu ce message, contacter "
+       "s'il vous plaît %2"
+
+#: data/System/ExampleSkinATPopenMailTemplate.txt:13
+msgid "Your task has been reopened."
+msgstr "Votre tâche a été rouverte."
+
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:22
+#: data/System/ExampleSkinATPclosedMailTemplate.txt:24
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:23
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:25
+#: data/System/ExampleSkinATPopenMailTemplate.txt:23
+#: data/System/ExampleSkinATPopenMailTemplate.txt:25
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:23
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:25
+msgid "no description"
+msgstr "pas de déscription"
+
+#: data/System/ExampleSkinATPcreateMailTemplate.txt:21
+#: data/System/ExampleSkinATPopenMailTemplate.txt:21
+#: data/System/ExampleSkinATPreassignmentwhoMailTemplate.txt:21
+msgid "not defined"
+msgstr "non défini"

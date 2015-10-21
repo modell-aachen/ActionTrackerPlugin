@@ -370,9 +370,7 @@ sub notify {
                 # The <nop> tags are being removed after rendering the template.
                 # this is a bit ugly
                 next unless $this->{text};
-                $this->{text_raw} = $this->{text};
-                $this->{text_raw} =~ s#\s*<br />#\n#g;
-                $this->{text_raw} =~ s#\s*<p />#\n\n#g;
+                $this->{text_raw} = Foswiki::Plugins::ActionTrackerPlugin::_deHtml($this->{text});
             }
             next unless $this->{$field};
             Foswiki::Func::setPreferencesValue( "ACTION_$field", $this->{$field} );
@@ -485,6 +483,11 @@ sub populateMissingFields {
     # note: notification of state changes are handled in
     # Foswiki::Plugins::ActionTrackerPlugin::afterEditHandler()
     $this->notify( 'create' ) if $newlycreated;
+}
+
+sub getKeys {
+    my ( $this ) = @_;
+    return keys %$this;
 }
 
 # PUBLIC format as an action
@@ -983,21 +986,7 @@ sub _formatField_edit {
         # Can't edit from plain text
         return '';
     }
-
-    my $skin = join( ',', ( 'action', Foswiki::Func::getSkin() ) );
-
-    my $url = Foswiki::Func::getScriptUrl(
-        $this->{web}, $this->{topic}, 'edit',
-        skin       => $skin,
-        atp_action => $this->getAnchor(),
-        nowysiwyg  => 1,                    # SMELL: could do better!
-        t          => time()
-    );
-    $url =~ s/%2c/,/g;
-    my $attrs = { href => $url, title => 'Edit', class => "atp_edit ui-icon ui-icon-pencil ".
-        "{web: '$this->{web}', topic: '$this->{topic}'}" };
-
-    return CGI::a( $attrs, 'edit' );
+    return Foswiki::Plugins::ActionTrackerPlugin::_handleActionEdit( $Foswiki::Plugins::SESSION, $this->getAnchor(), $this->{topic}, $this->{web} );
 }
 
 # PUBLIC see if this other action matches according to fuzzy
@@ -1127,7 +1116,7 @@ sub findChanges {
 # from a CGI query as used in the action edit.
 sub createFromQuery {
     my ( $web, $topic, $an, $query ) = @_;
-    my $desc = $query->param('text') || 'No description';
+    my $desc = $query->param('text') || '';
     unless (Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_WYSIWYG')) {
         $desc =~ s/\r?\n\r?\n/ <p \/>/sgo;
         $desc =~ s/\r?\n/ <br \/>/sgo;

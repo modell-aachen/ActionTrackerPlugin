@@ -190,6 +190,17 @@ __Note__ in general you should *not* use these mechanisms for assigning actions,
 _For administrators only_:
 Each action is assigned a Unique Identifier (UID) when it is created. This UID is a six-digit number, and is generated when the action is first saved by incrementing a number in a special file (<code>pub/_work_areas/ActionTrackerPlugin/UIDRegister</code> under the installation). If this file is accidentally deleted, or is not writable, then you will have problems and you may get duplicate UIDs. Normally this won't matter a hoot, as UIDs only _have_ to be unique within a single topic, but if the file is persistantly inaccessible it could be a bit of a nuisance.
 
+---+++ Generating edit buttons for actions
+
+If you display actions by any mechanism other than =ACTIONSEARCH=, the =ACTIONEDIT= macro can help you generate an edit button that will respect all of the important preferences.
+
+The following parameters are defined:
+
+   | *Name* | *Description* |
+   | =web= | Web containing the action (defaults to current web) |
+   | =topic= | Topic containing the action (defaults to current topic) |
+   | =uid= | Numeric ID for the action (e.g. 000000) |
+
 #NotiFication
 ---++ Notification
 
@@ -276,7 +287,7 @@ __Notes:__
    1 Unlike all other search terms, =changedsince= works as an OR term rather than an AND term. If you use a compound expression like <code>late,changedsince=yesterday</code>, this will *not* give you all late actions that changed since yesterday. Instead, it will give you all late actions *and* all actions that changed since yesterday.
    1 If you give the parameter DEBUG to the actionnotify script, it will print out the mails that would have been sent to STDOUT. This is useful for debugging, and may be useful if you have some other processing in mind (such as piping to an alternative mail program).
    1 =changedsince= requires RCS, and will not work with Rcs<nop>Lite.
----++ Notification on create/close
+---++ Notification on create/close/change
 ActionTrackerPlugin can notify the addressee when a new action has been created or inform the creator of an action when it has been closed. Any other state-changes can be notified as well.
 
 The user performing the action (creating/closing/changing it) will never be notified.
@@ -285,8 +296,9 @@ To enable a notification, copy one of the following templates into your skin pat
    ExampleSkinATPcreateMailTemplate: To send a mail when a new action has been created.
    ExampleSkinATPcloseMailTemplate: To send a mail when an action has been closed.
    ExampleSkinATPopenMailTemplate: To send a mail when an action has been reopened.
+   ExampleSkinATPchangedMailTemplate: To send a mail when any field (exept those handeled above) changed.
 For example copy =ExampleSkinATPopenMailTemplate= to =CustomSkinATPopenMailTemplate= if your =SKIN= setting includes =custom= and you want to be notified about reopened actions. If you want to be notified about any other state, just copy =ExampleSkinATPopenMailTemplate= to =CustomSkinATPstatenameMailTemplate= and modify the appropriate definitions.
-If you want to access the action's fields, you can use =%<nop>ACTION_field%= (eg. =%<nop>ACTION_text%=), however if you need to use them in in other macros (eg. =%<nop>CALC{"%<nop>ACTION_created%...=) you will need to declare them in =RequiredFields= as comma-separated list. (eg. =%<nop>TMPL:DEF{"RequiredFields"}%<nop>createdate, closed%<nop>TMPL:END%= if you need =%<nop>ACTION_createdate%= and =%<nop>ACTION_closed%=).
+If you want to access the action's fields, you can use =%<nop>ACTION_field%= (eg. =%<nop>ACTION_text%=), however if you need to use them in in other macros (eg. =%<nop>CALC{"%<nop>ACTION_created%...=) you will need to declare them in =RequiredFields= as comma-separated list. (eg. =%<nop>TMPL:DEF{"RequiredFields"}%<nop>createdate, closed%<nop>TMPL:END%= if you need =%<nop>ACTION_createdate%= and =%<nop>ACTION_closed%=). Additionally all changed fields are available in ATPchangeMailTemplate as =%<nop>ACTION_new_fieldname%= and =%<nop>ACTION_old_fieldname%=.
 #CustomIsation
 ---++ Customisation
 
@@ -454,6 +466,11 @@ Non-standard attributes - see [[#NonStandardAttributes][Non-standard attributes]
 | *Preference* | *Default* |
 | =ACTIONTRACKERPLUGIN_EXTRAS= | _none_ |
 
+If set to 1, in view mode, render select fields as plain text rather than a dropdown field.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_VIEWWITHDROPDOWN= | =1= |
+
 If set to 1, the action tracker will show action states using a drop-down menu, to allow viewers to quickly and easily change action states. You can disable this feature by setting this to 0.
 
 | *Preference* | *Default* |
@@ -472,6 +489,32 @@ The strings used by the =$button$ switch. A =$closebutton= is a special
 ActionTrackerPlugin will use the extension [[Foswiki:Extensions/JSCalendarContrib]] for displaying the calendar popup allowing for date selection when editing actions. It will format the selected date according to the settings specified for JSCalendarContrib.
 
 Refer to the System.JSCalendarContrib documentation to learn [[System.JSCalendarContrib#CustomizingTheAppearance][how to customize]] these settings system-wide, for a web or topic using the available date [[System.JSCalendarContrib#FormatSpecifiers][format specifiers]] for this extension.
+
+---+++ Customizing textboxlist fields
+
+These allow customizing specific textboxlist fields configured as extra fields. For a field with name 'myfieldname':
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_MYFIELDNAME_AUTOCOMPLETE= | |
+
+This specifies an endpoint used for fetching autocomplete information; see the documentation of textboxlist for details.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_MYFIELDNAME_MUSTMATCH= | |
+
+No value, or an empty value, disables mustMatch (mustMatch means values can only be selected from autocomplete results). Anything else enables it.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_MYFIELDNAME_LIMIT= | |
+
+If set to a numeric value, specifies the maximum number of entries that a user may add to a textboxlist field (existing values that exceed the limit are kept).
+
+---+++ Enabling asynchronous updates of actions
+
+By default, when saving changes to an action, a traditional form submit is performed, potentially taking a long time to reload the page. Alternatively, you can enable an asynchronous mode that saves changes in the background; the downside being that the changes won't be displayed until the next time you reload the page. To enable it, simply set =UPDATEAJAX= to =1=.
+
+| *Preference* | *Default* |
+| =ACTIONTRACKERPLUGIN_UPDATEAJAX= | =0= |
 
 ---+++ Known Limitations and Debugging
 

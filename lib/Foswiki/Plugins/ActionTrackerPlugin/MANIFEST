@@ -1,5 +1,6 @@
 data/System/ActionTrackerPlugin.txt 0660 Plugin topic
 data/System/ActionTrackerPluginQBE.txt 0660 Query-by-example action search
+data/System/ExampleSkinATPchangedMailTemplate.txt 0660
 data/System/ExampleSkinATPclosedMailTemplate.txt 0660
 data/System/ExampleSkinATPcreateMailTemplate.txt 0660
 data/System/ExampleSkinATPopenMailTemplate.txt 0660
@@ -27,3 +28,4 @@ lib/Foswiki/Plugins/ActionTrackerPlugin/AttrDef.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/Format.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/JQuery.pm 0440 Perl support module
 locale/ActionTrackerPlugin/de.po 0666 German translations
+locale/ActionTrackerPlugin/fr.po 0666

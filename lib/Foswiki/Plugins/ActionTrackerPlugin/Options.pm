@@ -26,6 +26,7 @@ my %defaults = (
     TABLEHEADER => '| Assigned to | Due date | Description | State | Notify ||',
     TABLEORIENT => 'cols',
     TEXTFORMAT  => 'Action for $who, due $due, $state$n$text$n$link$n',
+    UPDATEAJAX => '1',
     VIEWWITHDROPDOWN    => '1',
 );
 

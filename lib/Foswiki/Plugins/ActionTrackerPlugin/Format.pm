@@ -437,7 +437,14 @@ sub _formatFieldForEdit {
             }
             my $session = $Foswiki::Plugins::SESSION;
             my $topicObject = new Foswiki::Meta($session, $session->{webName}, $session->{topicName});
-            my $limit = ($attrname eq 'who' && !Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_MULTI_WHO')) ? ', limit: 1' : '';
+            my $limit = '';
+            if ($attrname eq 'who' && !Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_MULTI_WHO')) {
+                $limit = ', limit: 1';
+            }
+            my $limitPref = Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_'. uc($attrname) .'_LIMIT');
+            if ($limitPref && $limitPref =~ /^\s*(\d)\s*$/s) {
+                $limit = ", limit: $1";
+            }
             my $mm = (Foswiki::Func::getPreferencesValue('ACTIONTRACKERPLUGIN_'. uc($attrname) .'_MUSTMATCH')) ? ', mustMatch: 1' : '';
             @extras = ( class => "jqTextboxList {useHidden: 1$limit$mm}", autocomplete => $topicObject->expandMacros($autocomplete) );
         }
