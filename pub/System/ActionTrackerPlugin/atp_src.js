@@ -109,6 +109,9 @@
     });
 
     $('#atp_editor input[type="submit"]').livequery(function() {
+	if ($('#atp_editor form[name="loginform"]').length) {
+	    return false;
+	}
 	var e = $(this);
 	var f = e.closest('form');
 	f.submit(function(ev) {
@@ -165,6 +168,7 @@
 	$(this).submit(function() {
 	    var form = $(this);
 	    $.ajax({
+		type: 'POST',
 		url: form.attr("action"),
 		data: form.serialize(),
 		success: function(d, t, r) {
