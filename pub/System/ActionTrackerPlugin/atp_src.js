@@ -66,6 +66,7 @@
 		} });
 	    }
 	    $.blockUI();
+	    div.children().remove(); // IE10 workaround, see modac#9771
 	    div.load(dlgHref,
 		     function(done, status) {
 			 $.unblockUI();
