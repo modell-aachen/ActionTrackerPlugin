@@ -29,7 +29,6 @@ use integer;
 
 use CGI ();
 use JSON;
-use Text::Soundex ();
 use Time::ParseDate ();
 
 use Foswiki::Func ();
@@ -998,7 +997,6 @@ sub _formatField_edit {
 # due identical - 1
 # state identical - 1
 # text identical - length of matching text
-# text sounds match - number of matching sounds
 # This is deprecated but is retained for support of non-UID actions.
 sub fuzzyMatches {
     my ( $this, $old ) = @_;
@@ -1049,7 +1047,7 @@ sub fuzzyMatches {
 }
 
 # PRIVATE Crude algorithm for matching text. The words in the old text
-# are matched by equality or sound and the proportion of words
+# are matched by equality and the proportion of words
 # in the old text still seen in the new text is returned.
 sub _partialMatch {
     my ( $old, $new ) = @_;
