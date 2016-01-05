@@ -428,6 +428,8 @@ sub notify {
             Foswiki::Func::writeWarning(
                 'Failed to send action mails: ' . $errors
             );
+        } else {
+            return 1;
         }
     }
 }

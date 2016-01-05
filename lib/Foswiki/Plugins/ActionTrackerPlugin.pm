@@ -376,11 +376,11 @@ sub afterEditHandler {
     # send notification
     # note: notification for creation of new actions is handled in
     # Foswiki::Plugins::ActionTrackerPlugin::Action::populateMissingFields()
-    if ( $latest_act->{state} ne $old_fields->{state} ) {
-        $latest_act->notify( $latest_act->{state} );
-    } elsif ( $latest_act->{who} ne $old_fields->{who} ) {
-        $latest_act->notify( 'reassignmentwho' );
-    } else {
+    if ( $latest_act->{state} ne $old_fields->{state} && !$mailsSent ) {
+        $mailsSent = $latest_act->notify( $latest_act->{state} );
+    } elsif ( $latest_act->{who} ne $old_fields->{who} && !$mailsSent ) {
+        $mailsSent = $latest_act->notify( 'reassignmentwho' );
+    } elsif ( !$mailsSent ) {
         # check all other fields
         my @changed;
 
@@ -416,7 +416,7 @@ sub afterEditHandler {
                 Foswiki::Func::setPreferencesValue( "ACTION_old_$field", (defined $old_fields->{$field})?$old_fields->{$field}:'%MAKETEXT{"(not set)"}%' );
             }
             Foswiki::Func::setPreferencesValue('ACTION_changed', join(',', @changed));
-            $latest_act->notify( 'changed' );
+            $mailsSent = $latest_act->notify( 'changed' );
         }
     }
 
