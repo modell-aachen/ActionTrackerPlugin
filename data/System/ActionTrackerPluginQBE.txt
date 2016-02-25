@@ -11,3 +11,4 @@
 </form>
 Result:
 %ACTIONSEARCH{ %IF{"$qwho!=''" then="who='%URLPARAM{qwho}%'"}% %IF{"$qnotify!=''" then="notify='%URLPARAM{qnotify}%'"}% %IF{"$qstate!=''" then="state='%URLPARAM{qstate}%'"}}% %IF{"$qwithin!=''" then="within='%URLPARAM{qwithin}%'"}% %IF{"$qweb!=''" then="web='%URLPARAM{qweb}%'"}% %IF{"$qtopic!=''" then="topic='%URLPARAM{qtopic}%'"}% }%
+
