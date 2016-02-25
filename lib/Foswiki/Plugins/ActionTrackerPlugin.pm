@@ -700,7 +700,6 @@ sub _indexTopicHandler {
 	my $aDoc = $indexer->newDocument();
 	$aDoc->add_fields(
 	  'id' => $id,
-	  'collection' => $collection,
 	  'language' => $language,
 	  'type' => 'action',
 	  'web' => $web,
