@@ -673,12 +673,13 @@ sub _indexTopicHandler {
     my $actionset = Foswiki::Plugins::ActionTrackerPlugin::ActionSet::load($web, $topic, $meta->text);
 
     for my $action (@{ $actionset->{ACTIONS} }) {
-	my $createDate = Foswiki::Func::formatTime($action->{created}, 'iso', 'gmtime');
+	my $createDate = Foswiki::Func::formatTime(($action->{created} || 0), 'iso', 'gmtime');
 	my $dueDate = $action->{due} ? Foswiki::Func::formatTime($action->{due}, 'iso', 'gmtime') : undef;
 	my $closedDate = $action->{closed} ? Foswiki::Func::formatTime($action->{closed}, 'iso', 'gmtime') : undef;
 	my $webtopic = "$web.$topic";
 	$webtopic =~ s/\//./g;
-	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$action->{uid});
+	my $ankor = defined $action->{uid} ? $action->{uid} : '';
+	my $url = Foswiki::Func::getScriptUrl($web, $topic, 'view', '#'=>$ankor);
 	my $id = $webtopic.':action'.$action->{uid};
 	my $title = $action->{task} || $action->{unloaded_fields}{task} || substr($action->{text}, 0, 20) ."...";
 	my $text = $action->{text};
@@ -700,7 +701,6 @@ sub _indexTopicHandler {
 	my $aDoc = $indexer->newDocument();
 	$aDoc->add_fields(
 	  'id' => $id,
-	  'collection' => $collection,
 	  'language' => $language,
 	  'type' => 'action',
 	  'web' => $web,
