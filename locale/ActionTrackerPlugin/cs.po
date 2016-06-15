@@ -1,0 +1,85 @@
+#: core/pub/System/ActionTrackerPlugin:53
+msgid "%1 has been editing the topic for %2 and the lease is still active for another %3."
+msgstr ""
+
+msgid "%1 has changed"
+msgstr ""
+
+#: core/pub/System/ActionTrackerPlugin:51
+msgid "%1 may still be editing the topic, but their lease expired %2 ago."
+msgstr ""
+
+msgid "A task has been reassigned to you."
+msgstr ""
+
+msgid "A task you created has been closed."
+msgstr ""
+
+msgid "Assigned to: %1"
+msgstr ""
+
+msgid "Context: %1"
+msgstr ""
+
+#: core/pub/System/ActionTrackerPlugin:49
+msgid "Could not access %1, the topic containing this action."
+msgstr ""
+
+msgid "Creator: %1"
+msgstr ""
+
+msgid "Details: %1"
+msgstr ""
+
+msgid "Due: %1"
+msgstr ""
+
+#: core/pub/System/ActionTrackerPlugin:59
+msgid "Error when I tried to edit the action"
+msgstr ""
+
+msgid "Please note that any recently changes by %1 could be discarded!"
+msgstr ""
+
+#: core/pub/System/ActionTrackerPlugin:87
+msgid "Sorry, validation failed, possibly because someone else is already editing the action. Please try again in a few minutes."
+msgstr ""
+
+msgid "State: %1"
+msgstr ""
+
+msgid "Task: "
+msgstr ""
+
+msgid ""
+"These fields have changed:\n"
+"\n"
+msgstr ""
+
+#: core/pub/System/ActionTrackerPlugin:55
+msgid "To clear the lease, try editing %1 with the standard text editor."
+msgstr ""
+
+msgid "You have a new task."
+msgstr ""
+
+msgid "You received this mail, because you are registered in %1. If you think you shouldn't have got this message, please contact %2."
+msgstr ""
+
+msgid "Your task has been modified."
+msgstr ""
+
+msgid "Your task has been reopened."
+msgstr ""
+
+msgid "from: "
+msgstr ""
+
+msgid "no description"
+msgstr ""
+
+msgid "not defined"
+msgstr ""
+
+msgid "to: "
+msgstr ""

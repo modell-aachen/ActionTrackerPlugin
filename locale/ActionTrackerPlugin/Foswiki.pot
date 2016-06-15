@@ -71,7 +71,7 @@ msgid "Details: %1"
 msgstr ""
 
 msgid "You received this mail, because you are registered in %1. If you think you shouldn't have got this message, please contact %2."
-msgstr ""%2."
+msgstr ""
 
 msgid "no description"
 msgstr ""
