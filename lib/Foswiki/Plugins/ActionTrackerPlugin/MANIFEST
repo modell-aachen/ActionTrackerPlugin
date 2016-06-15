@@ -29,3 +29,7 @@ lib/Foswiki/Plugins/ActionTrackerPlugin/Format.pm 0440 Perl support module
 lib/Foswiki/Plugins/ActionTrackerPlugin/JQuery.pm 0440 Perl support module
 locale/ActionTrackerPlugin/de.po 0666 German translations
 locale/ActionTrackerPlugin/fr.po 0666
+locale/ActionTrackerPlugin/cs.po 0644
+locale/ActionTrackerPlugin/hu.po 0644
+locale/ActionTrackerPlugin/it.po 0644
+locale/ActionTrackerPlugin/zh-cn.po 0644
