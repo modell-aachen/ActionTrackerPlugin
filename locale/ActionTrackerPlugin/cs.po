@@ -1,55 +1,55 @@
 #: core/pub/System/ActionTrackerPlugin:53
 msgid "%1 has been editing the topic for %2 and the lease is still active for another %3."
-msgstr ""
+msgstr "%1 已经被编辑主题 %2 且the lease 是对其他%3仍旧有效的。"
 
 msgid "%1 has changed"
-msgstr ""
+msgstr "%1 已被更改"
 
 #: core/pub/System/ActionTrackerPlugin:51
 msgid "%1 may still be editing the topic, but their lease expired %2 ago."
-msgstr ""
+msgstr "%1 可能还在编辑该主题，但是他们的 lease已经在 %2前超出。"
 
 msgid "A task has been reassigned to you."
-msgstr ""
+msgstr "一项任务已经重新分配给您。"
 
 msgid "A task you created has been closed."
-msgstr ""
+msgstr "您创建的任务已结束。"
 
 msgid "Assigned to: %1"
-msgstr ""
+msgstr "分配给: "
 
 msgid "Context: %1"
 msgstr ""
 
 #: core/pub/System/ActionTrackerPlugin:49
 msgid "Could not access %1, the topic containing this action."
-msgstr ""
+msgstr "不能进入 %1, 该主题包含这一操作。"
 
 msgid "Creator: %1"
-msgstr ""
+msgstr "创建人: %1"
 
 msgid "Details: %1"
 msgstr ""
 
 msgid "Due: %1"
-msgstr ""
+msgstr "由于: %1"
 
 #: core/pub/System/ActionTrackerPlugin:59
 msgid "Error when I tried to edit the action"
-msgstr ""
+msgstr "试图编辑操作时报错"
 
 msgid "Please note that any recently changes by %1 could be discarded!"
-msgstr ""
+msgstr "请注意，最近因 %1而做的改动可能不予采纳!"
 
 #: core/pub/System/ActionTrackerPlugin:87
 msgid "Sorry, validation failed, possibly because someone else is already editing the action. Please try again in a few minutes."
-msgstr ""
+msgstr "对不起，检测失败，可能是由于有其他人已将该操作编辑了。请您稍后重试。"
 
 msgid "State: %1"
-msgstr ""
+msgstr "状态: %1"
 
 msgid "Task: "
-msgstr ""
+msgstr "任务: "
 
 msgid ""
 "These fields have changed:\n"
@@ -61,25 +61,25 @@ msgid "To clear the lease, try editing %1 with the standard text editor."
 msgstr ""
 
 msgid "You have a new task."
-msgstr ""
+msgstr "您有一项新任务"
 
 msgid "You received this mail, because you are registered in %1. If you think you shouldn't have got this message, please contact %2."
-msgstr ""
+msgstr "您会收到这封邮件，是因为您在 %1登记了。如果您本不应收到该信息，请与 %2 取得联系。"
 
 msgid "Your task has been modified."
-msgstr ""
+msgstr "您的任务已被修改"
 
 msgid "Your task has been reopened."
-msgstr ""
+msgstr "您的任务已被重新开启"
 
 msgid "from: "
-msgstr ""
+msgstr "发布人: "
 
 msgid "no description"
-msgstr ""
+msgstr "无描述"
 
 msgid "not defined"
-msgstr ""
+msgstr "无定义"
 
 msgid "to: "
-msgstr ""
+msgstr "接受人: "
