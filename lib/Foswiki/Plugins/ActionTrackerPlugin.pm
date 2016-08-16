@@ -55,13 +55,13 @@ sub initPlugin {
 sub commonTagsHandler {
     my ( $otext, $topic, $web, $meta ) = @_;
 
-    return unless ( $_[0] =~ m/%ACTION.*{.*}%/o );
+    return unless ( $_[0] =~ m/%ACTION.*\{.*\}%/o );
 
     return unless lazyInit( $web, $topic );
 
     if ($options->{AUTODISPLAY} ne '1') {
         # Just get rid of the tags in the output
-        $_[0] =~ s/%ACTION.*?{.*?}%.*?%ENDACTION%//sg;
+        $_[0] =~ s/%ACTION.*?\{.*?\}%.*?%ENDACTION%//sg;
         return;
     }
 
@@ -101,7 +101,7 @@ sub commonTagsHandler {
     # COVERAGE OFF debug only
     if ( $options->{DEBUG} ) {
         $_[0] =~
-	    s/%ACTIONNOTIFICATIONS{(.*?)}%/_handleActionNotify($web, $1)/geo;
+	    s/%ACTIONNOTIFICATIONS\{(.*?)\}%/_handleActionNotify($web, $1)/geo;
     }
 
     # COVERAGE ON
@@ -132,7 +132,7 @@ sub _beforeNormalEdit {
 
     #my( $text, $topic, $web, $meta ) = @_;
     # Coarse method of testing if modern action syntax is used
-    my $oc = scalar( $_[0] =~ m/%ACTION{.*?}%/g );
+    my $oc = scalar( $_[0] =~ m/%ACTION\{.*?\}%/g );
     my $cc = scalar( $_[0] =~ m/%ENDACTION%/g );
 
     if ( $cc < $oc ) {
@@ -429,7 +429,7 @@ sub beforeSaveHandler {
         my $inpost   = 0;
         my $text     = "";
         foreach my $line ( split( /\r?\n/, $_[0] ) ) {
-            if ( $line =~ /^%META:[^{]+{[^}]*}%/ ) {
+            if ( $line =~ /^%META:[^{]+\{[^}]*\}%/ ) {
                 if ($inpost) {
                     $postmeta .= "$line\n";
                 }
